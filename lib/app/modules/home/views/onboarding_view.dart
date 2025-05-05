@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../../widgets/primary_button.dart';
+
 import '../../../themes/tyvaa_theme.dart';
+import '../../../widgets/primary_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
   final _controller = PageController();
@@ -17,6 +18,7 @@ class OnboardingScreen extends StatelessWidget {
     TextStyle titleStyle = brightness == Brightness.dark ? AppTextStyles.h2Dark : AppTextStyles.h2;
     TextStyle subtitleStyle = brightness == Brightness.dark ? AppTextStyles.bodySecondaryDark : AppTextStyles.bodySecondary;
     Color backgroundColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
+    // ignore: unused_local_variable
     Color buttonTextColor = brightness == Brightness.dark ? Colors.white : AppColors.textOnPrimary;
 
     return Scaffold(
@@ -103,7 +105,7 @@ class OnboardingScreen extends StatelessWidget {
   final List<String> _titles = [
     'Bienvenue sur Tyvaa',
     'Chauffeurs vérifiés',
-    'Assistante OulyX',
+    'Support Interactive',
   ];
 
   final List<String> _subtitles = [
