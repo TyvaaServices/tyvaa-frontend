@@ -9,10 +9,8 @@ class ChooseChatbotScreen extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final HomeController controller = Get.put(HomeController());
 
-    // Get current theme brightness
     final brightness = Theme.of(context).brightness;
 
-    // Define theme-specific colors
     final backgroundColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
     final textColor = brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary;
     final buttonColor = brightness == Brightness.dark ? AppColors.primaryDark : AppColors.primary;

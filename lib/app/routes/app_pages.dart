@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/chooseChat_view.dart';
-import 'package:passenger_tyvaa/app/modules/home/views/home_view1.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/login_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 

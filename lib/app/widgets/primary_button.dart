@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../themes/tyvaa_theme.dart';
 
 class PrimaryButton extends StatelessWidget {
