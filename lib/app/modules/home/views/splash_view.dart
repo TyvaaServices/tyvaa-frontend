@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
-import 'dart:async';
-import 'dart:ui';
 
 import '../controllers/splash_controller.dart';
 
 class SplashScreen extends GetView<SplashController> {
+  const SplashScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {

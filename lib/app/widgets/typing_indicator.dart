@@ -5,7 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 class TypingIndicator extends StatelessWidget {
   final Color botColor;
 
-  const TypingIndicator({required this.botColor});
+  const TypingIndicator({super.key, required this.botColor});
 
   @override
   Widget build(BuildContext context) {
