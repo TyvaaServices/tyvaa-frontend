@@ -16,6 +16,8 @@ class MainScreen extends GetView<HomeController> {
     const ProfileScreen(key: ValueKey('profile')),
   ];
 
+  MainScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
