@@ -7,7 +7,7 @@ class PrimaryButton extends StatelessWidget {
   final Color? color;
   final bool isWide; // Marked as final to make it immutable
 
-  PrimaryButton({
+  const PrimaryButton({super.key, 
     required this.text,
     required this.onPressed,
     this.color,
