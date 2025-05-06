@@ -406,7 +406,7 @@ class HomeScreen extends GetView<HomeController> {
           ),
         ),
         SizedBox(height: 16),
-        Container(
+        SizedBox(
           height: 180,
           child: PageView.builder(
             controller: controller.bannerController,
