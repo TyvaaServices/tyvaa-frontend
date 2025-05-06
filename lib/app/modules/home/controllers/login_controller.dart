@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+
 
 
 
@@ -18,6 +16,8 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
   late AnimationController animationController;
   late Animation<double> fadeInAnimation;
 
+  late ScrollController scrollController;
+
   var isLoading = false.obs;
   var unmasked = ''.obs;
 
@@ -28,6 +28,7 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
   @override
   void onInit() {
     super.onInit();
+
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -35,9 +36,27 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
     fadeInAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: animationController, curve: Curves.easeOut),
     );
+
+    scrollController = ScrollController();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       phoneFocus.requestFocus();
     });
+
+    phoneFocus.addListener(() {
+      if (phoneFocus.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 400), () {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent+100,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+    });
+
     phoneController.addListener(() {
       unmasked.value = phoneMask.getUnmaskedText();
     });
@@ -47,14 +66,18 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
   void onClose() {
     animationController.dispose();
     phoneController.dispose();
+    scrollController.dispose();
+    phoneFocus.dispose();
     super.onClose();
   }
 
   Future<void> handleLogin() async {
     if (!formKey.currentState!.validate()) return;
+
     isLoading.value = true;
     await Future.delayed(const Duration(seconds: 2));
     isLoading.value = false;
+
     Get.offAllNamed('/home');
   }
 }

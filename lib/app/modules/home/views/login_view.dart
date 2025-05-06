@@ -28,7 +28,6 @@ class LoginScreen extends GetView<LoginController> {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // Cercles de fond
           Positioned(
             top: -size.height * .15,
             right: -size.width * .2,
@@ -56,9 +55,15 @@ class LoginScreen extends GetView<LoginController> {
 
           SafeArea(
             child: SingleChildScrollView(
+              controller: controller.scrollController,
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  0,
+                  24,
+                  MediaQuery.of(context).viewInsets.bottom + 24,
+                ),
                 child: FadeTransition(
                   opacity: controller.fadeInAnimation,
                   child: Column(
@@ -66,10 +71,9 @@ class LoginScreen extends GetView<LoginController> {
                     children: [
                       Image.asset(
                         'assets/login_illustration.png',
-                        height: 350,
+                        height: size.height * 0.4,
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(height: 16),
                       Text(
                         'Bienvenue',
                         style: TextStyle(
@@ -77,7 +81,7 @@ class LoginScreen extends GetView<LoginController> {
                             fontWeight: FontWeight.bold,
                             color: textColor),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: size.height * 0.02,),
                       Text(
                         'Connectez-vous avec votre numéro pour accéder à votre compte',
                         style: TextStyle(
@@ -85,7 +89,7 @@ class LoginScreen extends GetView<LoginController> {
                             color: secondaryTextColor,
                             height: 1.5),
                       ),
-                      SizedBox(height: size.height * .06),
+                      SizedBox(height: size.height * .03),
 
                       // Formulaire
                       Form(
