@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 import 'dart:async';
 
 
@@ -33,10 +31,6 @@ class SplashController extends GetxController {
     Get.offAllNamed('/onboarding');
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }
 
 // Add this splash screen as your initial route:

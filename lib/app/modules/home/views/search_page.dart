@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/search_controller.dart';
 class SearchView extends GetView<SearchViewController> {
-  const SearchView({Key? key}) : super(key: key);
+  const SearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +315,7 @@ class SearchView extends GetView<SearchViewController> {
             ],
           ),
         ),
-        Container(
+        SizedBox(
           height: 110,
           child: Obx(() {
             final popularItems = controller.selectedTab.value == 0
