@@ -39,10 +39,12 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   smooth_page_indicator: any
   carousel_slider: ^5.0.0
+  image_picker: ^1.1.2
   convex_bottom_bar: any
   stylish_bottom_bar: ^1.1.1
   flutter_spinkit: any
   lottie: any
+  permission_handler: ^12.0.0+1
 
 
 dev_dependencies:
@@ -71,6 +73,7 @@ flutter:
     - assets/animations/
     - assets/chatbot_pic/
     - assets/icons/
+    - assets/flags/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
