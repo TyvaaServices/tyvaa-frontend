@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../themes/tyvaa_theme.dart';
 
 class AideScreen extends StatelessWidget {
-  const AideScreen({Key? key}) : super(key: key);
+  const AideScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +433,7 @@ class AideScreen extends StatelessWidget {
 class HelpDetailScreen extends StatelessWidget {
   final String topic;
 
-  const HelpDetailScreen({Key? key, required this.topic}) : super(key: key);
+  const HelpDetailScreen({super.key, required this.topic});
 
   @override
   Widget build(BuildContext context) {
