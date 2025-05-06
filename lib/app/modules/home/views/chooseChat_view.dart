@@ -1,134 +1,202 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/widgets/chatbot/chat_bot_card.dart';
 import 'package:passenger_tyvaa/app/widgets/typing_indicator.dart';
-import '../../../themes/tyvaa_theme.dart';
+
+import '../../../../domain/entities/message.dart';
 import '../controllers/home_controller.dart';
 
 class ChooseChatbotScreen extends GetView<HomeController> {
+  const ChooseChatbotScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.put(HomeController());
-
     final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
 
-    final backgroundColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
-    final textColor = brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final buttonColor = brightness == Brightness.dark ? AppColors.primaryDark : AppColors.primary;
-    final warningColor = brightness == Brightness.dark ? AppColors.warning : AppColors.warning;
+    // Updated color palette
+    final backgroundColor = isDark ? Color(0xFF121212) : Color(0xFFF8F9FD);
+    final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Color(0xFF2D3142);
+    final accentBlue = Color(0xFF3370FF);
+    final accentRed = Color(0xFFFF4757);
 
     return Obx(() {
       return controller.showChatInterface.value
-          ? _buildChatInterface(context, controller, backgroundColor, textColor, buttonColor)
-          : _buildChatbotSelectionUI(context, controller, backgroundColor, textColor, buttonColor, warningColor);
+          ? _buildChatInterface(context, controller, isDark)
+          : _buildChatbotSelectionUI(
+          context,
+          controller,
+          backgroundColor,
+          cardColor,
+          textColor,
+          accentBlue,
+          accentRed);
     });
   }
 
-  Widget _buildChatbotSelectionUI(BuildContext context, HomeController controller, Color backgroundColor, Color textColor, Color buttonColor, Color warningColor) {
+  Widget _buildChatbotSelectionUI(BuildContext context,
+      HomeController controller,
+      Color backgroundColor,
+      Color cardColor,
+      Color textColor,
+      Color accentBlue,
+      Color accentRed) {
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(
-                        "Choisissez l'assistant qui vous accompagnera dans votre parcours",
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.subtitle1.copyWith(
-                          color: textColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40),
+                // Animated header
+                ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      colors: [accentBlue, accentRed],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds);
+                  },
+                  child: Text(
+                    "Rencontrez votre compagnon de voyage",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.2,
                     ),
-                    SizedBox(height: 36),
-                    Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildChatbotCard(
-                            context: context,
-                            name: 'Oulyx',
-                            description:
-                            'Votre guide stratégique et organisé. Oulyx est un chatbot analytique, précis et empathique qui vous aidera dans vos voyages',
-                            personality: 'Analytique • Précise • Empathique',
-                            imagePath: 'assets/chatbot_pic/oulyx_avatar.png',
-                            isSelected: controller.selectedChatbot.value == 'Oulyx',
-                            onPressed: () => controller.selectedChatbot.value = 'Oulyx',
-                            primaryColor: Color(0xFF3498DB),
-                            secondaryColor: Color(0xFFE1F0FA),
-                          ),
-                          SizedBox(width: 16),
-                          _buildChatbotCard(
-                            context: context,
-                            name: 'Chyx',
-                            description:
-                            'Votre compagnon créatif et intuitif. Chyx est un chatbot créatif et drole vous aidant lors de vos voyages.',
-                            personality: 'Créatif • Drole • Inspirant',
-                            imagePath: 'assets/chatbot_pic/chyx_avatar.png',
-                            isSelected: controller.selectedChatbot.value == 'Chyx',
-                            onPressed: () => controller.selectedChatbot.value = 'Chyx',
-                            primaryColor: Color(0xFFE74C3C),
-                            secondaryColor: Color(0xFFFCE4E2),
-                          ),
-                        ],
-                      ),
-                    )),
-                    SizedBox(height: 100),
-                  ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 16),
+                Text(
+                  "Choisissez l'assistant qui vous accompagnera dans votre parcours",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: textColor.withOpacity(0.7),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 40),
+                // Chatbot selection cards
+                Obx(() =>
+                    _buildSelectionCards(
+                        context,
+                        controller,
+                        cardColor,
+                        textColor,
+                        accentBlue,
+                        accentRed
+                    )),
+                SizedBox(height: 40),
+              ],
             ),
-            Obx(() => _buildBottomButton(controller, buttonColor, warningColor)),
-          ],
+          ),
         ),
       ),
+      bottomNavigationBar: _buildBottomButton(
+          controller, backgroundColor, textColor),
     );
   }
 
-  Widget _buildBottomButton(HomeController controller, Color buttonColor, Color warningColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+  Widget _buildSelectionCards(BuildContext context,
+      HomeController controller,
+      Color cardColor,
+      Color textColor,
+      Color accentBlue,
+      Color accentRed) {
+    return Column(
+      children: [
+        ChatBotCard(context: context,
+            name: 'Oulyx',
+            description: 'Votre guide stratégique et organisé. Analytique et précis, Oulyx vous aidera à planifier et organiser vos voyages avec efficacité.',
+            personality: 'Analytique • Précise • Empathique',
+            imagePath: 'assets/chatbot_pic/oulyx_avatar.png',
+            isSelected: controller.selectedChatbot.value == 'Oulyx',
+            onPressed: () => controller.selectedChatbot.value = 'Oulyx',
+            primaryColor: accentBlue,
+            secondaryColor: accentBlue.withOpacity(0.1),
+            cardColor: cardColor,
+            textColor: textColor),
+        SizedBox(height: 20),
+        ChatBotCard(context: context,
+            name: 'Chyx',
+            description: 'Votre compagnon créatif et intuitif. Inspirant et plein d\'humour, Chyx vous accompagnera avec spontanéité et originalité.',
+            personality: 'Créatif • Drole • Inspirant',
+            imagePath: 'assets/chatbot_pic/chyx_avatar.png',
+            isSelected: controller.selectedChatbot.value == 'Chyx',
+            onPressed: () => controller.selectedChatbot.value = 'Chyx',
+            primaryColor: accentRed,
+            secondaryColor: accentRed.withOpacity(0.1),
+            cardColor: cardColor,
+            textColor: textColor),
+      ],
+    );
+  }
+
+  Widget _buildBottomButton(HomeController controller, Color backgroundColor,
+      Color textColor) {
+    final bool hasSelection = controller.selectedChatbot.value.isNotEmpty;
+    final Color buttonColor = controller.selectedChatbot.value == 'Oulyx'
+        ? Color(0xFF3370FF)
+        : controller.selectedChatbot.value == 'Chyx'
+        ? Color(0xFFFF4757)
+        : Colors.grey;
+
+    return Container(
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: Offset(0, -5),
+          )
+        ],
+      ),
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
-        width: double.infinity,
         height: 60,
         decoration: BoxDecoration(
-          color: controller.selectedChatbot.value.isNotEmpty
-              ? buttonColor
-              : warningColor,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: controller.selectedChatbot.value.isNotEmpty
-              ? [
+          gradient: hasSelection ? LinearGradient(
+            colors: [
+              buttonColor,
+              buttonColor.withOpacity(0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+          color: hasSelection ? null : Colors.grey.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: hasSelection ? [
             BoxShadow(
-              color: buttonColor.withOpacity(0.4),
-              spreadRadius: 1,
-              blurRadius: 8,
-              offset: Offset(0, 4),
+              color: buttonColor.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: Offset(0, 5),
             )
-          ]
-              : [],
+          ] : [],
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(16),
             onTap: () {
-              if (controller.selectedChatbot.value.isNotEmpty) {
-                controller.saveChatbotPreference(controller.selectedChatbot.value);
+              if (hasSelection) {
+                controller.saveChatbotPreference(
+                    controller.selectedChatbot.value);
                 controller.showChatInterface.value = true;
               } else {
                 Get.snackbar(
                   'Selection requise',
                   'Veuillez choisir un assistant avant de continuer',
                   snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: warningColor,
+                  backgroundColor: Colors.redAccent,
                   colorText: Colors.white,
                   margin: EdgeInsets.all(16),
                   borderRadius: 8,
@@ -140,16 +208,23 @@ class ChooseChatbotScreen extends GetView<HomeController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    controller.selectedChatbot.value.isNotEmpty
+                    hasSelection
                         ? "Commencer avec ${controller.selectedChatbot.value}"
-                        : "Sélectionnez un assistant",
-                    style: AppTextStyles.button.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                        : "Veuillez sélectionner un assistant",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: hasSelection ? Colors.white : textColor
+                          .withOpacity(0.5),
                     ),
                   ),
                   SizedBox(width: 8),
-                  Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                  Icon(
+                      Icons.arrow_forward_rounded,
+                      color: hasSelection ? Colors.white : textColor
+                          .withOpacity(0.5),
+                      size: 20
+                  ),
                 ],
               ),
             ),
@@ -159,169 +234,20 @@ class ChooseChatbotScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildChatbotCard({
-    required BuildContext context,
-    required String name,
-    required String description,
-    required String personality,
-    required String imagePath,
-    required bool isSelected,
-    required VoidCallback onPressed,
-    required Color primaryColor,
-    required Color secondaryColor,
-  }) {
-    // Checking if the current theme is dark mode
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildChatInterface(BuildContext context, HomeController controller,
+      bool isDark) {
+    final botColor = controller.selectedChatbot.value == 'Oulyx'
+        ? Color(0xFF3370FF)
+        : Color(0xFFFF4757);
 
-    return Expanded(
-      child: GestureDetector(
-        onTap: onPressed,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? secondaryColor.withOpacity(0.1) // Lighter selection in dark mode
-                : isDarkMode
-                ? Colors.grey[800] // Darker background in dark mode
-                : Colors.white, // Light background in light mode
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isSelected
-                  ? primaryColor
-                  : isDarkMode
-                  ? Colors.grey[700]!
-                  : Colors.grey.shade300,
-              width: isSelected ? 2.5 : 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected
-                    ? primaryColor.withOpacity(0.3)
-                    : isDarkMode
-                    ? Colors.grey.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.1),
-                spreadRadius: isSelected ? 2 : 0,
-                blurRadius: isSelected ? 15 : 5,
-                offset: Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              AnimatedScale(
-                scale: isSelected ? 1.2 : 1.0,
-                duration: Duration(milliseconds: 300),
-                child: Container(
-                  height: 130,
-                  width: 130,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: secondaryColor,
-                    border: Border.all(
-                      color: primaryColor.withOpacity(0.5),
-                      width: 3,
-                    ),
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      imagePath,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                name,
-                style: AppTextStyles.h2.copyWith(
-                  color: primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              AnimatedSize(
-                duration: Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                child: Container(
-                  height: isSelected ? null : 50,
-                  child: Text(
-                    description,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.body.copyWith(
-                      color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  personality,
-                  style: AppTextStyles.bodySecondary.copyWith(
-                    color: primaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (isSelected)
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  height: 40,
-                  margin: EdgeInsets.only(top: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Sélectionné",
-                        style: AppTextStyles.bodySecondary.copyWith(
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    final backgroundColor = isDark ? Color(0xFF121212) : Color(0xFFF8F9FD);
+    final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Color(0xFF2D3142);
 
-
-  Widget _buildChatInterface(BuildContext context, HomeController controller, Color backgroundColor, Color textColor, Color buttonColor) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(
-                controller.selectedChatbot.value == 'Oulyx'
-                    ? 'assets/chatbot_pic/oulyx_avatar.png'
-                    : 'assets/chatbot_pic/chyx_avatar.png',
-              ),
-              radius: 16,
-            ),
-            SizedBox(width: 12),
-            Text(
-              controller.selectedChatbot.value,
-              style: AppTextStyles.h3.copyWith(color: textColor),
-            ),
-          ],
-        ),
-      ),
+      appBar: _buildChatAppBar(
+          context, controller, backgroundColor, textColor, botColor),
       body: Column(
         children: [
           Expanded(
@@ -336,124 +262,363 @@ class ChooseChatbotScreen extends GetView<HomeController> {
               }
               return ListView.builder(
                 controller: controller.chatScrollController,
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                 itemCount: msgList.length,
                 itemBuilder: (context, index) {
                   final message = msgList[index];
                   if (controller.isTyping.value && index == msgList.length - 1) {
-                    return TypingIndicator(botColor: controller.selectedChatbot.value == 'Oulyx'
-                        ? Color(0xFF3498DB)
-                        : Color(0xFFE74C3C));
+                    return TypingIndicator(botColor: botColor,);
                   }
-                  return ChatBubble(
+                  return _buildMessageBubble(
                     message: message.text,
                     isUserMessage: message.isUserMessage,
                     timestamp: message.timestamp,
-                    botColor: controller.selectedChatbot.value == 'Oulyx'
-                        ? Color(0xFF3498DB)
-                        : Color(0xFFE74C3C),
+                    botColor: botColor,
+                    isDark: isDark,
+                    isFirst: index == 0 ||
+                        (index > 0 && msgList[index - 1].isUserMessage !=
+                            message.isUserMessage),
+                    isLast: index == msgList.length - 1 ||
+                        (index < msgList.length - 1 &&
+                            msgList[index + 1].isUserMessage !=
+                                message.isUserMessage),
                   );
                 },
               );
             }),
           ),
-          _buildMessageInput(controller),
+          _buildMessageInput(controller, isDark, botColor),
         ],
       ),
     );
   }
 
-  Widget _buildMessageInput(HomeController controller) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
+  PreferredSizeWidget _buildChatAppBar(BuildContext context,
+      HomeController controller,
+      Color backgroundColor,
+      Color textColor,
+      Color botColor) {
+    return AppBar(
+      backgroundColor: backgroundColor,
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      title: Row(
         children: [
-          Expanded(
-            child: TextField(
-              controller: controller.messageController,
-              decoration: InputDecoration(
-                hintText: 'Tapez votre message...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: AppColors.background,
-                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          // Back button with custom styling
+          GestureDetector(
+            onTap: () {
+              controller.showChatInterface.value = false;
+            },
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: botColor.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              onSubmitted: (_) => controller.sendMessage(),
+              child: Icon(
+                Icons.arrow_back,
+                color: botColor,
+                size: 20,
+              ),
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 16),
+          // Avatar
+          Hero(
+            tag: 'avatar_${controller.selectedChatbot.value}',
+            child: Container(
+              padding: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [botColor, botColor.withOpacity(0.7)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: CircleAvatar(
+                backgroundImage: AssetImage(
+                  controller.selectedChatbot.value == 'Oulyx'
+                      ? 'assets/chatbot_pic/oulyx_avatar.png'
+                      : 'assets/chatbot_pic/chyx_avatar.png',
+                ),
+                radius: 16,
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          // Bot name and status
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                controller.selectedChatbot.value,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              Text(
+                controller.isTyping.value
+                    ? 'En train d\'écrire...'
+                    : 'En ligne',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: controller.isTyping.value
+                      ? botColor
+                      : textColor.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          // Options button
           Container(
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: textColor.withOpacity(0.05),
               shape: BoxShape.circle,
             ),
-            child: IconButton(
-              icon: Icon(Icons.send, color: Colors.white),
-              onPressed: controller.sendMessage,
+            child: Icon(
+              Icons.more_vert,
+              color: textColor.withOpacity(0.7),
+              size: 20,
             ),
           ),
         ],
       ),
     );
   }
-}
 
 
-class ChatBubble extends StatelessWidget {
-  final String message;
-  final bool isUserMessage;
-  final DateTime timestamp;
-  final Color botColor;
+  Widget _buildMessageBubble({
+    required String message,
+    required bool isUserMessage,
+    required DateTime timestamp,
+    required Color botColor,
+    required bool isDark,
+    required bool isFirst,
+    required bool isLast,
+  }) {
+    final textColor = isDark ? Colors.white : Color(0xFF2D3142);
 
-  const ChatBubble({
-    required this.message,
-    required this.isUserMessage,
-    required this.timestamp,
-    required this.botColor,
-  });
+    return Padding(
+      padding: EdgeInsets.only(
+        top: isFirst ? 8 : 4,
+        bottom: isLast ? 8 : 4,
+      ),
+      child: Row(
+        mainAxisAlignment: isUserMessage
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isUserMessage && isFirst)
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [botColor, botColor.withOpacity(0.7)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              padding: EdgeInsets.all(2),
+              child: CircleAvatar(
+                backgroundImage: AssetImage(
+                  botColor == Color(0xFF3370FF)
+                      ? 'assets/chatbot_pic/oulyx_avatar.png'
+                      : 'assets/chatbot_pic/chyx_avatar.png',
+                ),
+                backgroundColor: Colors.transparent,
+              ),
+            )
+          else
+            if (!isUserMessage && !isFirst)
+              SizedBox(width: 36),
 
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
-        decoration: BoxDecoration(
-          color: isUserMessage ? AppColors.primary : botColor.withOpacity(0.1),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-            bottomLeft: isUserMessage ? Radius.circular(20) : Radius.circular(4),
-            bottomRight: isUserMessage ? Radius.circular(4) : Radius.circular(20),
-          ),
-          border: Border.all(
-            color: isUserMessage ? Colors.transparent : botColor.withOpacity(0.3),
-            width: 1.5,
-          ),
-        ),
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              message,
-              style: AppTextStyles.body.copyWith(
-                color: isUserMessage ? Colors.white : AppColors.textPrimary,
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isUserMessage
+                    ? botColor
+                    : isDark
+                    ? Color(0xFF2A2A2A)
+                    : botColor.withOpacity(0.08),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(isUserMessage || !isFirst ? 18 : 4),
+                  topRight: Radius.circular(isUserMessage && !isFirst ? 4 : 18),
+                  bottomLeft: Radius.circular(
+                      isUserMessage || !isLast ? 18 : 4),
+                  bottomRight: Radius.circular(
+                      isUserMessage && !isLast ? 4 : 18),
+                ),
+                boxShadow: isUserMessage ? [
+                  BoxShadow(
+                    color: botColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  )
+                ] : [],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isUserMessage
+                          ? Colors.white
+                          : textColor,
+                      height: 1.4,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '${timestamp.hour}:${timestamp.minute.toString().padLeft(
+                        2, '0')}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isUserMessage
+                          ? Colors.white.withOpacity(0.7)
+                          : textColor.withOpacity(0.5),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 4),
-            Text(
-              '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
-              style: AppTextStyles.caption.copyWith(
-                color: isUserMessage ? Colors.white70 : AppColors.textSecondary,
+          ),
+
+          if (isUserMessage && isFirst)
+            Container(
+              margin: EdgeInsets.only(left: 8),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDark ? Color(0xFF2A2A2A) : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Icon(
+                Icons.person,
+                color: textColor.withOpacity(0.7),
+                size: 16,
+              ),
+            )
+          else
+            if (isUserMessage && !isFirst)
+              SizedBox(width: 36),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageInput(HomeController controller, bool isDark,
+      Color botColor) {
+    final backgroundColor = isDark ? Color(0xFF1A1A1A) : Colors.white;
+    final textColor = isDark ? Colors.white : Color(0xFF2D3142);
+
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Optional icons
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: textColor.withOpacity(0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.mic,
+              color: textColor.withOpacity(0.7),
+              size: 20,
+            ),
+          ),
+          SizedBox(width: 12),
+          // Text field
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: textColor.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: TextField(
+                controller: controller.messageController,
+                decoration: InputDecoration(
+                  hintText: 'Tapez votre message...',
+                  hintStyle: TextStyle(
+                    color: textColor.withOpacity(0.5),
+                    fontSize: 15,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 14),
+                ),
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 15,
+                ),
+                onSubmitted: (_) => controller.sendMessage(),
               ),
             ),
-          ],
-        ),
+          ),
+          SizedBox(width: 12),
+          // Send button
+          GestureDetector(
+            onTapDown: (_) => controller.isPressingSend.value = true,
+            onTapUp: (_) => controller.isPressingSend.value = false,
+            onTapCancel: () => controller.isPressingSend.value = false,
+            onTap: controller.sendMessage,
+            child: Obx(() =>
+                AnimatedScale(
+                  scale: controller.isPressingSend.value ? 0.9 : 1.0,
+                  duration: Duration(milliseconds: 150),
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [botColor, botColor.withOpacity(0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: botColor.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.send, color: Colors.white, size: 20),
+                  ),
+                )),
+          ),
+        ],
       ),
     );
   }
