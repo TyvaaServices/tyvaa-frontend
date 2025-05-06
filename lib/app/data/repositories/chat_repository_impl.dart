@@ -4,6 +4,7 @@ import '../../../domain/entities/message.dart';
 import '../../../domain/repositories/chat_repository.dart';
 
 class ChatRepositoryImpl extends GetConnect implements ChatRepository {
+  @override
   final String baseUrl;
 
   ChatRepositoryImpl({required this.baseUrl}) {
