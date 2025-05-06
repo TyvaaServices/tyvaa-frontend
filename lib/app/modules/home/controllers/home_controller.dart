@@ -1,9 +1,17 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../domain/entities/message.dart';
+import '../../../../domain/repositories/chat_repository.dart';
+
 class HomeController extends GetxController {
-  // Existing banner functionality
+
+  final ChatRepository chatRepository;
+  var isPressingSend = false.obs;
+
+  HomeController({required this.chatRepository});
   final bannerController = PageController(viewportFraction: 0.9);
   final currentBanner = 0.obs;
   final selectedIndex = 0.obs;
@@ -12,7 +20,7 @@ class HomeController extends GetxController {
 
 
   late Timer _bannerTimer;
-  final ScrollController chatScrollController = ScrollController(); // Define a scroll controller
+  final ScrollController chatScrollController = ScrollController();
 
 
   final banners = [
@@ -33,14 +41,12 @@ class HomeController extends GetxController {
     },
   ];
 
-  // Chatbot functionality
   final RxList<Message> messages = <Message>[].obs;
   final TextEditingController messageController = TextEditingController();
   final selectedChatbot = ''.obs;
 
   @override
   void onInit() {
-    // Initialize banner timer
     _bannerTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       final next = (currentBanner.value + 1) % banners.length;
       if (bannerController.hasClients) {
@@ -59,7 +65,6 @@ class HomeController extends GetxController {
     _bannerTimer.cancel();
     bannerController.dispose();
     messageController.dispose();
-
     chatScrollController.dispose();
     super.onClose();
   }
@@ -95,46 +100,37 @@ class HomeController extends GetxController {
     ));
   }
 
-  void sendMessage() {
-    if (messageController.text.isEmpty) return;
+  void sendMessage() async {
+    final text = messageController.text.trim();
+    if (text.isEmpty) return;
 
-    // Add user message
-    messages.add(Message(
-      text: messageController.text,
-      isUserMessage: true,
-      timestamp: DateTime.now(),
-    ));
+    final userMsg = Message(
+        text: text, isUserMessage: true, timestamp: DateTime.now());
+    messages.add(userMsg);
     isTyping.value = true;
+    messageController.clear();
     scrollToBottom();
-    // Simulate bot response
-    Future.delayed(const Duration(seconds: 4), () {
-      final response = selectedChatbot.value == 'Oulyx'
-          ? 'Je comprends votre demande. Procédons étape par étape pour maximiser l\'efficacité.'
-          : 'Excellente idée ! Explorons ensemble des solutions innovantes pour cela.';
+    String personality="";
+    try {
+      personality = selectedChatbot.value == 'Oulyx' ? 'f' : 'm';
+      final botReply = await chatRepository.sendMessage(
+          text, personality, messages.take(50).toList());
+      print(messages
+          .toList()
+          .first
+          .text);
+      messages.add(botReply);
+    } catch (e) {
 
       messages.add(Message(
-        text: response,
+        // text: 'Erreur: ${e.toString()}',
+        text: personality=='m'?"Euh verifier votre connexion svp mdr":"Uhm vous etes actuellement pas connecter ?",
         isUserMessage: false,
         timestamp: DateTime.now(),
       ));
-      isTyping.value = false;
+    }
 
-      scrollToBottom();
-
-    });
-
-    messageController.clear();
+    isTyping.value = false;
+    scrollToBottom();
   }
-}
-
-class Message {
-  final String text;
-  final bool isUserMessage;
-  final DateTime timestamp;
-
-  Message({
-    required this.text,
-    required this.isUserMessage,
-    required this.timestamp,
-  });
 }

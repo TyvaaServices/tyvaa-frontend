@@ -1,156 +1,412 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/search_page.dart';
+
 import '../../../themes/tyvaa_theme.dart';
-import '../../../widgets/primary_button.dart';
 import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
 
-    // Define dynamic colors based on the theme (light or dark)
-    Color backgroundColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
-    Color appBarColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
-    Color textColor = brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    Color cardColor = brightness == Brightness.dark ? AppColors.cardDark : AppColors.card;
-    Color buttonTextColor = brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    Color buttonColor = brightness == Brightness.dark ? AppColors.primaryDark : AppColors.primary;
-    Color promoTitleColor = brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    Color promoCardOverlayColor = brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.black.withOpacity(0.3);
+    // Colors
+    final backgroundColor = isDark ? AppColors.darkBackground : Color(
+        0xFFF7F8FC);
+    final textColor = isDark ? AppColors.textPrimaryDark : AppColors
+        .textPrimary;
+    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
+    final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: _buildAppBar(appBarColor, textColor),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 34),
-            _buildWelcomeCard(cardColor),
-            SizedBox(height: 24),
-            _buildQuickActions(),
-            SizedBox(height: 24),
-            _buildSearchButton(buttonColor, buttonTextColor),
-            SizedBox(height: 24),
-            _buildPromoSection(promoTitleColor, promoCardOverlayColor),
-            SizedBox(height: 80),
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            _buildAppBar(
+                context, isDark, primaryColor, textColor, surfaceColor),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 12),
+                    _buildWelcomeCard(context, isDark, primaryColor),
+                    SizedBox(height: 28),
+                    _buildSearchBar(context, isDark, surfaceColor, textColor),
+                    SizedBox(height: 28),
+                    _buildQuickActions(
+                        context, isDark, surfaceColor, textColor),
+                    SizedBox(height: 28),
+                    _buildPromoSection(context, isDark, textColor),
+                    SizedBox(height: 80),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(Color appBarColor, Color textColor) {
-    return AppBar(
-      backgroundColor: appBarColor,
+  Widget _buildAppBar(BuildContext context, bool isDark, Color primaryColor,
+      Color textColor, Color surfaceColor) {
+    return SliverAppBar(
+      floating: true,
+      pinned: false,
       elevation: 0,
+      backgroundColor: isDark ? AppColors.darkBackground : Color(0xFFF7F8FC),
       title: Row(
         children: [
-          CircleAvatar(radius: 18, backgroundColor: AppColors.primary, child: Icon(Icons.person, color: Colors.white)),
-          const SizedBox(width: 8),
+          Container(
+            height: 42,
+            width: 42,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  primaryColor,
+                  primaryColor.withOpacity(0.8),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.person, color: Colors.white),
+          ),
+          SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Bonjour 👋🏾', style: TextStyle(fontSize: 14, color: textColor)),
-              Text('Cheikh Tidiane', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
+              Text(
+                'Bonjour, Cheikh 👋🏾',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              Text(
+                'Bienvenue sur Tyvaa',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: textColor.withOpacity(0.7),
+                ),
+              ),
             ],
-          )
+          ),
         ],
       ),
       actions: [
-        IconButton(icon: const Icon(Icons.notifications_none), onPressed: () {}),
+        Container(
+          margin: EdgeInsets.only(right: 10),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: Icon(
+              Icons.notifications_none_rounded,
+              color: textColor,
+            ),
+            onPressed: () {},
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildWelcomeCard(Color cardColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: AppColors.primary,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Bienvenue sur Tyvaa 👋', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Prêt à voyager avec la communauté ?', style: TextStyle(color: Colors.white)),
+  Widget _buildWelcomeCard(BuildContext context, bool isDark,
+      Color primaryColor) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : primaryColor.withOpacity(0.2),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // Background gradient
+            Container(
+              height: 160,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    primaryColor,
+                    Color(0xFF8A6FFF),
+                  ],
+                ),
+              ),
+            ),
+
+            // Abstract design elements
+            Positioned(
+              right: -50,
+              top: -30,
+              child: Container(
+                height: 120,
+                width: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            Positioned(
+              left: -30,
+              bottom: -40,
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Voyagez avec la communauté',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Trouvez facilement des trajets ou proposez les vôtres',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  InkWell(
+                    onTap: () => Get.to(SearchTrajetScreen()),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        'Rechercher un trajet',
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSearchButton(Color buttonColor, Color buttonTextColor) {
-    return PrimaryButton(
-      text: "Rechercher un trajet",
-      isWide: false,
-      onPressed: () {},
-      color: buttonColor,
-    );
-  }
-
-  Widget _buildQuickActions() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildAction(Icons.book_online, 'Réservations', AppColors.primary, () {}),
-          _buildAction(Icons.history, 'Historique', AppColors.info, () {}),
-          _buildAction(Icons.support_agent, 'Aide', AppColors.accent, () {}),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAction(IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _buildSearchBar(BuildContext context, bool isDark, Color surfaceColor,
+      Color textColor) {
     return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(radius: 28, backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color)),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12)),
-        ],
+      onTap: () => Get.to(SearchTrajetScreen()),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.search_rounded,
+              color: textColor.withOpacity(0.6),
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Où souhaitez-vous aller ?',
+              style: TextStyle(
+                color: textColor.withOpacity(0.6),
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Updated promo section with Obx and dynamic colors
-  Widget _buildPromoSection(Color promoTitleColor, Color promoCardOverlayColor) {
+  Widget _buildQuickActions(BuildContext context, bool isDark,
+      Color surfaceColor, Color textColor) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Promotions',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: promoTitleColor)),
-              Obx(() => Row(
-                children: List.generate(controller.banners.length, (index) {
-                  return Container(
-                    width: 8,
-                    height: 8,
-                    margin: const EdgeInsets.only(left: 4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: controller.currentBanner.value == index
-                          ? AppColors.primary
-                          : AppColors.primary.withOpacity(0.2),
-                    ),
-                  );
-                }),
-              )),
-            ],
+        Text(
+          'Actions rapides',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
         ),
         SizedBox(height: 16),
-        SizedBox(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildActionCard(
+              context,
+              isDark,
+              surfaceColor,
+              textColor,
+              Icons.add_road_rounded,
+              'Publier trajet',
+              Color(0xFF6C63FF),
+                  () {},
+            ),
+            _buildActionCard(
+              context,
+              isDark,
+              surfaceColor,
+              textColor,
+              Icons.history_rounded,
+              'Historique',
+              Color(0xFF4ECDC4),
+                  () {},
+            ),
+            _buildActionCard(
+              context,
+              isDark,
+              surfaceColor,
+              textColor,
+              Icons.support_agent_rounded,
+              'Aide',
+              Color(0xFFFF6B6B),
+                  () => Get.to(() => AideScreen()),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionCard(BuildContext context,
+      bool isDark,
+      Color surfaceColor,
+      Color textColor,
+      IconData icon,
+      String label,
+      Color iconColor,
+      VoidCallback onTap,) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: (MediaQuery
+            .of(context)
+            .size
+            .width - 50) / 3,
+        padding: EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 24),
+            ),
+            SizedBox(height: 12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPromoSection(BuildContext context, bool isDark,
+      Color textColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Offres spéciales',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+        SizedBox(height: 16),
+        Container(
           height: 180,
           child: PageView.builder(
             controller: controller.bannerController,
@@ -159,30 +415,114 @@ class HomeScreen extends GetView<HomeController> {
             itemBuilder: (context, index) {
               final banner = controller.banners[index];
               return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
+                margin: const EdgeInsets.only(right: 16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  image: DecorationImage(image: AssetImage(banner['image']!), fit: BoxFit.cover),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark ? Colors.black26 : Colors.black.withOpacity(
+                          0.1),
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: promoCardOverlayColor,
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Text(banner['title']!,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                      Text(banner['subtitle']!, style: const TextStyle(fontSize: 14, color: Colors.white)),
+                      // Banner image
+                      Image.asset(
+                        banner['image']!,
+                        fit: BoxFit.cover,
+                      ),
+
+                      // Overlay gradient
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(
+                                'PROMO',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              banner['title']!,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              banner['subtitle']!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               );
             },
           ),
+        ),
+        SizedBox(height: 16),
+        Center(
+          child: Obx(() =>
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(controller.banners.length, (index) {
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    width: controller.currentBanner.value == index ? 20 : 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: controller.currentBanner.value == index
+                          ? Color(0xFF6C63FF)
+                          : (isDark ? Colors.grey.shade700 : Colors.grey
+                          .shade300),
+                    ),
+                  );
+                }),
+              )),
         ),
       ],
     );
