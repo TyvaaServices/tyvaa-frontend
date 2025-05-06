@@ -68,7 +68,7 @@ class HomeController extends GetxController {
     chatScrollController.dispose();
     super.onClose();
   }
-  // Method to scroll to the bottom
+
   void scrollToBottom() {
     if (chatScrollController.hasClients) {
       chatScrollController.animateTo(
