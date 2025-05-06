@@ -214,7 +214,7 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                   SizedBox(height: 24),
                   InkWell(
-                    onTap: () => Get.to(SearchTrajetScreen()),
+                    onTap: () => Get.to(SearchView()),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                           vertical: 12, horizontal: 20),
@@ -251,7 +251,7 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildSearchBar(BuildContext context, bool isDark, Color surfaceColor,
       Color textColor) {
     return GestureDetector(
-      onTap: () => Get.to(SearchTrajetScreen()),
+      onTap: () => Get.to(SearchView()),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
