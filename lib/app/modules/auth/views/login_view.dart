@@ -69,10 +69,15 @@ class LoginScreen extends GetView<LoginController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        'assets/login_illustration.png',
-                        height: size.height * 0.4,
-                        fit: BoxFit.contain,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/login_illustration.png',
+                            height: size.height * 0.4,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
                       ),
                       Text(
                         'Bienvenue',
@@ -93,7 +98,6 @@ class LoginScreen extends GetView<LoginController> {
                       ),
                       SizedBox(height: size.height * .03),
 
-                      // Formulaire
                       Form(
                         key: controller.formKey,
                         child: Container(
@@ -180,7 +184,7 @@ class LoginScreen extends GetView<LoginController> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: Get.height * 0.02),
                               Text(
                                 'Numéro de téléphone',
                                 style: TextStyle(
@@ -260,7 +264,7 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      SizedBox(height: Get.height * 0.02),
 
                       // Bouton de connexion
                       Obx(
@@ -276,7 +280,7 @@ class LoginScreen extends GetView<LoginController> {
                             ],
                           ),
                           width: double.infinity,
-                          height: 60,
+                          height: Get.height * 0.07,
                           child: ElevatedButton(
                             onPressed:
                                 controller.isLoading.value
@@ -314,12 +318,12 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: Get.height * 0.01),
                       Center(
                         child: TextButton(
                           onPressed: () {},
                           child: Text(
-                            'Pas encore inscris ?',
+                            'Besoin d\'aide?',
                             style: TextStyle(
                               color: primaryColor,
                               fontWeight: FontWeight.w500,
@@ -327,7 +331,7 @@ class LoginScreen extends GetView<LoginController> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: Get.height * 0.02),
                     ],
                   ),
                 ),

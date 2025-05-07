@@ -20,6 +20,7 @@ class LoginController extends GetxController
   var unmasked = ''.obs;
 
   bool get hasInput => unmasked.value.isNotEmpty;
+
   bool get isValid => unmasked.value.length == 9;
   final phoneFocus = FocusNode();
 

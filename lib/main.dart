@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'app/routes/app_pages.dart';
-import 'app/themes/tyvaa_theme.dart'; // Ensure this file includes AppColors & AppTextStyles
+import 'app/themes/tyvaa_theme.dart';
 
 void main() {
   runApp(
@@ -14,18 +14,14 @@ void main() {
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.background,
-        textTheme: TextTheme(
-          bodyMedium: AppTextStyles.subtitle1, // Use the light theme text style
-        ),
+        textTheme: TextTheme(bodyMedium: AppTextStyles.subtitle1),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.darkBackground,
-        textTheme: TextTheme(
-          bodyMedium: AppTextStyles.subtitle1Dark, // Use the dark theme text style
-        ),
+        textTheme: TextTheme(bodyMedium: AppTextStyles.subtitle1Dark),
       ),
-      themeMode: ThemeMode.system, // This automatically adjusts based on system preference
+      themeMode: ThemeMode.system,
     ),
   );
 }

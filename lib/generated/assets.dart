@@ -3,7 +3,8 @@ class Assets {
   Assets._();
 
   static const String animationsLoading = 'assets/animations/loading.json';
-  static const String assetsEnterOTPCuateRemovebgPreview = 'assets/Enter_OTP-cuate-removebg-preview.png';
+  static const String assetsEnterOTPCuateRemovebgPreview =
+      'assets/Enter_OTP-cuate-removebg-preview.png';
   static const String assetsLoginIllustration = 'assets/login_illustration.png';
   static const String assetsOnboarding1 = 'assets/onboarding_1.png';
   static const String assetsOnboarding2 = 'assets/onboarding_2.png';
@@ -11,10 +12,11 @@ class Assets {
   static const String assetsPromo1 = 'assets/promo1.png';
   static const String assetsPromo2 = 'assets/promo2.png';
   static const String assetsPromo3 = 'assets/promo3.png';
-  static const String chatbotPicChyxAvatar = 'assets/chatbot_pic/chyx_avatar.png';
-  static const String chatbotPicOulyxAvatar = 'assets/chatbot_pic/oulyx_avatar.png';
+  static const String chatbotPicChyxAvatar =
+      'assets/chatbot_pic/chyx_avatar.png';
+  static const String chatbotPicOulyxAvatar =
+      'assets/chatbot_pic/oulyx_avatar.png';
   static const String flagsImg = 'assets/flags/sn.png';
   static const String iconsIconWa = 'assets/icons/icon_wa.png';
   static const String iconsWaIcon = 'assets/icons/wa_icon.png';
-
 }

@@ -82,7 +82,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ).paddingOnly(bottom: Get.height * 0.01),
     );
   }
 

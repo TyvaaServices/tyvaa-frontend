@@ -10,8 +10,8 @@ import 'home_view.dart';
 
 class MainScreen extends GetView<HomeController> {
   final List<Widget> pages = [
-    const HomeScreen(key: ValueKey('home')),
-    const HomeScreen(key: ValueKey('trajets')),
+    HomeScreen(key: ValueKey('home')),
+    HomeScreen(key: ValueKey('trajets')),
     const ChooseChatbotScreen(key: ValueKey('chat')),
     const ProfileScreen(key: ValueKey('profile')),
   ];
@@ -22,7 +22,6 @@ class MainScreen extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
-    // Define dynamic colors based on the theme (light or dark)
     Color iconColor =
         brightness == Brightness.dark
             ? AppColors.textPrimaryDark

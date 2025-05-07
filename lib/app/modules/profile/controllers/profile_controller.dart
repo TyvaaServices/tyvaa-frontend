@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ProfileController extends GetxController {
-  final userName = 'Cheikh Ndiaye'.obs;
+  final userName = 'Cheikh Tidiane'.obs;
   final TextEditingController nameController = TextEditingController();
   final isEditingName = false.obs;
   final Rx<File?> profileImage = Rx<File?>(null);
@@ -38,7 +38,6 @@ class ProfileController extends GetxController {
       Get.snackbar('Permission refusée', 'Autorisez l\'accès aux photos');
     }
   }
-
 
   void saveChanges() {
     Get.snackbar(

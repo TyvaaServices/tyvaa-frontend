@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
+import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
 
 import '../../../themes/tyvaa_theme.dart';
 import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+  NotificationController notificationController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -127,10 +129,35 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ],
           ),
-          child: IconButton(
-            icon: Icon(Icons.notifications_none_rounded, color: textColor),
-            onPressed: () {},
-          ),
+          child: Obx(() {
+            final hasNotifications =
+                notificationController.notifications.isNotEmpty;
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.notifications_none_rounded,
+                    color: textColor,
+                  ),
+                  onPressed: () => Get.toNamed('/notification'),
+                ),
+                if (hasNotifications)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          }),
         ),
       ],
     );

@@ -9,15 +9,18 @@ abstract class Routes {
   static const ONBOARDING = _Paths.ONBOARDING;
   static const LOGIN = _Paths.LOGIN;
   static const SPLASH = _Paths.SPLASH;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
 }
 
 abstract class _Paths {
   _Paths._();
 
   static const MAIN = '/main';
+
   // static const HOME = '/home';
   static const CHOOSE = '/choose';
   static const ONBOARDING = '/onboarding';
   static const LOGIN = '/login';
   static const SPLASH = '/splash';
+  static const NOTIFICATION = '/notification';
 }

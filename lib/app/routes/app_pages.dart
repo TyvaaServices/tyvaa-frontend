@@ -3,6 +3,8 @@ import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dar
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
+import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
+import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 
 import '../modules/auth/bindings/home_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -23,7 +25,7 @@ class AppPages {
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
       showCupertinoParallax: true,
-      bindings: [HomeBinding(), ChatbotBinding()],
+      bindings: [HomeBinding(), ChatbotBinding(), NotificationBinding()],
     ),
     GetPage(
       name: _Paths.CHOOSE,
@@ -51,6 +53,13 @@ class AppPages {
       page: () => SplashScreen(),
       binding: HomeBinding(),
       transition: Transition.zoom,
+      transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION,
+      page: () => NotificationsScreen(),
+      binding: HomeBinding(),
+      transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
   ];

@@ -26,7 +26,6 @@ class ChatRepositoryImpl extends GetConnect implements ChatRepository {
                 (m) => {
                   'text': m.text,
                   'isUserMessage': m.isUserMessage,
-                  // Change isUser to isUserMessage here
                   'timestamp': m.timestamp.toIso8601String(),
                 },
               )
