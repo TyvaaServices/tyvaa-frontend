@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
-import 'package:passenger_tyvaa/app/modules/home/views/login_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
+import 'package:passenger_tyvaa/app/modules/login/bindings/home_binding.dart';
+import 'package:passenger_tyvaa/app/modules/login/views/login_view.dart';
 
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
@@ -19,11 +20,10 @@ class AppPages {
     GetPage(
       name: _Paths.MAIN,
       page: () => MainScreen(),
-      binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
       showCupertinoParallax: true,
-      bindings: [ChatbotBinding()],
+      bindings: [HomeBinding(), ChatbotBinding()],
     ),
     GetPage(
       name: _Paths.CHOOSE,
@@ -42,7 +42,7 @@ class AppPages {
     GetPage(
       name: _Paths.LOGIN,
       page: () => LoginScreen(),
-      binding: HomeBinding(),
+      binding: Authentication(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
