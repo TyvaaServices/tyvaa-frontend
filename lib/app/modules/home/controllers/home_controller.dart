@@ -27,8 +27,27 @@ class HomeController extends GetxController {
     },
   ];
 
+  // @override
+  // void onInit() {
+  //   _bannerTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+  //     final next = (currentBanner.value + 1) % banners.length;
+  //     if (bannerController.hasClients) {
+  //       bannerController.animateToPage(
+  //         next,
+  //         duration: const Duration(milliseconds: 500),
+  //         curve: Curves.easeInOut,
+  //       );
+  //     }
+  //   });
+  //   super.onInit();
+  // }
   @override
   void onInit() {
+    super.onInit();
+    bannerController.addListener(() {
+      final page = bannerController.page?.round() ?? 0;
+      currentBanner.value = page;
+    });
     _bannerTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       final next = (currentBanner.value + 1) % banners.length;
       if (bannerController.hasClients) {
@@ -39,7 +58,6 @@ class HomeController extends GetxController {
         );
       }
     });
-    super.onInit();
   }
 
   @override

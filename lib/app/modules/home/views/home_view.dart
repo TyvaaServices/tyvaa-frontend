@@ -13,8 +13,6 @@ class HomeScreen extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
-
-    // Colors
     final backgroundColor =
         isDark ? AppColors.darkBackground : Color(0xFFF7F8FC);
     final textColor =
