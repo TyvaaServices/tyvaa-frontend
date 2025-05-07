@@ -30,45 +30,45 @@ class NotificationController extends GetxController {
           isRead: false,
           actionData: {'tripId': 'T123', 'driverId': 'D456'},
         ),
-        // NotificationModel(
-        //   id: '2',
-        //   title: 'Nouveau message',
-        //   message: 'Amadou: À quelle heure comptez-vous arriver à Thiès?',
-        //   type: NotificationType.message,
-        //   time: DateTime.now().subtract(Duration(hours: 2)),
-        //   isRead: false,
-        //   actionData: {'chatId': 'C789', 'senderId': 'U567'},
-        // ),
-        // NotificationModel(
-        //   id: '3',
-        //   title: 'Rappel de trajet',
-        //   message:
-        //       'Votre trajet vers Mbour démarre dans 2 heures. Préparez-vous!',
-        //   type: NotificationType.reminder,
-        //   time: DateTime.now().subtract(Duration(hours: 6)),
-        //   isRead: true,
-        //   actionData: {'tripId': 'T456'},
-        // ),
-        // NotificationModel(
-        //   id: '4',
-        //   title: 'Annulation de trajet',
-        //   message:
-        //       'Désolé, le trajet Dakar → Touba du 10 mai a été annulé par le conducteur.',
-        //   type: NotificationType.tripCancelled,
-        //   time: DateTime.now().subtract(Duration(days: 1)),
-        //   isRead: true,
-        //   actionData: {'tripId': 'T789'},
-        // ),
-        // NotificationModel(
-        //   id: '5',
-        //   title: 'Promotion spéciale',
-        //   message:
-        //       '50% de réduction sur votre prochain trajet! Utilisez le code TYVAA50.',
-        //   type: NotificationType.promo,
-        //   time: DateTime.now().subtract(Duration(days: 2)),
-        //   isRead: true,
-        //   actionData: {'promoCode': 'TYVAA50'},
-        // ),
+        NotificationModel(
+          id: '2',
+          title: 'Nouveau message',
+          message: 'Amadou: À quelle heure comptez-vous arriver à Thiès?',
+          type: NotificationType.message,
+          time: DateTime.now().subtract(Duration(hours: 2)),
+          isRead: false,
+          actionData: {'chatId': 'C789', 'senderId': 'U567'},
+        ),
+        NotificationModel(
+          id: '3',
+          title: 'Rappel de trajet',
+          message:
+              'Votre trajet vers Mbour démarre dans 2 heures. Préparez-vous!',
+          type: NotificationType.reminder,
+          time: DateTime.now().subtract(Duration(hours: 6)),
+          isRead: true,
+          actionData: {'tripId': 'T456'},
+        ),
+        NotificationModel(
+          id: '4',
+          title: 'Annulation de trajet',
+          message:
+              'Désolé, le trajet Dakar → Touba du 10 mai a été annulé par le conducteur.',
+          type: NotificationType.tripCancelled,
+          time: DateTime.now().subtract(Duration(days: 1)),
+          isRead: true,
+          actionData: {'tripId': 'T789'},
+        ),
+        NotificationModel(
+          id: '5',
+          title: 'Promotion spéciale',
+          message:
+              '50% de réduction sur votre prochain trajet! Utilisez le code TYVAA50.',
+          type: NotificationType.promo,
+          time: DateTime.now().subtract(Duration(days: 2)),
+          isRead: true,
+          actionData: {'promoCode': 'TYVAA50'},
+        ),
       ];
     } catch (e) {
       hasError.value = true;
