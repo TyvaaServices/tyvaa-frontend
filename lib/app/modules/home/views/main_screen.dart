@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/home/views/profile_view.dart';
+import 'package:passenger_tyvaa/app/modules/profile/views/profile_view.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 import '../../../themes/tyvaa_theme.dart';
