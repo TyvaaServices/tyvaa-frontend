@@ -1,19 +1,20 @@
 // search_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/home/controllers/search_controller.dart';
+import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
+
 class SearchView extends GetView<SearchViewController> {
   const SearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor   = isDark ? Color(0xFF121212) : Color(0xFFF8F9FD);
+    final bgColor = isDark ? Color(0xFF121212) : Color(0xFFF8F9FD);
     final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
-    final primary   = Color(0xFF5E6FE4);
-    final accent    = Color(0xFFFF6B6B);
-    final txt       = isDark ? Colors.white : Color(0xFF303030);
-    final txtSec    = isDark ? Colors.white70 : Color(0xFF757575);
+    final primary = Color(0xFF5E6FE4);
+    final accent = Color(0xFFFF6B6B);
+    final txt = isDark ? Colors.white : Color(0xFF303030);
+    final txtSec = isDark ? Colors.white70 : Color(0xFF757575);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -29,8 +30,20 @@ class SearchView extends GetView<SearchViewController> {
                 final tabIndex = controller.selectedTab.value;
                 final isRecent = controller.showRecent.value;
                 return isRecent
-                    ? _buildRecentSearches(cardColor, txt, txtSec, primary, accent)
-                    : _buildSearchResults(cardColor, txt, txtSec, primary, accent);
+                    ? _buildRecentSearches(
+                      cardColor,
+                      txt,
+                      txtSec,
+                      primary,
+                      accent,
+                    )
+                    : _buildSearchResults(
+                      cardColor,
+                      txt,
+                      txtSec,
+                      primary,
+                      accent,
+                    );
               }),
             ),
           ],
@@ -64,8 +77,18 @@ class SearchView extends GetView<SearchViewController> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Où allez-vous?', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: txt)),
-              Text('Trouvez votre destination', style: TextStyle(fontSize: 14, color: txt.withOpacity(0.6))),
+              Text(
+                'Où allez-vous?',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: txt,
+                ),
+              ),
+              Text(
+                'Trouvez votre destination',
+                style: TextStyle(fontSize: 14, color: txt.withOpacity(0.6)),
+              ),
             ],
           ),
         ],
@@ -80,20 +103,50 @@ class SearchView extends GetView<SearchViewController> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child:  TabBar(
+      child: TabBar(
         controller: controller.tabController,
-        indicator: BoxDecoration(color: primary, borderRadius: BorderRadius.circular(28)),
+        indicator: BoxDecoration(
+          color: primary,
+          borderRadius: BorderRadius.circular(28),
+        ),
         labelColor: Colors.white,
         unselectedLabelColor: txt.withOpacity(0.7),
         labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
         tabs: [
-          Tab(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.directions_bus_rounded, size: 18), SizedBox(width: 6), Text('Long trajet')])),
-          Tab(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.directions_car_rounded, size: 18), SizedBox(width: 6), Text('En ville')])),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.directions_bus_rounded, size: 18),
+                SizedBox(width: 6),
+                Text('Long trajet'),
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.directions_car_rounded, size: 18),
+                SizedBox(width: 6),
+                Text('En ville'),
+              ],
+            ),
+          ),
         ],
-      )
+      ),
     );
   }
 
@@ -105,7 +158,13 @@ class SearchView extends GetView<SearchViewController> {
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: Offset(0, 5))],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            ),
+          ],
         ),
         child: Obx(() {
           final isLong = controller.selectedTab.value == 0;
@@ -115,28 +174,41 @@ class SearchView extends GetView<SearchViewController> {
             onChanged: controller.filterLocations,
             style: TextStyle(color: txt, fontSize: 16),
             decoration: InputDecoration(
-              hintText: isLong ? 'Rechercher une région...' : 'Rechercher un quartier...',
+              hintText:
+                  isLong
+                      ? 'Rechercher une région...'
+                      : 'Rechercher un quartier...',
               hintStyle: TextStyle(color: txt.withOpacity(0.5), fontSize: 15),
               prefixIcon: Icon(Icons.search_rounded, color: primary, size: 22),
-              suffixIcon: hasText
-                  ? IconButton(
-                icon: Icon(Icons.clear, color: primary, size: 20),
-                onPressed: () {
-                  controller.searchController.clear();
-                  controller.filterLocations('');
-                },
-              )
-                  : null,
+              suffixIcon:
+                  hasText
+                      ? IconButton(
+                        icon: Icon(Icons.clear, color: primary, size: 20),
+                        onPressed: () {
+                          controller.searchController.clear();
+                          controller.filterLocations('');
+                        },
+                      )
+                      : null,
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 18,
+              ),
             ),
           );
         }),
       ),
     );
   }
-  Widget _buildRecentSearches(Color cardColor, Color txt, Color txtSecondary,
-      Color primary, Color accent) {
+
+  Widget _buildRecentSearches(
+    Color cardColor,
+    Color txt,
+    Color txtSecondary,
+    Color primary,
+    Color accent,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,31 +229,29 @@ class SearchView extends GetView<SearchViewController> {
                 onPressed: () => controller.clearRecentSearches(),
                 child: Text(
                   'Effacer',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: primary,
-                  ),
+                  style: TextStyle(fontSize: 14, color: primary),
                 ),
               ),
             ],
           ),
         ),
         Expanded(
-          child: Obx(() =>
-          controller.recentSearches.isEmpty
-              ? _buildEmptyRecents(txt, primary)
-              : ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            itemCount: controller.recentSearches.length,
-            itemBuilder: (_, i) =>
-                _buildRecentItem(
-                  controller.recentSearches[i],
-                  cardColor,
-                  txt,
-                  txtSecondary,
-                  primary,
-                ),
-          ),
+          child: Obx(
+            () =>
+                controller.recentSearches.isEmpty
+                    ? _buildEmptyRecents(txt, primary)
+                    : ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      itemCount: controller.recentSearches.length,
+                      itemBuilder:
+                          (_, i) => _buildRecentItem(
+                            controller.recentSearches[i],
+                            cardColor,
+                            txt,
+                            txtSecondary,
+                            primary,
+                          ),
+                    ),
           ),
         ),
         SizedBox(height: 16),
@@ -212,18 +282,20 @@ class SearchView extends GetView<SearchViewController> {
           SizedBox(height: 8),
           Text(
             'Vos recherches apparaîtront ici',
-            style: TextStyle(
-              fontSize: 14,
-              color: txt.withOpacity(0.5),
-            ),
+            style: TextStyle(fontSize: 14, color: txt.withOpacity(0.5)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRecentItem(String label, Color cardColor, Color txt,
-      Color txtSecondary, Color primary) {
+  Widget _buildRecentItem(
+    String label,
+    Color cardColor,
+    Color txt,
+    Color txtSecondary,
+    Color primary,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -284,8 +356,12 @@ class SearchView extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildPopularSection(Color cardColor, Color txt, Color primary,
-      Color accent) {
+  Widget _buildPopularSection(
+    Color cardColor,
+    Color txt,
+    Color primary,
+    Color accent,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -294,23 +370,21 @@ class SearchView extends GetView<SearchViewController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Obx(() =>
-                  Text(
-                    controller.selectedTab.value == 0
-                        ? 'Destinations populaires'
-                        : 'Quartiers populaires',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: txt,
-                    ),
-                  )),
+              Obx(
+                () => Text(
+                  controller.selectedTab.value == 0
+                      ? 'Destinations populaires'
+                      : 'Quartiers populaires',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: txt,
+                  ),
+                ),
+              ),
               Text(
                 '5 éléments',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: txt.withOpacity(0.5),
-                ),
+                style: TextStyle(fontSize: 14, color: txt.withOpacity(0.5)),
               ),
             ],
           ),
@@ -318,9 +392,10 @@ class SearchView extends GetView<SearchViewController> {
         SizedBox(
           height: 110,
           child: Obx(() {
-            final popularItems = controller.selectedTab.value == 0
-                ? controller.popularRegions
-                : controller.popularDistricts;
+            final popularItems =
+                controller.selectedTab.value == 0
+                    ? controller.popularRegions
+                    : controller.popularDistricts;
 
             return ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -332,23 +407,24 @@ class SearchView extends GetView<SearchViewController> {
                   accent,
                   Colors.green,
                   Colors.amber,
-                  Colors.teal
+                  Colors.teal,
                 ];
-                final icons = controller.selectedTab.value == 0
-                    ? [
-                  Icons.location_city,
-                  Icons.landscape,
-                  Icons.beach_access,
-                  Icons.waves,
-                  Icons.agriculture
-                ]
-                    : [
-                  Icons.home,
-                  Icons.business,
-                  Icons.beach_access,
-                  Icons.restaurant,
-                  Icons.local_mall
-                ];
+                final icons =
+                    controller.selectedTab.value == 0
+                        ? [
+                          Icons.location_city,
+                          Icons.landscape,
+                          Icons.beach_access,
+                          Icons.waves,
+                          Icons.agriculture,
+                        ]
+                        : [
+                          Icons.home,
+                          Icons.business,
+                          Icons.beach_access,
+                          Icons.restaurant,
+                          Icons.local_mall,
+                        ];
 
                 return Container(
                   width: 100,
@@ -360,8 +436,9 @@ class SearchView extends GetView<SearchViewController> {
                     shadowColor: Colors.black.withOpacity(0.05),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: () =>
-                          controller.selectPopularItem(popularItems[index]),
+                      onTap:
+                          () =>
+                              controller.selectPopularItem(popularItems[index]),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
@@ -407,12 +484,18 @@ class SearchView extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildSearchResults(Color cardColor, Color txt, Color txtSecondary,
-      Color primary, Color accent) {
+  Widget _buildSearchResults(
+    Color cardColor,
+    Color txt,
+    Color txtSecondary,
+    Color primary,
+    Color accent,
+  ) {
     return Obx(() {
-      final list = controller.selectedTab.value == 0
-          ? controller.filteredLong
-          : controller.filteredLocal;
+      final list =
+          controller.selectedTab.value == 0
+              ? controller.filteredLong
+              : controller.filteredLocal;
 
       if (list.isEmpty) {
         return Center(
@@ -436,10 +519,7 @@ class SearchView extends GetView<SearchViewController> {
               SizedBox(height: 8),
               Text(
                 'Essayez avec un autre terme de recherche',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: txt.withOpacity(0.5),
-                ),
+                style: TextStyle(fontSize: 14, color: txt.withOpacity(0.5)),
               ),
             ],
           ),
@@ -450,28 +530,24 @@ class SearchView extends GetView<SearchViewController> {
         padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
         itemCount: list.length,
         itemBuilder: (_, i) {
-          final iconData = (controller.selectedTab.value == 0
-              ? [
-            Icons.location_city,
-            Icons.landscape,
-            Icons.beach_access,
-            Icons.agriculture,
-            Icons.waves
-          ]
-              : [
-            Icons.home,
-            Icons.apartment,
-            Icons.business,
-            Icons.store,
-            Icons.restaurant
-          ])[i % 5];
-          final iconColor = [
-            primary,
-            accent,
-            Colors.green,
-            Colors.amber,
-            Colors.teal
-          ][i % 5];
+          final iconData =
+              (controller.selectedTab.value == 0
+                  ? [
+                    Icons.location_city,
+                    Icons.landscape,
+                    Icons.beach_access,
+                    Icons.agriculture,
+                    Icons.waves,
+                  ]
+                  : [
+                    Icons.home,
+                    Icons.apartment,
+                    Icons.business,
+                    Icons.store,
+                    Icons.restaurant,
+                  ])[i % 5];
+          final iconColor =
+              [primary, accent, Colors.green, Colors.amber, Colors.teal][i % 5];
 
           return AnimatedBuilder(
             animation: controller.animationController,
@@ -488,8 +564,10 @@ class SearchView extends GetView<SearchViewController> {
                   ),
                 ),
                 child: SlideTransition(
-                  position: Tween<Offset>(begin: Offset(0, 0.2),
-                      end: Offset.zero).animate(
+                  position: Tween<Offset>(
+                    begin: Offset(0, 0.2),
+                    end: Offset.zero,
+                  ).animate(
                     CurvedAnimation(
                       parent: controller.animationController,
                       curve: Interval(
@@ -504,21 +582,29 @@ class SearchView extends GetView<SearchViewController> {
               );
             },
             child: _buildResultItem(
-                list[i],
-                iconData,
-                iconColor,
-                cardColor,
-                txt,
-                txtSecondary,
-                accent),
+              list[i],
+              iconData,
+              iconColor,
+              cardColor,
+              txt,
+              txtSecondary,
+              accent,
+            ),
           );
         },
       );
     });
   }
 
-  Widget _buildResultItem(String label, IconData iconData, Color iconColor,
-      Color cardColor, Color txt, Color txtSecondary, Color accent) {
+  Widget _buildResultItem(
+    String label,
+    IconData iconData,
+    Color iconColor,
+    Color cardColor,
+    Color txt,
+    Color txtSecondary,
+    Color accent,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -555,16 +641,14 @@ class SearchView extends GetView<SearchViewController> {
                         ),
                       ),
                       SizedBox(height: 2),
-                      Obx(() =>
-                          Text(
-                            controller.selectedTab.value == 0
-                                ? 'Sénégal'
-                                : 'Dakar',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: txtSecondary,
-                            ),
-                          )),
+                      Obx(
+                        () => Text(
+                          controller.selectedTab.value == 0
+                              ? 'Sénégal'
+                              : 'Dakar',
+                          style: TextStyle(fontSize: 13, color: txtSecondary),
+                        ),
+                      ),
                     ],
                   ),
                 ),

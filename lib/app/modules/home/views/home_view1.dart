@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
-import 'package:passenger_tyvaa/app/modules/home/views/search_page.dart';
+import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
 
 import '../../../themes/tyvaa_theme.dart';
 import '../controllers/home_controller.dart';
@@ -15,10 +15,10 @@ class HomeScreen extends GetView<HomeController> {
     final isDark = brightness == Brightness.dark;
 
     // Colors
-    final backgroundColor = isDark ? AppColors.darkBackground : Color(
-        0xFFF7F8FC);
-    final textColor = isDark ? AppColors.textPrimaryDark : AppColors
-        .textPrimary;
+    final backgroundColor =
+        isDark ? AppColors.darkBackground : Color(0xFFF7F8FC);
+    final textColor =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
     final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
     final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
 
@@ -28,7 +28,12 @@ class HomeScreen extends GetView<HomeController> {
         child: CustomScrollView(
           slivers: [
             _buildAppBar(
-                context, isDark, primaryColor, textColor, surfaceColor),
+              context,
+              isDark,
+              primaryColor,
+              textColor,
+              surfaceColor,
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -41,7 +46,11 @@ class HomeScreen extends GetView<HomeController> {
                     _buildSearchBar(context, isDark, surfaceColor, textColor),
                     SizedBox(height: 28),
                     _buildQuickActions(
-                        context, isDark, surfaceColor, textColor),
+                      context,
+                      isDark,
+                      surfaceColor,
+                      textColor,
+                    ),
                     SizedBox(height: 28),
                     _buildPromoSection(context, isDark, textColor),
                     SizedBox(height: 80),
@@ -55,8 +64,13 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDark, Color primaryColor,
-      Color textColor, Color surfaceColor) {
+  Widget _buildAppBar(
+    BuildContext context,
+    bool isDark,
+    Color primaryColor,
+    Color textColor,
+    Color surfaceColor,
+  ) {
     return SliverAppBar(
       floating: true,
       pinned: false,
@@ -71,10 +85,7 @@ class HomeScreen extends GetView<HomeController> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(0.8),
-                ],
+                colors: [primaryColor, primaryColor.withOpacity(0.8)],
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -119,10 +130,7 @@ class HomeScreen extends GetView<HomeController> {
             ],
           ),
           child: IconButton(
-            icon: Icon(
-              Icons.notifications_none_rounded,
-              color: textColor,
-            ),
+            icon: Icon(Icons.notifications_none_rounded, color: textColor),
             onPressed: () {},
           ),
         ),
@@ -130,8 +138,11 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildWelcomeCard(BuildContext context, bool isDark,
-      Color primaryColor) {
+  Widget _buildWelcomeCard(
+    BuildContext context,
+    bool isDark,
+    Color primaryColor,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(0),
@@ -156,10 +167,7 @@ class HomeScreen extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    primaryColor,
-                    Color(0xFF8A6FFF),
-                  ],
+                  colors: [primaryColor, Color(0xFF8A6FFF)],
                 ),
               ),
             ),
@@ -217,7 +225,9 @@ class HomeScreen extends GetView<HomeController> {
                     onTap: () => Get.to(SearchView()),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 20),
+                        vertical: 12,
+                        horizontal: 20,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
@@ -248,8 +258,12 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context, bool isDark, Color surfaceColor,
-      Color textColor) {
+  Widget _buildSearchBar(
+    BuildContext context,
+    bool isDark,
+    Color surfaceColor,
+    Color textColor,
+  ) {
     return GestureDetector(
       onTap: () => Get.to(SearchView()),
       child: Container(
@@ -267,17 +281,11 @@ class HomeScreen extends GetView<HomeController> {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.search_rounded,
-              color: textColor.withOpacity(0.6),
-            ),
+            Icon(Icons.search_rounded, color: textColor.withOpacity(0.6)),
             SizedBox(width: 12),
             Text(
               'Où souhaitez-vous aller ?',
-              style: TextStyle(
-                color: textColor.withOpacity(0.6),
-                fontSize: 14,
-              ),
+              style: TextStyle(color: textColor.withOpacity(0.6), fontSize: 14),
             ),
           ],
         ),
@@ -285,8 +293,12 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, bool isDark,
-      Color surfaceColor, Color textColor) {
+  Widget _buildQuickActions(
+    BuildContext context,
+    bool isDark,
+    Color surfaceColor,
+    Color textColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -310,7 +322,7 @@ class HomeScreen extends GetView<HomeController> {
               Icons.add_road_rounded,
               'Publier trajet',
               Color(0xFF6C63FF),
-                  () {},
+              () {},
             ),
             _buildActionCard(
               context,
@@ -320,7 +332,7 @@ class HomeScreen extends GetView<HomeController> {
               Icons.history_rounded,
               'Historique',
               Color(0xFF4ECDC4),
-                  () {},
+              () {},
             ),
             _buildActionCard(
               context,
@@ -330,7 +342,7 @@ class HomeScreen extends GetView<HomeController> {
               Icons.support_agent_rounded,
               'Aide',
               Color(0xFFFF6B6B),
-                  () => Get.to(() => AideScreen()),
+              () => Get.to(() => AideScreen()),
             ),
           ],
         ),
@@ -338,21 +350,20 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildActionCard(BuildContext context,
-      bool isDark,
-      Color surfaceColor,
-      Color textColor,
-      IconData icon,
-      String label,
-      Color iconColor,
-      VoidCallback onTap,) {
+  Widget _buildActionCard(
+    BuildContext context,
+    bool isDark,
+    Color surfaceColor,
+    Color textColor,
+    IconData icon,
+    String label,
+    Color iconColor,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: (MediaQuery
-            .of(context)
-            .size
-            .width - 50) / 3,
+        width: (MediaQuery.of(context).size.width - 50) / 3,
         padding: EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: surfaceColor,
@@ -392,8 +403,11 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPromoSection(BuildContext context, bool isDark,
-      Color textColor) {
+  Widget _buildPromoSection(
+    BuildContext context,
+    bool isDark,
+    Color textColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -420,8 +434,10 @@ class HomeScreen extends GetView<HomeController> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: isDark ? Colors.black26 : Colors.black.withOpacity(
-                          0.1),
+                      color:
+                          isDark
+                              ? Colors.black26
+                              : Colors.black.withOpacity(0.1),
                       blurRadius: 15,
                       offset: Offset(0, 5),
                     ),
@@ -433,10 +449,7 @@ class HomeScreen extends GetView<HomeController> {
                     fit: StackFit.expand,
                     children: [
                       // Banner image
-                      Image.asset(
-                        banner['image']!,
-                        fit: BoxFit.cover,
-                      ),
+                      Image.asset(banner['image']!, fit: BoxFit.cover),
 
                       // Overlay gradient
                       Container(
@@ -461,7 +474,9 @@ class HomeScreen extends GetView<HomeController> {
                           children: [
                             Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(30),
@@ -504,25 +519,28 @@ class HomeScreen extends GetView<HomeController> {
         ),
         SizedBox(height: 16),
         Center(
-          child: Obx(() =>
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(controller.banners.length, (index) {
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    width: controller.currentBanner.value == index ? 20 : 8,
-                    height: 8,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: controller.currentBanner.value == index
-                          ? Color(0xFF6C63FF)
-                          : (isDark ? Colors.grey.shade700 : Colors.grey
-                          .shade300),
-                    ),
-                  );
-                }),
-              )),
+          child: Obx(
+            () => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(controller.banners.length, (index) {
+                return AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  width: controller.currentBanner.value == index ? 20 : 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color:
+                        controller.currentBanner.value == index
+                            ? Color(0xFF6C63FF)
+                            : (isDark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade300),
+                  ),
+                );
+              }),
+            ),
+          ),
         ),
       ],
     );
