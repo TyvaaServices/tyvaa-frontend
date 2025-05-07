@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-
-
-
 class LoginController extends GetxController with SingleGetTickerProviderMixin {
   final formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
@@ -48,7 +45,7 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
         Future.delayed(const Duration(milliseconds: 400), () {
           if (scrollController.hasClients) {
             scrollController.animateTo(
-              scrollController.position.maxScrollExtent+100,
+              scrollController.position.maxScrollExtent + 100,
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeOut,
             );
@@ -78,6 +75,6 @@ class LoginController extends GetxController with SingleGetTickerProviderMixin {
     await Future.delayed(const Duration(seconds: 2));
     isLoading.value = false;
 
-    Get.offAllNamed('/home');
+    Get.offAllNamed('/main');
   }
 }
