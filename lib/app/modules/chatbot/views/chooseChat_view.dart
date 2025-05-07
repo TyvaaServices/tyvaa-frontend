@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/chatbot/controllers/chatbot_controller.dart';
 import 'package:passenger_tyvaa/app/widgets/chatbot/chat_bot_card.dart';
 import 'package:passenger_tyvaa/app/widgets/typing_indicator.dart';
 
-import '../../../../domain/entities/message.dart';
-import '../controllers/home_controller.dart';
-
-class ChooseChatbotScreen extends GetView<HomeController> {
+import '../../../../domain/entities/messagetbotController> {
   const ChooseChatbotScreen({super.key});
 
   @override
@@ -36,7 +34,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
   }
 
   Widget _buildChatbotSelectionUI(BuildContext context,
-      HomeController controller,
+      ChatbotController controller,
       Color backgroundColor,
       Color cardColor,
       Color textColor,
@@ -103,7 +101,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
   }
 
   Widget _buildSelectionCards(BuildContext context,
-      HomeController controller,
+      ChatbotController controller,
       Color cardColor,
       Color textColor,
       Color accentBlue,
@@ -137,7 +135,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildBottomButton(HomeController controller, Color backgroundColor,
+  Widget _buildBottomButton(ChatbotController controller, Color backgroundColor,
       Color textColor) {
     final bool hasSelection = controller.selectedChatbot.value.isNotEmpty;
     final Color buttonColor = controller.selectedChatbot.value == 'Oulyx'
@@ -234,7 +232,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildChatInterface(BuildContext context, HomeController controller,
+  Widget _buildChatInterface(BuildContext context, ChatbotController controller,
       bool isDark) {
     final botColor = controller.selectedChatbot.value == 'Oulyx'
         ? Color(0xFF3370FF)
@@ -294,7 +292,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
   }
 
   PreferredSizeWidget _buildChatAppBar(BuildContext context,
-      HomeController controller,
+      ChatbotController controller,
       Color backgroundColor,
       Color textColor,
       Color botColor) {
@@ -526,7 +524,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildMessageInput(HomeController controller, bool isDark,
+  Widget _buildMessageInput(ChatbotController controller, bool isDark,
       Color botColor) {
     final backgroundColor = isDark ? Color(0xFF1A1A1A) : Colors.white;
     final textColor = isDark ? Colors.white : Color(0xFF2D3142);
@@ -595,7 +593,7 @@ class ChooseChatbotScreen extends GetView<HomeController> {
             onTap: controller.sendMessage,
             child: Obx(() =>
                 AnimatedScale(
-                  scale: controller.isPressingSend.value ? 0.9 : 1.0,
+                  scale: controller.isPressingSend.value ? 0.8 : 1.0,
                   duration: Duration(milliseconds: 150),
                   child: Container(
                     padding: EdgeInsets.all(12),
