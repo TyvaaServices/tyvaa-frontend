@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/home/views/chooseChat_view.dart';
+import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
+import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/login_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
-
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/onboarding_view.dart';
 
 part 'app_routes.dart';
 
@@ -16,17 +14,18 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.HOME,
+      name: _Paths.MAIN,
       page: () => MainScreen(),
       binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
       showCupertinoParallax: true,
+      bindings: [ChatbotBinding()],
     ),
     GetPage(
       name: _Paths.CHOOSE,
       page: () => ChooseChatbotScreen(),
-      binding: HomeBinding(),
+      binding: ChatbotBinding(),
       transition: Transition.zoom,
       transitionDuration: Duration(milliseconds: 800),
     ),
@@ -36,7 +35,8 @@ class AppPages {
       binding: HomeBinding(),
       transition: Transition.zoom,
       transitionDuration: Duration(milliseconds: 800),
-    ),    GetPage(
+    ),
+    GetPage(
       name: _Paths.LOGIN,
       page: () => LoginScreen(),
       binding: HomeBinding(),
@@ -50,6 +50,5 @@ class AppPages {
       transition: Transition.zoom,
       transitionDuration: Duration(milliseconds: 800),
     ),
-
   ];
 }
