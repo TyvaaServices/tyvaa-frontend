@@ -1,0 +1,22 @@
+#workflows:
+#  flutter-app:
+#    name: Flutter Build Workflow
+#    max_build_duration: 60
+#    environment:
+#      flutter: stable
+#      xcode: latest
+#      vars:
+#        APP_NAME: "YourAppName"
+#    scripts:
+#      - name: Install Dependencies
+#        script: flutter pub get
+#      - name: Run Tests
+#        script: flutter test
+#      - name: Build APK
+#        script: flutter build apk --release
+#    artifacts:
+#      - build/app/outputs/flutter-apk/app-release.apk
+#    publishing:
+#      email:
+#        recipients:
+#          - atidiane741@gmail.com
