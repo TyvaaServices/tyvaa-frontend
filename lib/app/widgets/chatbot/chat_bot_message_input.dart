@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
-
-class ChatBotMessageInput extends StatelessWidget {
-  const ChatBotMessageInput({
+import 'package:passenger_tyvaa/app/modules/chatbot/controllers/chatbotBotMessageInput({
     super.key,
     required this.controller,
     required this.isDark,
     required this.botColor,
   });
 
-  final HomeController controller;
+  final ChatbotController controller;
   final bool isDark;
   final Color botColor;
 
