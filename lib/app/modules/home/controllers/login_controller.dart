@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-class LoginController extends GetxController with SingleGetTickerProviderMixin {
+class LoginController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
   final phoneMask = MaskTextInputFormatter(
