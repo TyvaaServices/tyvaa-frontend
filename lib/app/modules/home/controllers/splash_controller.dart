@@ -1,7 +1,6 @@
-import 'package:get/get.dart';
 import 'dart:async';
 
-
+import 'package:get/get.dart';
 
 class SplashController extends GetxController {
   final RxDouble visibility = 0.0.obs;
@@ -10,34 +9,20 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _startSimpleAnimation();
+    _animate();
   }
 
-  void _startSimpleAnimation() async {
-    // Fade in
+  void _animate() async {
     await Future.delayed(Duration(milliseconds: 100));
     visibility.value = 1.0;
 
-    // Letter spacing animation
     await Future.delayed(Duration(milliseconds: 300));
     letterSpacing.value = 2.0;
 
-    // Brief pause for visibility
     await Future.delayed(Duration(milliseconds: 800));
 
-    // Fade out and navigate
     visibility.value = 0.0;
     await Future.delayed(Duration(milliseconds: 300));
     Get.offAllNamed('/onboarding');
   }
-
 }
-
-// Add this splash screen as your initial route:
-// GetMaterialApp(
-//   initialRoute: '/splash',
-//   getPages: [
-//     GetPage(name: '/splash', page: () => SplashScreen()),
-//     GetPage(name: '/main', page: () => MainScreen()),
-//   ],
-// )

@@ -6,7 +6,7 @@ import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import '../../../themes/tyvaa_theme.dart';
 import '../../chatbot/views/chooseChat_view.dart';
 import '../controllers/home_controller.dart';
-import 'home_view1.dart';
+import 'home_view.dart';
 
 class MainScreen extends GetView<HomeController> {
   final List<Widget> pages = [

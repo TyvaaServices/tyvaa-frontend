@@ -3,9 +3,9 @@ import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dar
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
-import 'package:passenger_tyvaa/app/modules/login/bindings/home_binding.dart';
-import 'package:passenger_tyvaa/app/modules/login/views/login_view.dart';
 
+import '../modules/auth/bindings/home_binding.dart';
+import '../modules/auth/views/login_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
 

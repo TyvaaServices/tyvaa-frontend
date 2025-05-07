@@ -15,11 +15,18 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
-    TextStyle titleStyle = brightness == Brightness.dark ? AppTextStyles.h2Dark : AppTextStyles.h2;
-    TextStyle subtitleStyle = brightness == Brightness.dark ? AppTextStyles.bodySecondaryDark : AppTextStyles.bodySecondary;
-    Color backgroundColor = brightness == Brightness.dark ? AppColors.darkBackground : AppColors.background;
-    // ignore: unused_local_variable
-    Color buttonTextColor = brightness == Brightness.dark ? Colors.white : AppColors.textOnPrimary;
+    TextStyle titleStyle =
+        brightness == Brightness.dark ? AppTextStyles.h2Dark : AppTextStyles.h2;
+    TextStyle subtitleStyle =
+        brightness == Brightness.dark
+            ? AppTextStyles.bodySecondaryDark
+            : AppTextStyles.bodySecondary;
+    Color backgroundColor =
+        brightness == Brightness.dark
+            ? AppColors.darkBackground
+            : AppColors.background;
+    Color buttonTextColor =
+        brightness == Brightness.dark ? Colors.white : AppColors.textOnPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -29,46 +36,50 @@ class OnboardingScreen extends StatelessWidget {
             controller: _controller,
             itemCount: 3,
             onPageChanged: (index) => _currentPage.value = index,
-            itemBuilder: (_, index) => _buildPage(index, titleStyle, subtitleStyle),
+            itemBuilder:
+                (_, index) => _buildPage(index, titleStyle, subtitleStyle),
           ),
           Positioned(
             bottom: 24,
             left: 24,
             right: 24,
-            child: Obx(() => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SmoothPageIndicator(
-                  controller: _controller,
-                  count: 3,
-                  effect: WormEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    activeDotColor: AppColors.primary,
-                    dotColor: AppColors.primary.withOpacity(0.4),
+            child: Obx(
+              () => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SmoothPageIndicator(
+                    controller: _controller,
+                    count: 3,
+                    effect: WormEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: AppColors.primary,
+                      dotColor: AppColors.primary.withOpacity(0.4),
+                    ),
+                    onDotClicked:
+                        (i) => _controller.animateToPage(
+                          i,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
                   ),
-                  onDotClicked: (i) => _controller.animateToPage(
-                    i,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                  SizedBox(height: 24),
+                  PrimaryButton(
+                    text: _currentPage.value == 2 ? 'Commencer' : 'Suivant',
+                    onPressed: () {
+                      if (_currentPage.value < 2) {
+                        _controller.nextPage(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        Get.offAllNamed('/login');
+                      }
+                    }, // Adjust button text color
                   ),
-                ),
-                SizedBox(height: 24),
-                PrimaryButton(
-                  text: _currentPage.value == 2 ? 'Commencer' : 'Suivant',
-                  onPressed: () {
-                    if (_currentPage.value < 2) {
-                      _controller.nextPage(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      Get.offAllNamed('/login');
-                    }
-                  }, // Adjust button text color
-                ),
-              ],
-            )),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -86,10 +97,7 @@ class OnboardingScreen extends StatelessWidget {
 
         return Opacity(
           opacity: opacity,
-          child: Transform.translate(
-            offset: Offset(offsetX, 0),
-            child: child,
-          ),
+          child: Transform.translate(offset: Offset(offsetX, 0), child: child),
         );
       },
       child: _OnboardingPage(
@@ -141,11 +149,7 @@ class _OnboardingPage extends StatelessWidget {
           SizedBox(height: 32),
           Text(title, style: titleStyle),
           SizedBox(height: 16),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: subtitleStyle,
-          ),
+          Text(subtitle, textAlign: TextAlign.center, style: subtitleStyle),
         ],
       ),
     );
