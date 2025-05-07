@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/splash_controller.dart';
-import 'package:passenger_tyvaa/app/modules/login/controllers/login_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
 
+import '../../auth/controllers/login_controller.dart';
 import '../controllers/home_controller.dart';
 
 class HomeBinding extends Bindings {

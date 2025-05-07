@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/login/controllers/login_controller.dart';
+
+import '../controllers/login_controller.dart';
 
 class Authentication extends Bindings {
   @override
