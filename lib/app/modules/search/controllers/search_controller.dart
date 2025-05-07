@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchViewController extends GetxController with GetTickerProviderStateMixin{
+class SearchViewController extends GetxController
+    with GetTickerProviderStateMixin {
   late TabController tabController;
   late AnimationController animationController;
   final TextEditingController searchController = TextEditingController();
@@ -13,15 +14,36 @@ class SearchViewController extends GetxController with GetTickerProviderStateMix
 
   // Location lists
   final List<String> allRegions = [
-    'Dakar', 'Saint-Louis', 'Thiès', 'Kaolack', 'Ziguinchor',
-    'Tambacounda', 'Louga', 'Fatick', 'Kolda', 'Matam',
-    'Kaffrine', 'Sédhiou', 'Kédougou', 'Diourbel',
+    'Dakar',
+    'Saint-Louis',
+    'Thiès',
+    'Kaolack',
+    'Ziguinchor',
+    'Tambacounda',
+    'Louga',
+    'Fatick',
+    'Kolda',
+    'Matam',
+    'Kaffrine',
+    'Sédhiou',
+    'Kédougou',
+    'Diourbel',
   ];
 
   final List<String> allDistricts = [
-    'Médina', 'Pikine', 'Guédiawaye', 'Parcelles Assainies', 'Yoff',
-    'Almadies', 'Plateau', 'Fann', 'Grand Dakar', 'Ouakam',
-    'Ngor', 'Liberté', 'Sicap',
+    'Médina',
+    'Pikine',
+    'Guédiawaye',
+    'Parcelles Assainies',
+    'Yoff',
+    'Almadies',
+    'Plateau',
+    'Fann',
+    'Grand Dakar',
+    'Ouakam',
+    'Ngor',
+    'Liberté',
+    'Sicap',
   ];
 
   // Filtered results
@@ -29,14 +51,12 @@ class SearchViewController extends GetxController with GetTickerProviderStateMix
   final filteredLocal = <String>[].obs;
 
   // Recent searches
-  final recentSearches = <String>[
-    'Dakar → Thiès',
-    'Pikine → Médina',
-    'Saint-Louis → Dakar',
-  ].obs;
+  final recentSearches =
+      <String>['Dakar → Thiès', 'Pikine → Médina', 'Saint-Louis → Dakar'].obs;
 
   // Popular items
   List<String> get popularRegions => allRegions.take(5).toList();
+
   List<String> get popularDistricts => allDistricts.take(5).toList();
 
   @override
@@ -85,13 +105,15 @@ class SearchViewController extends GetxController with GetTickerProviderStateMix
     showRecent.value = query.isEmpty;
 
     if (selectedTab.value == 0) {
-      filteredLong.value = allRegions
-          .where((r) => r.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredLong.value =
+          allRegions
+              .where((r) => r.toLowerCase().contains(query.toLowerCase()))
+              .toList();
     } else {
-      filteredLocal.value = allDistricts
-          .where((d) => d.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredLocal.value =
+          allDistricts
+              .where((d) => d.toLowerCase().contains(query.toLowerCase()))
+              .toList();
     }
 
     if (query.isNotEmpty) {
@@ -107,7 +129,10 @@ class SearchViewController extends GetxController with GetTickerProviderStateMix
   void selectRecentSearch(String search) {
     final parts = search.split(' → ');
     if (parts.length == 2) {
-      Get.toNamed('/search-results', arguments: {'from': parts[0], 'to': parts[1]});
+      Get.toNamed(
+        '/search-results',
+        arguments: {'from': parts[0], 'to': parts[1]},
+      );
     }
   }
 
@@ -115,7 +140,10 @@ class SearchViewController extends GetxController with GetTickerProviderStateMix
     if (selectedTab.value == 0) {
       Get.toNamed('/search-results', arguments: item);
     } else {
-      Get.toNamed('/search-results', arguments: {'district': item, 'city': 'Dakar'});
+      Get.toNamed(
+        '/search-results',
+        arguments: {'district': item, 'city': 'Dakar'},
+      );
     }
     final searchText = 'Dakar → $item';
     if (!recentSearches.contains(searchText)) {
