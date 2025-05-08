@@ -4,12 +4,11 @@ class Assets {
 
   static const String animationsLoading = 'assets/animations/loading.json';
   static const String animationsSucces = 'assets/animations/succes.json';
-  static const String assetsEnterOTPCuateRemovebgPreview =
-      'assets/otp_illustration.png';
   static const String assetsLoginIllustration = 'assets/login_illustration.png';
   static const String assetsOnboarding1 = 'assets/onboarding_1.png';
   static const String assetsOnboarding2 = 'assets/onboarding_2.png';
   static const String assetsOnboarding3 = 'assets/onboarding_3.png';
+  static const String assetsOtpIllustration = 'assets/otp_illustration.png';
   static const String assetsPromo1 = 'assets/promo1.png';
   static const String assetsPromo2 = 'assets/promo2.png';
   static const String assetsPromo3 = 'assets/promo3.png';
@@ -22,4 +21,6 @@ class Assets {
   static const String iconsWaIcon = 'assets/icons/wa_icon.png';
   static const String imagesDefaultProfile =
       'assets/images/default_profile.png';
+  static const String imagesPublieTrajet1 =
+      'assets/images/publier_trajet_1.png';
 }
