@@ -5,12 +5,13 @@ import 'package:passenger_tyvaa/app/modules/notification/controllers/notificatio
 import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
 
 import '../../../themes/tyvaa_theme.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
   final NotificationController notificationController = Get.find();
-
+  final ProfileController profileController = Get.find();
   @override
   Widget build(BuildContext context) {
     final isDark = Get.isDarkMode;
@@ -25,6 +26,7 @@ class HomeScreen extends GetView<HomeController> {
       backgroundColor: backgroundColor,
       body: SafeArea(
         child: CustomScrollView(
+          physics: BouncingScrollPhysics(),
           slivers: [
             _buildAppBar(isDark, primaryColor, textColor, surfaceColor),
             SliverToBoxAdapter(
@@ -59,22 +61,38 @@ class HomeScreen extends GetView<HomeController> {
     Color surfaceColor,
   ) {
     return SliverAppBar(
+      pinned: true,
+      snap: false,
+      surfaceTintColor: Colors.transparent,
       floating: true,
       elevation: 0,
       backgroundColor:
           isDark ? AppColors.darkBackground : const Color(0xFFF7F8FC),
       title: Row(
         children: [
-          Container(
-            height: Get.height * 0.06,
-            width: Get.height * 0.06,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [primaryColor, primaryColor.withOpacity(0.8)],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.person, color: Colors.white),
+          SizedBox(
+            height: Get.height * 0.05,
+            width: Get.height * 0.05,
+            // child: const Icon(Icons.person, color: Colors.white),
+            child:
+                profileController.profileImage.value != null
+                    ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image(
+                        image: FileImage(profileController.profileImage.value!),
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                    : ClipRRect(
+                      borderRadius: BorderRadius.circular(25),
+                      child: Image(
+                        image:
+                            Image.asset(
+                              'assets/images/default_profile.png',
+                            ).image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
           ),
           const SizedBox(width: 12),
           Column(
