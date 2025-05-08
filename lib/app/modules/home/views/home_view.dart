@@ -10,8 +10,10 @@ import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
+
   final NotificationController notificationController = Get.find();
   final ProfileController profileController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     final isDark = Get.isDarkMode;

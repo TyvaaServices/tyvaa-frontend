@@ -10,7 +10,8 @@ import 'package:passenger_tyvaa/app/modules/auth/controllers/login_controller.da
 import '../controllers/otp_controller.dart';
 
 class OtpVerificationScreen extends GetView<OtpVerificationController> {
-  OtpVerificationScreen({Key? key}) : super(key: key);
+  OtpVerificationScreen({super.key});
+
   LoginController loginController = Get.find<LoginController>();
 
   @override
