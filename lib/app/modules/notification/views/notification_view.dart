@@ -6,7 +6,7 @@ import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 import '../controllers/notification_controller.dart';
 
 class NotificationsScreen extends StatelessWidget {
-  NotificationsScreen({Key? key}) : super(key: key);
+  NotificationsScreen({super.key});
 
   final NotificationController controller = Get.put(NotificationController());
 
