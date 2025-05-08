@@ -8,7 +8,7 @@ import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
 import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 
-import '../modules/auth/bindings/home_binding.dart';
+import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';

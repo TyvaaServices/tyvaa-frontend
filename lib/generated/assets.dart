@@ -21,6 +21,12 @@ class Assets {
   static const String iconsWaIcon = 'assets/icons/wa_icon.png';
   static const String imagesDefaultProfile =
       'assets/images/default_profile.png';
-  static const String imagesPublieTrajet1 =
+  static const String imagesPublierTrajet1 =
       'assets/images/publier_trajet_1.png';
+  static const String imagesPublierTrajet2 =
+      'assets/images/publier_trajet_2.png';
+  static const String imagesPublierTrajet3 =
+      'assets/images/publier_trajet_3.png';
+  static const String imagesPublierTrajet4 =
+      'assets/images/publier_trajet_4.png';
 }
