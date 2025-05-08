@@ -77,6 +77,6 @@ class LoginController extends GetxController
     await Future.delayed(const Duration(seconds: 2));
     isLoading.value = false;
 
-    Get.offAllNamed('/main');
+    Get.toNamed('/otp');
   }
 }

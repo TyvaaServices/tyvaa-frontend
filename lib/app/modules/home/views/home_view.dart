@@ -10,8 +10,10 @@ import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
+
   final NotificationController notificationController = Get.find();
   final ProfileController profileController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     final isDark = Get.isDarkMode;
@@ -98,12 +100,18 @@ class HomeScreen extends GetView<HomeController> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Bonjour, Cheikh 👋🏾',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+              SizedBox(
+                width: Get.width * 0.4,
+                child: Text(
+                  'Bonjour, ${profileController.nameController.text} 👋🏾',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                  softWrap: true,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(

@@ -11,6 +11,7 @@ abstract class Routes {
   static const REGISTER = _Paths.REGISTER;
   static const SPLASH = _Paths.SPLASH;
   static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const OTP = _Paths.OTP;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const REGISTER = '/register';
   static const SPLASH = '/splash';
   static const NOTIFICATION = '/notification';
+  static const OTP = '/otp';
 }
