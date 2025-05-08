@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/auth/views/otp_view.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
@@ -44,7 +45,7 @@ class AppPages {
     GetPage(
       name: _Paths.LOGIN,
       page: () => LoginScreen(),
-      binding: Authentication(),
+      binding: AuthenticationBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
@@ -59,6 +60,13 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => NotificationsScreen(),
       binding: HomeBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.OTP,
+      page: () => OtpVerificationScreen(),
+      binding: AuthenticationBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
