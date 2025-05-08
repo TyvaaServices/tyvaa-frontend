@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 
 import '../controllers/notification_controller.dart';
 
@@ -13,7 +14,8 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
-    final backgroundColor = isDark ? Color(0xFF1A1A2E) : Color(0xFFF7F8FC);
+    final backgroundColor =
+        isDark ? AppColors.darkBackground : AppColors.background;
     final textColor = isDark ? Colors.white : Color(0xFF333333);
     final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
 
