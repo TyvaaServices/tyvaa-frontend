@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:passenger_tyvaa/app/modules/auth/views/register_view.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 
 import '../controllers/login_controller.dart';
@@ -67,7 +68,7 @@ class LoginScreen extends GetView<LoginController> {
                 child: FadeTransition(
                   opacity: controller.fadeInAnimation,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -321,9 +322,11 @@ class LoginScreen extends GetView<LoginController> {
                       SizedBox(height: Get.height * 0.01),
                       Center(
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(() => RegisterScreen());
+                          },
                           child: Text(
-                            'Besoin d\'aide?',
+                            'S\'inscrire',
                             style: TextStyle(
                               color: primaryColor,
                               fontWeight: FontWeight.w500,
