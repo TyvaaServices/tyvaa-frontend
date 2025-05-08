@@ -16,7 +16,8 @@ class Assets {
       'assets/chatbot_pic/chyx_avatar.png';
   static const String chatbotPicOulyxAvatar =
       'assets/chatbot_pic/oulyx_avatar.png';
-  static const String flagsImg = 'assets/flags/sn.png';
+  static const String flagsSn = 'assets/flags/sn.png';
   static const String iconsIconWa = 'assets/icons/icon_wa.png';
   static const String iconsWaIcon = 'assets/icons/wa_icon.png';
+  static const String imagesImg = 'assets/images/img.png';
 }
