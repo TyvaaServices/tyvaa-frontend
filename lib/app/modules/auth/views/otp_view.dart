@@ -12,18 +12,16 @@ import '../controllers/otp_controller.dart';
 class OtpVerificationScreen extends GetView<OtpVerificationController> {
   OtpVerificationScreen({super.key});
 
-  LoginController loginController = Get.find<LoginController>();
+  final LoginController loginController = Get.find<LoginController>();
 
   @override
   Widget build(BuildContext context) {
-    // Get theme and screen metrics
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     final isDark = theme.brightness == Brightness.dark;
 
-    // Define colors based on theme
     final backgroundColor = theme.scaffoldBackgroundColor;
-    final cardColor = theme.cardColor;
+    // final cardColor = theme.cardColor;
     final primaryColor = theme.primaryColor;
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
     final secondaryTextColor = theme.textTheme.bodyMedium?.color ?? Colors.grey;
