@@ -12,6 +12,7 @@ abstract class Routes {
   static const SPLASH = _Paths.SPLASH;
   static const NOTIFICATION = _Paths.NOTIFICATION;
   static const OTP = _Paths.OTP;
+  static const ONBOARDINGCHAUFFEUR = _Paths.ONBOARDINGCHAUFFEUR;
 }
 
 abstract class _Paths {
@@ -27,4 +28,5 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const NOTIFICATION = '/notification';
   static const OTP = '/otp';
+  static const ONBOARDINGCHAUFFEUR = '/publier-trajet';
 }

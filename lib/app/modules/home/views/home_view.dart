@@ -319,7 +319,9 @@ class HomeScreen extends GetView<HomeController> {
               Icons.add_road_rounded,
               'Publier trajet',
               const Color(0xFF6C63FF),
-              () {},
+              () {
+                Get.toNamed('/publier-trajet');
+              },
             ),
             _buildActionCard(
               isDark,

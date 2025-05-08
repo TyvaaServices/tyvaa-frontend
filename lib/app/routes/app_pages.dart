@@ -3,6 +3,7 @@ import 'package:passenger_tyvaa/app/modules/auth/views/otp_view.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
 import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
@@ -67,6 +68,13 @@ class AppPages {
       name: _Paths.OTP,
       page: () => OtpVerificationScreen(),
       binding: AuthenticationBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.ONBOARDINGCHAUFFEUR,
+      page: () => PublierTrajetOnboarding(),
+      binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
