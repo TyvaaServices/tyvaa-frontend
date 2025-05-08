@@ -9,51 +9,39 @@ import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
-  NotificationController notificationController = Get.find();
+  final NotificationController notificationController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
+    final isDark = Get.isDarkMode;
     final backgroundColor =
-        isDark ? AppColors.darkBackground : Color(0xFFF7F8FC);
+        isDark ? AppColors.darkBackground : const Color(0xFFF7F8FC);
     final textColor =
         isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
     final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
+    final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            _buildAppBar(
-              context,
-              isDark,
-              primaryColor,
-              textColor,
-              surfaceColor,
-            ),
+            _buildAppBar(isDark, primaryColor, textColor, surfaceColor),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 12),
-                    _buildWelcomeCard(context, isDark, primaryColor),
-                    SizedBox(height: 28),
-                    _buildSearchBar(context, isDark, surfaceColor, textColor),
-                    SizedBox(height: 28),
-                    _buildQuickActions(
-                      context,
-                      isDark,
-                      surfaceColor,
-                      textColor,
-                    ),
-                    SizedBox(height: 28),
-                    _buildPromoSection(context, isDark, textColor),
-                    SizedBox(height: 80),
+                    SizedBox(height: Get.height * 0.015),
+                    _buildWelcomeCard(isDark, primaryColor),
+                    SizedBox(height: Get.height * 0.035),
+                    _buildSearchBar(isDark, surfaceColor, textColor),
+                    SizedBox(height: Get.height * 0.035),
+                    _buildQuickActions(isDark, surfaceColor, textColor),
+                    SizedBox(height: Get.height * 0.035),
+                    _buildPromoSection(isDark, textColor),
+                    SizedBox(height: Get.height * 0.08),
                   ],
                 ),
               ),
@@ -65,7 +53,6 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildAppBar(
-    BuildContext context,
     bool isDark,
     Color primaryColor,
     Color textColor,
@@ -73,25 +60,23 @@ class HomeScreen extends GetView<HomeController> {
   ) {
     return SliverAppBar(
       floating: true,
-      pinned: false,
       elevation: 0,
-      backgroundColor: isDark ? AppColors.darkBackground : Color(0xFFF7F8FC),
+      backgroundColor:
+          isDark ? AppColors.darkBackground : const Color(0xFFF7F8FC),
       title: Row(
         children: [
           Container(
-            height: 42,
-            width: 42,
+            height: Get.height * 0.06,
+            width: Get.height * 0.06,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
                 colors: [primaryColor, primaryColor.withOpacity(0.8)],
               ),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.person, color: Colors.white),
+            child: const Icon(Icons.person, color: Colors.white),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,7 +92,6 @@ class HomeScreen extends GetView<HomeController> {
                 'Bienvenue sur Tyvaa',
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w400,
                   color: textColor.withOpacity(0.7),
                 ),
               ),
@@ -117,7 +101,7 @@ class HomeScreen extends GetView<HomeController> {
       ),
       actions: [
         Container(
-          margin: EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.only(right: 10),
           decoration: BoxDecoration(
             color: surfaceColor,
             borderRadius: BorderRadius.circular(12),
@@ -125,7 +109,7 @@ class HomeScreen extends GetView<HomeController> {
               BoxShadow(
                 color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
                 blurRadius: 10,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -143,17 +127,10 @@ class HomeScreen extends GetView<HomeController> {
                   onPressed: () => Get.toNamed('/notification'),
                 ),
                 if (hasNotifications)
-                  Positioned(
+                  const Positioned(
                     top: 8,
                     right: 8,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
+                    child: CircleAvatar(radius: 4, backgroundColor: Colors.red),
                   ),
               ],
             );
@@ -163,21 +140,16 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildWelcomeCard(
-    BuildContext context,
-    bool isDark,
-    Color primaryColor,
-  ) {
+  Widget _buildWelcomeCard(bool isDark, Color primaryColor) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: isDark ? Colors.black26 : primaryColor.withOpacity(0.2),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -185,51 +157,36 @@ class HomeScreen extends GetView<HomeController> {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // Background gradient
             Container(
-              height: 160,
+              height: Get.height * 0.2,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [primaryColor, Color(0xFF8A6FFF)],
-                ),
-              ),
-            ),
-
-            // Abstract design elements
-            Positioned(
-              right: -50,
-              top: -30,
-              child: Container(
-                height: 120,
-                width: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
+                  colors: [primaryColor, const Color(0xFF8A6FFF)],
                 ),
               ),
             ),
             Positioned(
-              left: -30,
-              bottom: -40,
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                ),
+              right: -Get.width * 0.1,
+              top: -Get.height * 0.04,
+              child: CircleAvatar(
+                radius: Get.width * 0.15,
+                backgroundColor: Colors.white.withOpacity(0.1),
               ),
             ),
-
-            // Content
+            Positioned(
+              left: -Get.width * 0.08,
+              bottom: -Get.height * 0.05,
+              child: CircleAvatar(
+                radius: Get.width * 0.13,
+                backgroundColor: Colors.white.withOpacity(0.1),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Voyagez avec la communauté',
                     style: TextStyle(
                       color: Colors.white,
@@ -237,7 +194,7 @@ class HomeScreen extends GetView<HomeController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Trouvez facilement des trajets ou proposez les vôtres',
                     style: TextStyle(
@@ -245,11 +202,11 @@ class HomeScreen extends GetView<HomeController> {
                       fontSize: 14,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   InkWell(
                     onTap: () => Get.to(SearchView()),
                     child: Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: 12,
                         horizontal: 20,
                       ),
@@ -260,7 +217,7 @@ class HomeScreen extends GetView<HomeController> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 10,
-                            offset: Offset(0, 5),
+                            offset: const Offset(0, 5),
                           ),
                         ],
                       ),
@@ -283,16 +240,11 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildSearchBar(
-    BuildContext context,
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-  ) {
+  Widget _buildSearchBar(bool isDark, Color surfaceColor, Color textColor) {
     return GestureDetector(
       onTap: () => Get.to(SearchView()),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(16),
@@ -300,14 +252,14 @@ class HomeScreen extends GetView<HomeController> {
             BoxShadow(
               color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
             Icon(Icons.search_rounded, color: textColor.withOpacity(0.6)),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
               'Où souhaitez-vous aller ?',
               style: TextStyle(color: textColor.withOpacity(0.6), fontSize: 14),
@@ -318,12 +270,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildQuickActions(
-    BuildContext context,
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-  ) {
+  Widget _buildQuickActions(bool isDark, Color surfaceColor, Color textColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -335,38 +282,35 @@ class HomeScreen extends GetView<HomeController> {
             color: textColor,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildActionCard(
-              context,
               isDark,
               surfaceColor,
               textColor,
               Icons.add_road_rounded,
               'Publier trajet',
-              Color(0xFF6C63FF),
+              const Color(0xFF6C63FF),
               () {},
             ),
             _buildActionCard(
-              context,
               isDark,
               surfaceColor,
               textColor,
               Icons.history_rounded,
               'Historique',
-              Color(0xFF4ECDC4),
+              const Color(0xFF4ECDC4),
               () {},
             ),
             _buildActionCard(
-              context,
               isDark,
               surfaceColor,
               textColor,
               Icons.support_agent_rounded,
               'Aide',
-              Color(0xFFFF6B6B),
+              const Color(0xFFFF6B6B),
               () => Get.to(() => AideScreen()),
             ),
           ],
@@ -376,7 +320,6 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildActionCard(
-    BuildContext context,
     bool isDark,
     Color surfaceColor,
     Color textColor,
@@ -388,8 +331,8 @@ class HomeScreen extends GetView<HomeController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: (MediaQuery.of(context).size.width - 50) / 3,
-        padding: EdgeInsets.symmetric(vertical: 16),
+        width: Get.width * 0.26,
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(16),
@@ -397,29 +340,24 @@ class HomeScreen extends GetView<HomeController> {
             BoxShadow(
               color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: iconColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor, size: 24),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: textColor,
-              ),
+              style: TextStyle(fontSize: 12, color: textColor),
               textAlign: TextAlign.center,
             ),
           ],
@@ -428,11 +366,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPromoSection(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-  ) {
+  Widget _buildPromoSection(bool isDark, Color textColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -444,9 +378,9 @@ class HomeScreen extends GetView<HomeController> {
             color: textColor,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         SizedBox(
-          height: 180,
+          height: Get.height * 0.23,
           child: PageView.builder(
             controller: controller.bannerController,
             onPageChanged: (index) => controller.currentBanner.value = index,
@@ -464,7 +398,7 @@ class HomeScreen extends GetView<HomeController> {
                               ? Colors.black26
                               : Colors.black.withOpacity(0.1),
                       blurRadius: 15,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
@@ -473,10 +407,7 @@ class HomeScreen extends GetView<HomeController> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Banner image
                       Image.asset(banner['image']!, fit: BoxFit.cover),
-
-                      // Overlay gradient
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -489,8 +420,6 @@ class HomeScreen extends GetView<HomeController> {
                           ),
                         ),
                       ),
-
-                      // Content
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Column(
@@ -498,7 +427,7 @@ class HomeScreen extends GetView<HomeController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 6,
                               ),
@@ -506,7 +435,7 @@ class HomeScreen extends GetView<HomeController> {
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'PROMO',
                                 style: TextStyle(
                                   fontSize: 12,
@@ -515,16 +444,16 @@ class HomeScreen extends GetView<HomeController> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Text(
                               banner['title']!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               banner['subtitle']!,
                               style: TextStyle(
@@ -542,14 +471,14 @@ class HomeScreen extends GetView<HomeController> {
             },
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Center(
           child: Obx(
             () => Row(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(controller.banners.length, (index) {
                 return AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   width: controller.currentBanner.value == index ? 20 : 8,
                   height: 8,
                   margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -557,7 +486,7 @@ class HomeScreen extends GetView<HomeController> {
                     borderRadius: BorderRadius.circular(4),
                     color:
                         controller.currentBanner.value == index
-                            ? Color(0xFF6C63FF)
+                            ? const Color(0xFF6C63FF)
                             : (isDark
                                 ? Colors.grey.shade700
                                 : Colors.grey.shade300),
