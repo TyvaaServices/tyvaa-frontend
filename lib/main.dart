@@ -11,16 +11,8 @@ void main() {
       debugShowCheckedModeBanner: false,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.background,
-        textTheme: TextTheme(bodyMedium: AppTextStyles.subtitle1),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColors.darkBackground,
-        textTheme: TextTheme(bodyMedium: AppTextStyles.subtitle1Dark),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: ThemeMode.system,
     ),
   );
