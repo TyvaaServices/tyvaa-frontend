@@ -157,3 +157,126 @@ class AppTextStyles {
     color: AppColors.textSecondaryDark,
   ); // For dark mode
 }
+
+final ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primaryColor: AppColors.primary,
+  scaffoldBackgroundColor: AppColors.background,
+  cardColor: AppColors.card,
+  dividerColor: AppColors.divider,
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.background,
+    elevation: 0,
+    iconTheme: IconThemeData(color: AppColors.textPrimary),
+    titleTextStyle: TextStyle(
+      color: AppColors.textPrimary,
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  textTheme: TextTheme(
+    displayLarge: TextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+    displayMedium: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+    ),
+    displaySmall: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+    ),
+    titleMedium: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+      color: AppColors.textSecondary,
+    ),
+    titleSmall: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+      color: AppColors.textSecondary,
+    ),
+    bodyLarge: TextStyle(fontSize: 16, color: AppColors.textPrimary),
+    bodyMedium: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+    labelLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textOnPrimary,
+    ),
+    bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+    labelSmall: TextStyle(fontSize: 10, color: AppColors.textSecondary),
+  ),
+  colorScheme: ColorScheme.light(
+    primary: AppColors.primary,
+    secondary: AppColors.accent,
+    error: AppColors.error,
+  ),
+);
+
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: AppColors.primary,
+  scaffoldBackgroundColor: AppColors.darkBackground,
+  cardColor: AppColors.cardDark,
+  dividerColor: AppColors.darkDivider,
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.darkBackground,
+    elevation: 0,
+    iconTheme: IconThemeData(color: AppColors.textPrimaryDark),
+    titleTextStyle: TextStyle(
+      color: AppColors.textPrimaryDark,
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  textTheme: TextTheme(
+    displayLarge: TextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimaryDark,
+    ),
+    displayMedium: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimaryDark,
+    ),
+    displaySmall: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimaryDark,
+    ),
+    titleMedium: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+      color: AppColors.textSecondaryDark,
+    ),
+    titleSmall: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+      color: AppColors.textSecondaryDark,
+    ),
+    bodyLarge: TextStyle(fontSize: 16, color: AppColors.textPrimaryDark),
+    bodyMedium: TextStyle(fontSize: 14, color: AppColors.textSecondaryDark),
+    labelLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textOnPrimary,
+    ),
+    bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondaryDark),
+    labelSmall: TextStyle(fontSize: 10, color: AppColors.textSecondaryDark),
+  ),
+  colorScheme: ColorScheme.dark(
+    primary: AppColors.primary,
+    secondary: AppColors.accent,
+    error: AppColors.error,
+  ),
+);
+
+// Usage in MaterialApp
+// theme: lightTheme,
+// darkTheme: darkTheme,
+// themeMode: ThemeMode.system,
