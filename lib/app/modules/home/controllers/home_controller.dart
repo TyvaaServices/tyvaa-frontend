@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -8,6 +10,8 @@ class HomeController extends GetxController {
   final currentBanner = 0.obs;
   final selectedIndex = 0.obs;
   late Timer _bannerTimer;
+  RxString currentAddress = ''.obs;
+  late StreamSubscription<Position> _positionStream;
 
   final banners = [
     {
@@ -43,6 +47,7 @@ class HomeController extends GetxController {
   // }
   @override
   void onInit() {
+    _determinePosition();
     super.onInit();
     bannerController.addListener(() {
       final page = bannerController.page?.round() ?? 0;
@@ -68,4 +73,38 @@ class HomeController extends GetxController {
   }
 
   void changeTab(int index) => selectedIndex.value = index;
+
+  Future<void> _determinePosition() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        currentAddress.value = 'Services de localisation désactivés';
+        return;
+      }
+
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10, // meters
+        ),
+      ).listen((Position position) async {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        Placemark place = placemarks.first;
+        currentAddress.value =
+            '${place.thoroughfare} ${place.locality}, ${place.country}';
+      });
+    } else {
+      currentAddress.value = 'Localisation refusée';
+    }
+  }
 }
