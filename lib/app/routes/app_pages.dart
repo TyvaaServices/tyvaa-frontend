@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/otp_view.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
@@ -18,8 +19,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
-
+  static const INITIAL = Routes.MAIN;
   static final routes = [
     GetPage(
       name: _Paths.MAIN,
@@ -47,6 +47,13 @@ class AppPages {
       name: _Paths.LOGIN,
       page: () => LoginScreen(),
       binding: AuthenticationBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.AIDE,
+      page: () => AideScreen(),
+      binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
