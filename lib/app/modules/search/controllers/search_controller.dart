@@ -3,152 +3,104 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SearchViewController extends GetxController
-    with GetTickerProviderStateMixin {
-  late TabController tabController;
-  late AnimationController animationController;
-  final TextEditingController searchController = TextEditingController();
+    with GetSingleTickerProviderStateMixin {
+  final TextEditingController destinationController = TextEditingController();
 
-  // Tabs state
-  final selectedTab = 0.obs;
-  final showRecent = true.obs;
+  // Mock data for Senegal locations
+  final List<String> dakarDistricts = [
+    'Plateau',
+    'Médina',
+    'Grand Dakar',
+    'Fann',
+    'Point E',
+    'Ouakam',
+    'Yoff',
+    'Ngor',
+    'Almadies',
+    'Mermoz',
+    'Sacré-Coeur',
+    'Liberté',
+    'HLM',
+    'Sicap',
+    'Parcelles Assainies',
+  ];
 
-  // Location lists
-  final List<String> allRegions = [
-    'Dakar',
+  final List<String> senegalCities = [
     'Saint-Louis',
     'Thiès',
+    'Rufisque',
     'Kaolack',
     'Ziguinchor',
+    'Touba',
     'Tambacounda',
-    'Louga',
-    'Fatick',
     'Kolda',
-    'Matam',
-    'Kaffrine',
-    'Sédhiou',
-    'Kédougou',
+    'Mbour',
     'Diourbel',
+    'Louga',
+    'Matam',
+    'Kédougou',
+    'Fatick',
+    'Sédhiou',
   ];
 
-  final List<String> allDistricts = [
-    'Médina',
-    'Pikine',
-    'Guédiawaye',
-    'Parcelles Assainies',
-    'Yoff',
-    'Almadies',
-    'Plateau',
-    'Fann',
-    'Grand Dakar',
-    'Ouakam',
-    'Ngor',
-    'Liberté',
-    'Sicap',
+  final List<String> popularRoutes = [
+    'Dakar → Saint-Louis',
+    'Dakar → Mbour',
+    'Plateau → Yoff',
+    'Dakar → Saly',
+    'Médina → Almadies',
   ];
 
-  // Filtered results
-  final filteredLong = <String>[].obs;
-  final filteredLocal = <String>[].obs;
+  bool isLongDistance(String destination) {
+    // If destination is a Dakar district, it's not long distance
+    if (dakarDistricts.any(
+      (district) => destination.toLowerCase().contains(district.toLowerCase()),
+    )) {
+      return false;
+    }
 
-  // Recent searches
-  final recentSearches =
-      <String>['Dakar → Thiès', 'Pikine → Médina', 'Saint-Louis → Dakar'].obs;
+    // If destination is another city, it's long distance
+    if (senegalCities.any(
+      (city) => destination.toLowerCase().contains(city.toLowerCase()),
+    )) {
+      return true;
+    }
 
-  // Popular items
-  List<String> get popularRegions => allRegions.take(5).toList();
+    // Default: if text is long, assume it might be long distance
+    return destination.length > 6;
+  }
 
-  List<String> get popularDistricts => allDistricts.take(5).toList();
+  // Filter locations based on search query
+  List<String> getFilteredLocations(String query) {
+    query = query.toLowerCase();
+
+    List<String> results = [];
+
+    // Add matching Dakar districts
+    results.addAll(
+      dakarDistricts
+          .where((district) => district.toLowerCase().contains(query))
+          .map((district) => district + ', Dakar'),
+    );
+
+    // Add matching Senegal cities
+    results.addAll(
+      senegalCities
+          .where((city) => city.toLowerCase().contains(query))
+          .map((city) => city + ', Sénégal'),
+    );
+
+    return results;
+  }
 
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(_handleTabSelection);
-
-    animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    searchController.addListener(_handleSearchChanged);
-
-    // Initialize filtered lists
-    filteredLong.value = allRegions;
-    filteredLocal.value = allDistricts;
-
-    animationController.forward();
   }
 
   @override
   void onClose() {
-    tabController.removeListener(_handleTabSelection);
-    tabController.dispose();
-    animationController.dispose();
-    searchController.removeListener(_handleSearchChanged);
-    searchController.dispose();
+    destinationController.dispose();
     super.onClose();
-  }
-
-  void _handleTabSelection() {
-    selectedTab.value = tabController.index;
-    if (searchController.text.isNotEmpty) {
-      searchController.clear();
-      showRecent.value = true;
-    }
-  }
-
-  void _handleSearchChanged() {
-    filterLocations(searchController.text);
-  }
-
-  void filterLocations(String query) {
-    showRecent.value = query.isEmpty;
-
-    if (selectedTab.value == 0) {
-      filteredLong.value =
-          allRegions
-              .where((r) => r.toLowerCase().contains(query.toLowerCase()))
-              .toList();
-    } else {
-      filteredLocal.value =
-          allDistricts
-              .where((d) => d.toLowerCase().contains(query.toLowerCase()))
-              .toList();
-    }
-
-    if (query.isNotEmpty) {
-      animationController.reset();
-      animationController.forward();
-    }
-  }
-
-  void clearRecentSearches() {
-    recentSearches.clear();
-  }
-
-  void selectRecentSearch(String search) {
-    final parts = search.split(' → ');
-    if (parts.length == 2) {
-      Get.toNamed(
-        '/search-results',
-        arguments: {'from': parts[0], 'to': parts[1]},
-      );
-    }
-  }
-
-  void selectPopularItem(String item) {
-    if (selectedTab.value == 0) {
-      Get.toNamed('/search-results', arguments: item);
-    } else {
-      Get.toNamed(
-        '/search-results',
-        arguments: {'district': item, 'city': 'Dakar'},
-      );
-    }
-    final searchText = 'Dakar → $item';
-    if (!recentSearches.contains(searchText)) {
-      recentSearches.insert(0, searchText);
-      if (recentSearches.length > 5) recentSearches.removeLast();
-    }
   }
 }
