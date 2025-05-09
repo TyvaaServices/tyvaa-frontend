@@ -39,6 +39,56 @@ class OnboardingScreen extends StatelessWidget {
             itemBuilder:
                 (_, index) => _buildPage(index, titleStyle, subtitleStyle),
           ),
+
+          // ======== Bouton "Passer" ========
+          Positioned(
+            top: 50,
+            right: 24,
+            child: Obx(
+              () =>
+                  _currentPage.value < 2
+                      ? GestureDetector(
+                        onTap: () {
+                          _controller.animateToPage(
+                            2,
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                brightness == Brightness.dark
+                                    ? const Color(0xFF343438)
+                                    : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            'Passer',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      )
+                      : const SizedBox(),
+            ),
+          ),
+
+          // ======== Indicateur de page & bouton suivant/commencer ========
           Positioned(
             bottom: 24,
             left: 24,
@@ -75,7 +125,7 @@ class OnboardingScreen extends StatelessWidget {
                       } else {
                         Get.offAllNamed('/login');
                       }
-                    }, // Adjust button text color
+                    },
                   ),
                 ],
               ),
