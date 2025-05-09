@@ -68,6 +68,7 @@ class HomeScreen extends GetView<HomeController> {
       surfaceTintColor: Colors.transparent,
       floating: true,
       elevation: 0,
+      toolbarHeight: 80,
       backgroundColor:
           isDark ? AppColors.darkBackground : const Color(0xFFF7F8FC),
       title: Row(
@@ -119,6 +120,15 @@ class HomeScreen extends GetView<HomeController> {
                 style: TextStyle(
                   fontSize: 12,
                   color: textColor.withOpacity(0.7),
+                ),
+              ),
+              Obx(
+                () => Text(
+                  controller.currentAddress.value,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: textColor.withOpacity(0.6),
+                  ),
                 ),
               ),
             ],
