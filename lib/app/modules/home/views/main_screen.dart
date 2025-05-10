@@ -10,14 +10,7 @@ import '../controllers/home_controller.dart';
 import 'home_view.dart';
 
 class MainScreen extends GetView<HomeController> {
-  final List<Widget> pages = [
-    HomeScreen(key: ValueKey('home')),
-    DriverTrajetScreen(key: ValueKey('trajets')),
-    const ChooseChatbotScreen(key: ValueKey('chat')),
-    const ProfileScreen(key: ValueKey('profile')),
-  ];
-
-  MainScreen({super.key});
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +37,19 @@ class MainScreen extends GetView<HomeController> {
             ? AppColors.background
             : AppColors.background;
 
-    return Obx(
-      () => Scaffold(
+    return Obx(() {
+      final List<Widget> pages = [
+        HomeScreen(key: const ValueKey('home')),
+        controller.isDriver.value
+            ? DriverTrajetScreen(key: const ValueKey('trajets'))
+            : HistoriqueScreen(key: const ValueKey('historique')),
+        const ChooseChatbotScreen(key: ValueKey('chat')),
+        const ProfileScreen(key: ValueKey('profile')),
+      ];
+
+      return Scaffold(
         body: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -67,12 +69,22 @@ class MainScreen extends GetView<HomeController> {
               selectedIcon: Icon(Icons.home, color: selectedIconColor),
             ),
             BottomBarItem(
-              icon: Icon(Icons.directions_car_outlined, color: iconColor),
-              title: Text('Trajets', style: TextStyle(color: selectedColor)),
+              icon: Icon(
+                controller.isDriver.value
+                    ? Icons.directions_car_outlined
+                    : Icons.history_outlined,
+                color: iconColor,
+              ),
+              title: Text(
+                controller.isDriver.value ? 'Trajets' : 'Historique',
+                style: TextStyle(color: selectedColor),
+              ),
               backgroundColor: bottomNavBackgroundColor,
               selectedColor: selectedIconColor,
               selectedIcon: Icon(
-                Icons.directions_car,
+                controller.isDriver.value
+                    ? Icons.directions_car
+                    : Icons.history,
                 color: selectedIconColor,
               ),
             ),
@@ -92,7 +104,16 @@ class MainScreen extends GetView<HomeController> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
+  }
+}
+
+class HistoriqueScreen extends GetView<HomeController> {
+  const HistoriqueScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Historique'));
   }
 }
