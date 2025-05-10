@@ -28,6 +28,8 @@ dependencies:
   intl: ^0.20.2
   http: ^1.4.0
   shared_preferences: ^2.5.3
+  flutter_speed_dial: ^7.0.0
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:
