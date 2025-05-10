@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/trajet_view.dart';
 import 'package:passenger_tyvaa/app/modules/profile/views/profile_view.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
@@ -11,7 +12,7 @@ import 'home_view.dart';
 class MainScreen extends GetView<HomeController> {
   final List<Widget> pages = [
     HomeScreen(key: ValueKey('home')),
-    HomeScreen(key: ValueKey('trajets')),
+    DriverTrajetScreen(key: ValueKey('trajets')),
     const ChooseChatbotScreen(key: ValueKey('chat')),
     const ProfileScreen(key: ValueKey('profile')),
   ];

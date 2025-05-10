@@ -17,5 +17,9 @@ class HomeBinding extends Bindings {
       fenix: true,
       () => SearchViewController(),
     );
+    Get.lazyPut<SearchViewController>(
+      fenix: true,
+      () => SearchViewController(),
+    );
   }
 }
