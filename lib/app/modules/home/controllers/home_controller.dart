@@ -12,6 +12,7 @@ class HomeController extends GetxController {
   late Timer _bannerTimer;
   RxString currentAddress = ''.obs;
   late StreamSubscription<Position> _positionStream;
+  RxBool isDriver = false.obs;
 
   final banners = [
     {
