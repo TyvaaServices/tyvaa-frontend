@@ -15,9 +15,11 @@ class LocationSearchModal extends GetView<SearchViewController> {
     final textColor =
         isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
     final backgroundColor =
-        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE);
+        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FB);
     final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
+
     controller.forceFocus();
+
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
       minChildSize: 0.5,
@@ -26,54 +28,61 @@ class LocationSearchModal extends GetView<SearchViewController> {
       builder: (context, scrollController) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            return SafeArea(
-              top: false,
+            return SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Container(
                 height: constraints.maxHeight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: backgroundColor,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
-                    Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                    _buildDragHandle(isDark),
                     Expanded(
-                      child: ListView(
-                        controller: scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          _buildHeader(textColor),
-                          _buildSearchFields(
-                            isDark,
-                            surfaceColor,
-                            textColor,
-                            primaryColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Obx(
+                          () => ListView(
+                            controller: scrollController,
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              _buildHeader(textColor),
+                              _buildSearchFields(
+                                isDark,
+                                surfaceColor,
+                                textColor,
+                                primaryColor,
+                              ),
+                              const SizedBox(height: 24),
+
+                              // Show either search results or recent destinations
+                              controller.isSearching.value
+                                  ? _buildSearchResults(
+                                    isDark,
+                                    surfaceColor,
+                                    textColor,
+                                  )
+                                  : _buildRecentDestinations(
+                                    isDark,
+                                    surfaceColor,
+                                    textColor,
+                                    primaryColor,
+                                  ),
+
+                              const SizedBox(height: 20),
+                            ],
                           ),
-                          const SizedBox(height: 24),
-                          _buildRecentDestinations(
-                            isDark,
-                            surfaceColor,
-                            textColor,
-                            primaryColor,
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                        ),
                       ),
                     ),
                   ],
@@ -86,18 +95,49 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
+  Widget _buildDragHandle(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: Container(
+          width: 40,
+          height: 5,
+          decoration: BoxDecoration(
+            color: isDark ? Colors.grey[700] : Colors.grey[300],
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeader(Color textColor) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              "Entrez votre trajet",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+          Text(
+            "Planifiez votre trajet",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => Get.back(),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: textColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close_rounded,
+                color: textColor.withOpacity(0.8),
+                size: 20,
               ),
             ),
           ),
@@ -113,80 +153,170 @@ class LocationSearchModal extends GetView<SearchViewController> {
     Color primaryColor,
   ) {
     return Hero(
-      key: const Key('search_bar'),
       tag: 'search_bar',
       child: Container(
         decoration: BoxDecoration(
           color: surfaceColor,
-          borderRadius: BorderRadius.circular(22),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              isDark ? const Color(0xFF252543) : Colors.white,
-              isDark ? const Color(0xFF1E1E2E) : const Color(0xFFF8F9FE),
-            ],
-          ),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+              color: isDark ? Colors.black26 : Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: SingleChildScrollView(
+        child: Material(
+          color: Colors.transparent,
           child: Column(
             children: [
-              _buildLocationField(
-                controller: controller.currentLocationController,
-                icon: Icons.my_location_rounded,
-                iconColor: Colors.blue,
-                textColor: textColor,
-                isDark: isDark,
-                isFirst: true,
-                onTap: () {
-                  controller
-                      .currentLocationController
-                      .selection = TextSelection(
-                    baseOffset: 0,
-                    extentOffset:
-                        controller.currentLocationController.text.length,
-                  );
-                },
+              // Origin field
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildLocationIcon(
+                      color: Colors.blue,
+                      icon: Icons.my_location_rounded,
+                      isDark: isDark,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: controller.currentLocationController,
+                        focusNode: controller.currentLocationFocusNode,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Votre position actuelle',
+                          hintStyle: TextStyle(
+                            color: textColor.withOpacity(0.5),
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Swap button
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        controller.swapLocations();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(right: 10),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.swap_vert_rounded,
+                          color: primaryColor,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+
+              // Divider
               Padding(
                 padding: const EdgeInsets.only(left: 60),
                 child: Divider(
                   height: 1,
-                  color: isDark ? Colors.white24 : Colors.black12,
+                  color:
+                      isDark ? Colors.white12 : Colors.black.withOpacity(0.08),
                 ),
               ),
-              _buildLocationField(
-                controller: controller.destinationController,
-                icon: Icons.location_on_rounded,
-                iconColor: primaryColor,
-                textColor: textColor,
-                isDark: isDark,
-                isFirst: false,
-                focusNode: controller.destinationFocusNode,
-                hintText: 'Où souhaitez-vous aller ?',
-                trailingWidget: GestureDetector(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.place_outlined,
+
+              // Destination field
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildLocationIcon(
                       color: primaryColor,
-                      size: 18,
+                      icon: Icons.place_rounded,
+                      isDark: isDark,
                     ),
-                  ),
+                    Expanded(
+                      child: TextField(
+                        controller: controller.destinationController,
+                        focusNode: controller.destinationFocusNode,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Où souhaitez-vous aller ?',
+                          hintStyle: TextStyle(
+                            color: textColor.withOpacity(0.5),
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Clear or Map button
+                    Obx(
+                      () =>
+                          controller.showClearButton.value
+                              ? GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                  controller.clearDestination();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  margin: const EdgeInsets.only(right: 10),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isDark
+                                            ? Colors.white12
+                                            : Colors.black.withOpacity(0.05),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    color: textColor.withOpacity(0.5),
+                                    size: 18,
+                                  ),
+                                ),
+                              )
+                              : GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.mediumImpact();
+                                  // Open map selection
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  margin: const EdgeInsets.only(right: 10),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    Icons.map_rounded,
+                                    color: primaryColor,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -196,54 +326,107 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildLocationField({
-    required TextEditingController controller,
+  Widget _buildLocationIcon({
+    required Color color,
     required IconData icon,
-    required Color iconColor,
-    required Color textColor,
     required bool isDark,
-    required bool isFirst,
-    FocusNode? focusNode,
-    String? hintText,
-    VoidCallback? onTap,
-    Widget? trailingWidget,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Material(
-        child: TextField(
-          controller: controller,
-          focusNode: focusNode,
-          onTap: onTap,
-          style: TextStyle(color: textColor, fontSize: 16),
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: TextStyle(
-              color: textColor.withOpacity(0.5),
-              fontSize: 16,
-            ),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor, size: 20),
-              ),
-            ),
-            suffixIcon:
-                trailingWidget != null
-                    ? Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: trailingWidget,
-                    )
-                    : null,
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 18),
+    return Container(
+      width: 60,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            shape: BoxShape.circle,
           ),
+          child: Icon(icon, color: color, size: 18),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(bool isDark, Color surfaceColor, Color textColor) {
+    return Obx(
+      () =>
+          controller.searchResults.isEmpty
+              ? _buildNoResultsFound(textColor)
+              : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.search_rounded,
+                          size: 16,
+                          color: textColor.withOpacity(0.6),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Résultats de recherche",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: textColor.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ...controller.searchResults.map((result) {
+                    final location = controller.recentLocations.firstWhere(
+                      (loc) => loc.title == result,
+                      orElse:
+                          () => RecentLocation(
+                            result,
+                            "Adresse non disponible",
+                            Icons.place_outlined,
+                          ),
+                    );
+
+                    return _buildDestinationItem(
+                      location.title,
+                      location.subtitle,
+                      location.icon,
+                      textColor,
+                      isDark,
+                    );
+                  }).toList(),
+                ],
+              ),
+    );
+  }
+
+  Widget _buildNoResultsFound(Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            size: 60,
+            color: textColor.withOpacity(0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Aucun résultat trouvé",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: textColor.withOpacity(0.7),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Essayez de modifier votre recherche ou utilisez la carte",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.5)),
+          ),
+        ],
       ),
     );
   }
@@ -257,131 +440,141 @@ class LocationSearchModal extends GetView<SearchViewController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Destinations récentes",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: textColor,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Row(
+            children: [
+              Icon(
+                Icons.history_rounded,
+                size: 16,
+                color: textColor.withOpacity(0.6),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "Destinations récentes",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor.withOpacity(0.6),
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () {
+                  // Clear history action
+                  HapticFeedback.lightImpact();
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  "Effacer",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
-        _buildRecentDestinationItem(
-          "Centre Commercial Cap 3000",
-          "Avenue Eugène Donadeï, Saint-Laurent-du-Var",
-          Icons.shopping_bag_outlined,
-          textColor,
-          isDark,
-        ),
-        _buildRecentDestinationItem(
-          "Aéroport Nice Côte d'Azur",
-          "Rue Costes et Bellonte, Nice",
-          Icons.flight_outlined,
-          textColor,
-          isDark,
-        ),
-        _buildRecentDestinationItem(
-          "Gare SNCF de Nice Ville",
-          "Avenue Thiers, Nice",
-          Icons.train_outlined,
-          textColor,
-          isDark,
-        ),
-        _buildRecentDestinationItem(
-          "Promenade des Anglais",
-          "Nice",
-          Icons.beach_access_outlined,
-          textColor,
-          isDark,
-        ),
-        _buildRecentDestinationItem(
-          "Place Masséna",
-          "Centre-ville, Nice",
-          Icons.location_city_outlined,
-          textColor,
-          isDark,
-        ),
+        ...controller.recentLocations.map((location) {
+          return _buildDestinationItem(
+            location.title,
+            location.subtitle,
+            location.icon,
+            textColor,
+            isDark,
+          );
+        }).toList(),
       ],
     );
   }
 
-  Widget _buildRecentDestinationItem(
+  Widget _buildDestinationItem(
     String title,
     String subtitle,
     IconData icon,
     Color textColor,
     bool isDark,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF252543) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black12 : Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          controller.destinationController.text = title;
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color:
-                      isDark
-                          ? const Color(0xFF1E1E2E)
-                          : const Color(0xFFF0F2F8),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: isDark ? Colors.white70 : Colors.black54,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: textColor,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            controller.selectDestination(title);
+          },
+          borderRadius: BorderRadius.circular(14),
+          child: Ink(
+            decoration: BoxDecoration(
+              color:
+                  isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color:
+                          isDark
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.black.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: textColor.withOpacity(0.6),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    child: Icon(
+                      icon,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      size: 20,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: textColor.withOpacity(0.6),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: textColor.withOpacity(0.3),
+                    size: 14,
+                  ),
+                ],
               ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: textColor.withOpacity(0.3),
-                size: 14,
-              ),
-            ],
+            ),
           ),
         ),
       ),
