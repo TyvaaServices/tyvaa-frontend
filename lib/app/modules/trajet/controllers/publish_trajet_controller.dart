@@ -6,6 +6,7 @@ class PublishTrajetController extends GetxController {
   final dateTime = Rxn<DateTime>();
   final places = 1.obs;
   final comment = ''.obs;
+  final price = '2500'.obs; // ✅ Ajouté
 
   void publishTrajet() {
     print("🚗 Trajet publié !");
@@ -13,6 +14,7 @@ class PublishTrajetController extends GetxController {
     print("À : ${destination.value}");
     print("Quand : ${dateTime.value}");
     print("Places : ${places.value}");
+    print("Prix : ${price.value} FCFA"); // ✅ Affiche aussi le prix
     print("Commentaire : ${comment.value}");
 
     Get.snackbar(
