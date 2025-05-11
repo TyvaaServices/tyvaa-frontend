@@ -1,106 +1,109 @@
-// search_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchViewController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+class SearchViewController extends GetxController {
+  final TextEditingController currentLocationController = TextEditingController(
+    text: "Votre position actuelle",
+  );
   final TextEditingController destinationController = TextEditingController();
 
-  // Mock data for Senegal locations
-  final List<String> dakarDistricts = [
-    'Plateau',
-    'Médina',
-    'Grand Dakar',
-    'Fann',
-    'Point E',
-    'Ouakam',
-    'Yoff',
-    'Ngor',
-    'Almadies',
-    'Mermoz',
-    'Sacré-Coeur',
-    'Liberté',
-    'HLM',
-    'Sicap',
-    'Parcelles Assainies',
+  final FocusNode currentLocationFocusNode = FocusNode();
+  final FocusNode destinationFocusNode = FocusNode();
+
+  final RxBool isSearching = false.obs;
+  final RxList<String> searchResults = <String>[].obs;
+  final RxBool showClearButton = false.obs;
+
+  final List<RecentLocation> recentLocations = [
+    RecentLocation(
+      "Sandaga",
+      "Avenue Lamine Gueye, Dakar",
+      Icons.shopping_bag_outlined,
+    ),
+    RecentLocation(
+      "Aéroport International Blaise Diagne",
+      "Diass, Dakar",
+      Icons.flight_outlined,
+    ),
+    RecentLocation("Gare de Dakar", "Plateau, Dakar", Icons.train_outlined),
+    RecentLocation("Plage de Ngor", "Ngor, Dakar", Icons.beach_access_outlined),
+    RecentLocation(
+      "Place de l'Indépendance",
+      "Centre-ville, Dakar",
+      Icons.location_city_outlined,
+    ),
   ];
-
-  final List<String> senegalCities = [
-    'Saint-Louis',
-    'Thiès',
-    'Rufisque',
-    'Kaolack',
-    'Ziguinchor',
-    'Touba',
-    'Tambacounda',
-    'Kolda',
-    'Mbour',
-    'Diourbel',
-    'Louga',
-    'Matam',
-    'Kédougou',
-    'Fatick',
-    'Sédhiou',
-  ];
-
-  final List<String> popularRoutes = [
-    'Dakar → Saint-Louis',
-    'Dakar → Mbour',
-    'Plateau → Yoff',
-    'Dakar → Saly',
-    'Médina → Almadies',
-  ];
-
-  bool isLongDistance(String destination) {
-    // If destination is a Dakar district, it's not long distance
-    if (dakarDistricts.any(
-      (district) => destination.toLowerCase().contains(district.toLowerCase()),
-    )) {
-      return false;
-    }
-
-    // If destination is another city, it's long distance
-    if (senegalCities.any(
-      (city) => destination.toLowerCase().contains(city.toLowerCase()),
-    )) {
-      return true;
-    }
-
-    // Default: if text is long, assume it might be long distance
-    return destination.length > 6;
-  }
-
-  // Filter locations based on search query
-  List<String> getFilteredLocations(String query) {
-    query = query.toLowerCase();
-
-    List<String> results = [];
-
-    // Add matching Dakar districts
-    results.addAll(
-      dakarDistricts
-          .where((district) => district.toLowerCase().contains(query))
-          .map((district) => district + ', Dakar'),
-    );
-
-    // Add matching Senegal cities
-    results.addAll(
-      senegalCities
-          .where((city) => city.toLowerCase().contains(query))
-          .map((city) => city + ', Sénégal'),
-    );
-
-    return results;
-  }
 
   @override
   void onInit() {
     super.onInit();
+    setupListeners();
+    forceFocus();
+  }
+
+  void setupListeners() {
+    // Monitor text changes to show clear button when appropriate
+    destinationController.addListener(() {
+      showClearButton.value = destinationController.text.isNotEmpty;
+
+      // Simple search simulation
+      if (destinationController.text.isNotEmpty) {
+        isSearching.value = true;
+        // Simulated search results - in a real app would call an API
+        searchResults.value =
+            recentLocations
+                .where(
+                  (location) => location.title.toLowerCase().contains(
+                    destinationController.text.toLowerCase(),
+                  ),
+                )
+                .map((e) => e.title)
+                .toList();
+      } else {
+        isSearching.value = false;
+        searchResults.clear();
+      }
+    });
+  }
+
+  void forceFocus() {
+    Future.delayed(const Duration(milliseconds: 800), () {
+      destinationFocusNode.requestFocus();
+    });
+  }
+
+  void clearDestination() {
+    destinationController.clear();
+    destinationFocusNode.requestFocus();
+  }
+
+  void swapLocations() {
+    if (destinationController.text.isNotEmpty) {
+      final temp = currentLocationController.text;
+      currentLocationController.text = destinationController.text;
+      destinationController.text = temp;
+    }
+  }
+
+  void selectDestination(String destination) {
+    destinationController.text = destination;
+    destinationFocusNode.unfocus();
   }
 
   @override
   void onClose() {
+    currentLocationController.dispose();
     destinationController.dispose();
+    currentLocationFocusNode.dispose();
+    destinationFocusNode.dispose();
     super.onClose();
   }
+}
+
+class RecentLocation {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  RecentLocation(this.title, this.subtitle, this.icon);
 }

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/splash_controller.dart';
+import 'package:passenger_tyvaa/app/modules/home/views/trajet_view.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 
 import '../../auth/controllers/login_controller.dart';
@@ -17,5 +18,10 @@ class HomeBinding extends Bindings {
       fenix: true,
       () => SearchViewController(),
     );
+    Get.lazyPut<SearchViewController>(
+      fenix: true,
+      () => SearchViewController(),
+    );
+    Get.lazyPut<DriverController>(fenix: true, () => DriverController());
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
-import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+
+import '../../search/views/search_page.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
@@ -25,10 +28,10 @@ class HomeScreen extends GetView<HomeController> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
+      floatingActionButton: _buildSpeedDial(isDark, primaryColor, surfaceColor),
       body: SafeArea(
         child: Stack(
           children: [
-            // Background design elements
             Positioned(
               top: -100,
               right: -50,
@@ -75,8 +78,7 @@ class HomeScreen extends GetView<HomeController> {
                           context,
                         ),
                         SizedBox(height: Get.height * 0.035),
-                        _buildQuickActions(isDark, surfaceColor, textColor),
-                        SizedBox(height: Get.height * 0.035),
+                        // Quick Actions section removed
                         _buildRecentTripSection(
                           isDark,
                           surfaceColor,
@@ -94,6 +96,66 @@ class HomeScreen extends GetView<HomeController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSpeedDial(bool isDark, Color primaryColor, Color surfaceColor) {
+    return SpeedDial(
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      spacing: 3,
+      childPadding: const EdgeInsets.all(5),
+      spaceBetweenChildren: 4,
+      elevation: 8.0,
+      animationCurve: Curves.elasticInOut,
+      animationDuration: const Duration(milliseconds: 300),
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+      activeBackgroundColor: surfaceColor,
+      activeForegroundColor: primaryColor,
+      buttonSize: const Size(60, 60),
+      childrenButtonSize: const Size(56, 56),
+      overlayColor: Colors.black,
+      overlayOpacity: 0.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      children: [
+        SpeedDialChild(
+          child: const Icon(Icons.add_road_rounded),
+          backgroundColor: const Color(0xFF6C63FF),
+          foregroundColor: Colors.white,
+          label: 'Publier trajet',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          labelBackgroundColor: surfaceColor,
+          onTap: () => Get.toNamed('/publier-trajet'),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.history_rounded),
+          backgroundColor: const Color(0xFF4ECDC4),
+          foregroundColor: Colors.white,
+          label: 'Historique des trajets',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          labelBackgroundColor: surfaceColor,
+          onTap: () {},
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.support_agent_rounded),
+          backgroundColor: const Color(0xFFFF6B6B),
+          foregroundColor: Colors.white,
+          label: 'Centre d\'aide',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          labelBackgroundColor: surfaceColor,
+          onTap: () => Get.toNamed(Routes.AIDE),
+        ),
+      ],
     );
   }
 
@@ -133,20 +195,23 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(13),
-                child:
-                    profileController.profileImage.value != null
-                        ? Image(
-                          image: FileImage(
-                            profileController.profileImage.value!,
+              child: GestureDetector(
+                onTap: () => controller.changeTab(3),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
+                  child:
+                      profileController.profileImage.value != null
+                          ? Image(
+                            image: FileImage(
+                              profileController.profileImage.value!,
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                          : Image.asset(
+                            'assets/images/default_profile.png',
+                            fit: BoxFit.cover,
                           ),
-                          fit: BoxFit.cover,
-                        )
-                        : Image.asset(
-                          'assets/images/default_profile.png',
-                          fit: BoxFit.cover,
-                        ),
+                ),
               ),
             ),
           ),
@@ -369,6 +434,8 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
+  // Replace your existing _buildSearchBar function with this updated version
+  // Replace your existing _buildSearchBar function with this updated version
   Widget _buildSearchBar(
     bool isDark,
     Color surfaceColor,
@@ -376,16 +443,41 @@ class HomeScreen extends GetView<HomeController> {
     BuildContext context,
   ) {
     return Hero(
+      key: const Key('search_bar'),
+      transitionOnUserGestures: true,
       tag: 'search_bar',
       child: Material(
         color: Colors.transparent,
         child: GestureDetector(
-          onTap: () => _animateToSearchScreen(context),
+          onTap:
+              () => showMaterialModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                builder: (context) => LocationSearchModal(),
+                enableDrag: true,
+                bounce: true,
+                duration: const Duration(milliseconds: 400),
+                barrierColor: Colors.black54,
+                elevation: 0,
+                expand: false,
+                isDismissible: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+              ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
               color: surfaceColor,
               borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  isDark ? const Color(0xFF252543) : Colors.white,
+                  isDark ? const Color(0xFF1E1E2E) : const Color(0xFFF8F9FE),
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
                   color:
@@ -427,125 +519,6 @@ class HomeScreen extends GetView<HomeController> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  void _animateToSearchScreen(BuildContext context) {
-    // This creates a smoother transition to the search screen
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SearchView(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = const Offset(0.0, 0.05);
-          var end = Offset.zero;
-          var curve = Curves.easeInOutCubic;
-          var tween = Tween(
-            begin: begin,
-            end: end,
-          ).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: FadeTransition(opacity: animation, child: child),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 400),
-      ),
-    );
-  }
-
-  Widget _buildQuickActions(bool isDark, Color surfaceColor, Color textColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Actions rapides',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildActionCard(
-              isDark,
-              surfaceColor,
-              textColor,
-              Icons.add_road_rounded,
-              'Publier\ntrajet',
-              const Color(0xFF6C63FF),
-              () => Get.toNamed('/publier-trajet'),
-            ),
-            _buildActionCard(
-              isDark,
-              surfaceColor,
-              textColor,
-              Icons.history_rounded,
-              'Historique\ndes trajets',
-              const Color(0xFF4ECDC4),
-              () {},
-            ),
-            _buildActionCard(
-              isDark,
-              surfaceColor,
-              textColor,
-              Icons.support_agent_rounded,
-              'Centre\nd\'aide',
-              const Color(0xFFFF6B6B),
-              () => Get.toNamed(Routes.AIDE),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionCard(
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-    IconData icon,
-    String label,
-    Color iconColor,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: Get.width * 0.28,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: surfaceColor,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: iconColor, size: 24),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12, color: textColor, height: 1.2),
-              textAlign: TextAlign.center,
-            ),
-          ],
         ),
       ),
     );
