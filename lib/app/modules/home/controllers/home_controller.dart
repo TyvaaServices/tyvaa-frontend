@@ -12,7 +12,7 @@ class HomeController extends GetxController {
   late Timer _bannerTimer;
   RxString currentAddress = ''.obs;
   late StreamSubscription<Position> _positionStream;
-  RxBool isDriver = false.obs;
+  RxBool isDriver = true.obs;
 
   final banners = [
     {
@@ -71,6 +71,47 @@ class HomeController extends GetxController {
     _bannerTimer.cancel();
     bannerController.dispose();
     super.onClose();
+  }
+
+  // New properties for the redesigned HomeScreen
+  final isPassengerMode = true.obs;
+  final isDriverOnline = false.obs;
+
+  // New methods for the redesigned HomeScreen
+  void setPassengerMode() {
+    isPassengerMode.value = true;
+  }
+
+  void setDriverMode() {
+    isPassengerMode.value = false;
+  }
+
+  void toggleDriverOnline() {
+    isDriverOnline.value = !isDriverOnline.value;
+    // Here you can add code to actually go online/offline
+    if (isDriverOnline.value) {
+      Get.snackbar(
+        'En ligne',
+        'Vous êtes maintenant disponible pour recevoir des demandes de trajet',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Get.theme.colorScheme.primary,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 16,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      );
+    } else {
+      Get.snackbar(
+        'Hors ligne',
+        'Vous n\'êtes plus disponible pour recevoir des demandes',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.grey,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 16,
+        icon: const Icon(Icons.offline_bolt, color: Colors.white),
+      );
+    }
   }
 
   void changeTab(int index) => selectedIndex.value = index;

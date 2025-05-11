@@ -41,7 +41,7 @@ class MainScreen extends GetView<HomeController> {
       final List<Widget> pages = [
         HomeScreen(key: const ValueKey('home')),
         controller.isDriver.value
-            ? DriverTrajetScreen(key: const ValueKey('trajets'))
+            ? DriverHomeView(key: const ValueKey('trajets'))
             : HistoriqueScreen(key: const ValueKey('historique')),
         const ChooseChatbotScreen(key: ValueKey('chat')),
         const ProfileScreen(key: ValueKey('profile')),
