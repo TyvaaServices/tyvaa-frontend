@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../../../api/api_client.dart';
+
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
@@ -23,6 +25,8 @@ class LoginController extends GetxController
 
   bool get isValid => unmasked.value.length == 9;
   final phoneFocus = FocusNode();
+
+  final _apiClient = ApiClient();
 
   @override
   void onInit() {
@@ -74,9 +78,20 @@ class LoginController extends GetxController
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    isLoading.value = false;
 
-    Get.toNamed('/otp');
+    try {
+      final response = await _apiClient.dio.post(
+        '/login',
+        data: {'phoneNumber': unmasked.value},
+      );
+
+      final data = response.data;
+
+      Get.toNamed('/otp', arguments: data['otp']);
+    } catch (e) {
+      Get.snackbar('Error', 'Login failed. Please try again.');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

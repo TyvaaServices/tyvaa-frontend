@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'app/routes/app_pages.dart';
 import 'app/themes/tyvaa_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     GetMaterialApp(
       title: "Tyvaa",
