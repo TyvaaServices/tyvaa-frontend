@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
 class SplashController extends GetxController {
   final RxDouble visibility = 0.0.obs;
@@ -12,17 +14,20 @@ class SplashController extends GetxController {
     _animate();
   }
 
+  @override
+  Future<void> onReady() async {
+    super.onReady();
+
+    final secureStorage = const FlutterSecureStorage();
+    final token = await secureStorage.read(key: 'auth_token');
+
+    if (token != null) {
+      Get.offAllNamed(Routes.MAIN);
+    }
+  }
+
   void _animate() async {
-    await Future.delayed(Duration(milliseconds: 100));
-    visibility.value = 1.0;
-
     await Future.delayed(Duration(milliseconds: 300));
-    letterSpacing.value = 2.0;
-
-    await Future.delayed(Duration(milliseconds: 800));
-
-    visibility.value = 0.0;
-    await Future.delayed(Duration(milliseconds: 300));
-    Get.offAllNamed('/onboarding');
+    // Get.offAllNamed('/onboarding');
   }
 }

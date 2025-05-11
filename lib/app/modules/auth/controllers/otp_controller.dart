@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../../../api/api_client.dart';
 import '../../../constants/app_constants.dart';
 
 class OtpVerificationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final int otpLength = AppConstants.otpLength;
-  String correctOtp = AppConstants.demoCorrectOtp;
+  String correctOtp = ""; // Initialize as empty
   final int resendDelaySeconds = AppConstants.otpResendDelaySeconds;
 
   late List<TextEditingController> digitControllers;
@@ -25,9 +27,21 @@ class OtpVerificationController extends GetxController
   late AnimationController shakeController;
   late Animation<double> shakeAnimation;
 
+  final _apiClient = ApiClient();
+  final _secureStorage = const FlutterSecureStorage();
+
   @override
   void onInit() {
     super.onInit();
+
+    if (Get.arguments != null) {
+      correctOtp = Get.arguments.toString();
+      print(Get.arguments);
+      debugPrint("Correct OTP set from token: $correctOtp");
+    } else {
+      correctOtp = AppConstants.demoCorrectOtp;
+      debugPrint("Using demo OTP: $correctOtp");
+    }
 
     digitControllers = List.generate(otpLength, (_) => TextEditingController());
     focusNodes = List.generate(otpLength, (_) => FocusNode());
@@ -74,28 +88,43 @@ class OtpVerificationController extends GetxController
   void verifyOtp() async {
     if (isVerifying.value || !isOtpComplete) return;
 
-    hasError.value = false;
     isVerifying.value = true;
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
       if (completeOtp == correctOtp) {
         isVerified.value = true;
-        await Future.delayed(const Duration(milliseconds: 800));
+
+        await _secureStorage.write(key: 'auth_token', value: correctOtp);
+        Get.offAllNamed('/main');
+        return;
+      }
+
+      // If not matching, try to verify with API
+      final response = await _apiClient.dio.post(
+        '/verify-otp',
+        data: {'otp': completeOtp},
+      );
+
+      if (response.statusCode == 200) {
+        isVerified.value = true;
         Get.offAllNamed('/main');
       } else {
         hasError.value = true;
-        errorMessage.value = 'Code incorrect. Veuillez réessayer.';
-        shakeController.forward().then((_) => shakeController.reset());
-        resetFields();
+        errorMessage.value = 'Invalid OTP. Please try again.';
+        _shakeError();
       }
-    } catch (_) {
+    } catch (e) {
       hasError.value = true;
-      errorMessage.value = 'Une erreur est survenue. Réessayez plus tard.';
+      errorMessage.value = 'An error occurred. Please try again later.';
+      _shakeError();
     } finally {
       isVerifying.value = false;
     }
+  }
+
+  void _shakeError() {
+    shakeController.reset();
+    shakeController.forward();
   }
 
   void resendOtp() async {
