@@ -8,18 +8,20 @@ import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
 import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
+import 'package:passenger_tyvaa/app/modules/trajet/bindings/publish_trajet_binding.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
+import '../modules/trajet/views/publish_trajet_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
+  static const INITIAL = Routes.MAIN;
   static final routes = [
     GetPage(
       name: _Paths.MAIN,
@@ -84,6 +86,11 @@ class AppPages {
       binding: HomeBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.PUBLISH_TRAJET,
+      page: () => PublishTrajetView(),
+      binding: PublishTrajetBinding(),
     ),
   ];
 }
