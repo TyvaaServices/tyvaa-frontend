@@ -195,20 +195,23 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(13),
-                child:
-                    profileController.profileImage.value != null
-                        ? Image(
-                          image: FileImage(
-                            profileController.profileImage.value!,
+              child: GestureDetector(
+                onTap: () => controller.changeTab(3),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
+                  child:
+                      profileController.profileImage.value != null
+                          ? Image(
+                            image: FileImage(
+                              profileController.profileImage.value!,
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                          : Image.asset(
+                            'assets/images/default_profile.png',
+                            fit: BoxFit.cover,
                           ),
-                          fit: BoxFit.cover,
-                        )
-                        : Image.asset(
-                          'assets/images/default_profile.png',
-                          fit: BoxFit.cover,
-                        ),
+                ),
               ),
             ),
           ),
