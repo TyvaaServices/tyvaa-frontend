@@ -21,71 +21,73 @@ class LocationSearchModal extends GetView<SearchViewController> {
     controller.forceFocus();
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.85,
+      initialChildSize: 0.95,
       minChildSize: 0.5,
       maxChildSize: 0.95,
       expand: false,
       builder: (context, scrollController) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            return SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                height: constraints.maxHeight,
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(28),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 20,
-                      offset: const Offset(0, -4),
+            return SizedBox(
+              height: constraints.maxHeight,
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Container(
+                  height: constraints.maxHeight,
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(28),
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    _buildDragHandle(isDark),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Obx(
-                          () => ListView(
-                            controller: scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            children: [
-                              _buildHeader(textColor),
-                              _buildSearchFields(
-                                isDark,
-                                surfaceColor,
-                                textColor,
-                                primaryColor,
-                              ),
-                              const SizedBox(height: 24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 20,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      _buildDragHandle(isDark),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Obx(
+                            () => ListView(
+                              controller: scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              children: [
+                                _buildHeader(textColor),
+                                _buildSearchFields(
+                                  isDark,
+                                  surfaceColor,
+                                  textColor,
+                                  primaryColor,
+                                ),
+                                const SizedBox(height: 24),
 
-                              // Show either search results or recent destinations
-                              controller.isSearching.value
-                                  ? _buildSearchResults(
-                                    isDark,
-                                    surfaceColor,
-                                    textColor,
-                                  )
-                                  : _buildRecentDestinations(
-                                    isDark,
-                                    surfaceColor,
-                                    textColor,
-                                    primaryColor,
-                                  ),
+                                controller.isSearching.value
+                                    ? _buildSearchResults(
+                                      isDark,
+                                      surfaceColor,
+                                      textColor,
+                                    )
+                                    : _buildRecentDestinations(
+                                      isDark,
+                                      surfaceColor,
+                                      textColor,
+                                      primaryColor,
+                                    ),
 
-                              const SizedBox(height: 20),
-                            ],
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -168,158 +170,162 @@ class LocationSearchModal extends GetView<SearchViewController> {
         ),
         child: Material(
           color: Colors.transparent,
-          child: Column(
-            children: [
-              // Origin field
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildLocationIcon(
-                      color: Colors.blue,
-                      icon: Icons.my_location_rounded,
-                      isDark: isDark,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: controller.currentLocationController,
-                        focusNode: controller.currentLocationFocusNode,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Votre position actuelle',
-                          hintStyle: TextStyle(
-                            color: textColor.withOpacity(0.5),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Origin field
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildLocationIcon(
+                        color: Colors.blue,
+                        icon: Icons.my_location_rounded,
+                        isDark: isDark,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.currentLocationController,
+                          focusNode: controller.currentLocationFocusNode,
+                          style: TextStyle(
+                            color: textColor,
                             fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 16,
+                          decoration: InputDecoration(
+                            hintText: 'Votre position actuelle',
+                            hintStyle: TextStyle(
+                              color: textColor.withOpacity(0.5),
+                              fontSize: 16,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Swap button
-                    GestureDetector(
-                      onTap: () {
-                        HapticFeedback.mediumImpact();
-                        controller.swapLocations();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.swap_vert_rounded,
-                          color: primaryColor,
-                          size: 22,
+                      // Swap button
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          controller.swapLocations();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.swap_vert_rounded,
+                            color: primaryColor,
+                            size: 22,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              // Divider
-              Padding(
-                padding: const EdgeInsets.only(left: 60),
-                child: Divider(
-                  height: 1,
-                  color:
-                      isDark ? Colors.white12 : Colors.black.withOpacity(0.08),
+                // Divider
+                Padding(
+                  padding: const EdgeInsets.only(left: 60),
+                  child: Divider(
+                    height: 1,
+                    color:
+                        isDark
+                            ? Colors.white12
+                            : Colors.black.withOpacity(0.08),
+                  ),
                 ),
-              ),
 
-              // Destination field
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildLocationIcon(
-                      color: primaryColor,
-                      icon: Icons.place_rounded,
-                      isDark: isDark,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: controller.destinationController,
-                        focusNode: controller.destinationFocusNode,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Où souhaitez-vous aller ?',
-                          hintStyle: TextStyle(
-                            color: textColor.withOpacity(0.5),
+                // Destination field
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildLocationIcon(
+                        color: primaryColor,
+                        icon: Icons.place_rounded,
+                        isDark: isDark,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.destinationController,
+                          focusNode: controller.destinationFocusNode,
+                          style: TextStyle(
+                            color: textColor,
                             fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 16,
+                          decoration: InputDecoration(
+                            hintText: 'Où souhaitez-vous aller ?',
+                            hintStyle: TextStyle(
+                              color: textColor.withOpacity(0.5),
+                              fontSize: 16,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Clear or Map button
-                    Obx(
-                      () =>
-                          controller.showClearButton.value
-                              ? GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.lightImpact();
-                                  controller.clearDestination();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  margin: const EdgeInsets.only(right: 10),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isDark
-                                            ? Colors.white12
-                                            : Colors.black.withOpacity(0.05),
-                                    shape: BoxShape.circle,
+                      // Clear or Map button
+                      Obx(
+                        () =>
+                            controller.showClearButton.value
+                                ? GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    controller.clearDestination();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    margin: const EdgeInsets.only(right: 10),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isDark
+                                              ? Colors.white12
+                                              : Colors.black.withOpacity(0.05),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      color: textColor.withOpacity(0.5),
+                                      size: 18,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    Icons.close_rounded,
-                                    color: textColor.withOpacity(0.5),
-                                    size: 18,
+                                )
+                                : GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.mediumImpact();
+                                    // Open map selection
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    margin: const EdgeInsets.only(right: 10),
+                                    decoration: BoxDecoration(
+                                      color: primaryColor.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      Icons.map_rounded,
+                                      color: primaryColor,
+                                      size: 20,
+                                    ),
                                   ),
                                 ),
-                              )
-                              : GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.mediumImpact();
-                                  // Open map selection
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  margin: const EdgeInsets.only(right: 10),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withOpacity(0.15),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    Icons.map_rounded,
-                                    color: primaryColor,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -2,46 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SearchViewController extends GetxController {
-  // Text controllers
   final TextEditingController currentLocationController = TextEditingController(
     text: "Votre position actuelle",
   );
   final TextEditingController destinationController = TextEditingController();
 
-  // Focus nodes
   final FocusNode currentLocationFocusNode = FocusNode();
   final FocusNode destinationFocusNode = FocusNode();
 
-  // Observable values
   final RxBool isSearching = false.obs;
   final RxList<String> searchResults = <String>[].obs;
   final RxBool showClearButton = false.obs;
 
-  // Mock recent locations (would come from storage in real app)
   final List<RecentLocation> recentLocations = [
     RecentLocation(
-      "Centre Commercial Cap 3000",
-      "Avenue Eugène Donadeï, Saint-Laurent-du-Var",
+      "Sandaga",
+      "Avenue Lamine Gueye, Dakar",
       Icons.shopping_bag_outlined,
     ),
     RecentLocation(
-      "Aéroport Nice Côte d'Azur",
-      "Rue Costes et Bellonte, Nice",
+      "Aéroport International Blaise Diagne",
+      "Diass, Dakar",
       Icons.flight_outlined,
     ),
+    RecentLocation("Gare de Dakar", "Plateau, Dakar", Icons.train_outlined),
+    RecentLocation("Plage de Ngor", "Ngor, Dakar", Icons.beach_access_outlined),
     RecentLocation(
-      "Gare SNCF de Nice Ville",
-      "Avenue Thiers, Nice",
-      Icons.train_outlined,
-    ),
-    RecentLocation(
-      "Promenade des Anglais",
-      "Nice",
-      Icons.beach_access_outlined,
-    ),
-    RecentLocation(
-      "Place Masséna",
-      "Centre-ville, Nice",
+      "Place de l'Indépendance",
+      "Centre-ville, Dakar",
       Icons.location_city_outlined,
     ),
   ];
