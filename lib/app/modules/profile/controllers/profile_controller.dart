@@ -1,21 +1,25 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ProfileController extends GetxController {
   final userName = 'Cheikh Tidiane'.obs;
+  final phoneNumber = ''.obs;
   final TextEditingController nameController = TextEditingController();
   final isEditingName = false.obs;
   final Rx<File?> profileImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
+  final storage = const FlutterSecureStorage();
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     nameController.text = userName.value;
+    phoneNumber.value = (await storage.read(key: 'phone_number'))!;
   }
 
   void pickImage() async {

@@ -243,63 +243,66 @@ class ProfileScreen extends GetView<ProfileController> {
     Color textColor,
     Color surfaceColor,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Informations personnelles',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: textColor,
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Informations personnelles',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
-        ),
-        SizedBox(height: 16),
-        Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: Offset(0, 2),
-              ),
-            ],
+          SizedBox(height: 16),
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                _buildInfoItem(
+                  context,
+                  isDark,
+                  Icons.email_outlined,
+                  'Email',
+                  'cheikh@tyvaa.com',
+                  Colors.blue,
+                ),
+                Divider(height: 30),
+                _buildInfoItem(
+                  context,
+                  isDark,
+                  Icons.phone_outlined,
+                  'Téléphone',
+                  controller.phoneNumber.value,
+                  Colors.green,
+                ),
+                Divider(height: 30),
+                _buildInfoItem(
+                  context,
+                  isDark,
+                  Icons.calendar_today_outlined,
+                  'Membre depuis',
+                  'Mars 2025',
+                  Colors.amber,
+                ),
+              ],
+            ),
           ),
-          child: Column(
-            children: [
-              _buildInfoItem(
-                context,
-                isDark,
-                Icons.email_outlined,
-                'Email',
-                'cheikh@tyvaa.com',
-                Colors.blue,
-              ),
-              Divider(height: 30),
-              _buildInfoItem(
-                context,
-                isDark,
-                Icons.phone_outlined,
-                'Téléphone',
-                '+221 77 123 45 67',
-                Colors.green,
-              ),
-              Divider(height: 30),
-              _buildInfoItem(
-                context,
-                isDark,
-                Icons.calendar_today_outlined,
-                'Membre depuis',
-                'Mars 2025',
-                Colors.amber,
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
