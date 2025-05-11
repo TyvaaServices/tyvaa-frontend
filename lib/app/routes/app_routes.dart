@@ -14,6 +14,7 @@ abstract class Routes {
   static const OTP = _Paths.OTP;
   static const AIDE = _Paths.AIDE;
   static const ONBOARDINGCHAUFFEUR = _Paths.ONBOARDINGCHAUFFEUR;
+  static const PUBLISH_TRAJET = _Paths.PUBLISH_TRAJET;
 }
 
 abstract class _Paths {
@@ -31,4 +32,5 @@ abstract class _Paths {
   static const NOTIFICATION = '/notification';
   static const OTP = '/otp';
   static const ONBOARDINGCHAUFFEUR = '/publier-trajet';
+  static const PUBLISH_TRAJET = '/publish-trajet';
 }
