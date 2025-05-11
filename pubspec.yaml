@@ -13,6 +13,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.2
   dots_indicator: ^4.0.1
+  dio: any
+  flutter_secure_storage: any
   mask_text_input_formatter: ^2.9.0
   smooth_page_indicator: any
   carousel_slider: ^5.0.0
