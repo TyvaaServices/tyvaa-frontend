@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"tyvaa-project","appId":"1:460885677081:android:26b376f2c9e92901038688","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"tyvaa-project","configurations":{"android":"1:460885677081:android:26b376f2c9e92901038688","ios":"1:460885677081:ios:faadb05e6d0a93a7038688"}}}}}}

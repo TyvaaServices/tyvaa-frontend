@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "460885677081",
+    "project_id": "tyvaa-project",
+    "storage_bucket": "tyvaa-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460885677081:android:26b376f2c9e92901038688",
+        "android_client_info": {
+          "package_name": "com.chouly.tyvaa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALoNKZXfkR7M3DWVZXn45p8v86IvUz1ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
