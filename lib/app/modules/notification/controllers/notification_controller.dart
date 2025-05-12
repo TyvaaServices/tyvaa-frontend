@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../services/notification_service.dart';
+
 class NotificationController extends GetxController {
   final RxList<NotificationModel> notifications = <NotificationModel>[].obs;
   final isLoading = false.obs;
   final hasError = false.obs;
 
+  late NotificationService _notificationService;
+
   @override
   void onInit() {
     super.onInit();
+    _initializeNotificationService();
     fetchNotifications();
+  }
+
+  void _initializeNotificationService() {
+    if (Get.isRegistered<NotificationService>()) {
+      _notificationService = Get.find<NotificationService>();
+    } else {
+      _notificationService = Get.put(NotificationService());
+      if (!_notificationService.isInitialized.value) {
+        _notificationService.init();
+      }
+    }
   }
 
   Future<void> fetchNotifications() async {
@@ -17,61 +33,71 @@ class NotificationController extends GetxController {
     hasError.value = false;
 
     try {
-      await Future.delayed(Duration(milliseconds: 800));
+      // Get stored notifications from service
+      final storedNotifications =
+          await _notificationService.getStoredNotifications();
 
-      notifications.value = [
-        NotificationModel(
-          id: '1',
-          title: 'Demande acceptée',
-          message:
-              'Votre demande pour rejoindre le trajet Dakar → Saint-Louis a été acceptée par le conducteur.',
-          type: NotificationType.tripAccepted,
-          time: DateTime.now().subtract(Duration(minutes: 15)),
-          isRead: false,
-          actionData: {'tripId': 'T123', 'driverId': 'D456'},
-        ),
-        NotificationModel(
-          id: '2',
-          title: 'Nouveau message',
-          message: 'Amadou: À quelle heure comptez-vous arriver à Thiès?',
-          type: NotificationType.message,
-          time: DateTime.now().subtract(Duration(hours: 2)),
-          isRead: false,
-          actionData: {'chatId': 'C789', 'senderId': 'U567'},
-        ),
-        NotificationModel(
-          id: '3',
-          title: 'Rappel de trajet',
-          message:
-              'Votre trajet vers Mbour démarre dans 2 heures. Préparez-vous!',
-          type: NotificationType.reminder,
-          time: DateTime.now().subtract(Duration(hours: 6)),
-          isRead: true,
-          actionData: {'tripId': 'T456'},
-        ),
-        NotificationModel(
-          id: '4',
-          title: 'Annulation de trajet',
-          message:
-              'Désolé, le trajet Dakar → Touba du 10 mai a été annulé par le conducteur.',
-          type: NotificationType.tripCancelled,
-          time: DateTime.now().subtract(Duration(days: 1)),
-          isRead: true,
-          actionData: {'tripId': 'T789'},
-        ),
-        NotificationModel(
-          id: '5',
-          title: 'Promotion spéciale',
-          message:
-              '50% de réduction sur votre prochain trajet! Utilisez le code TYVAA50.',
-          type: NotificationType.promo,
-          time: DateTime.now().subtract(Duration(days: 2)),
-          isRead: true,
-          actionData: {'promoCode': 'TYVAA50'},
-        ),
-      ];
+      if (storedNotifications.isNotEmpty) {
+        notifications.value = storedNotifications;
+      }
+      // else {
+      //   // Fallback to mock data for demonstration
+      //   await Future.delayed(Duration(milliseconds: 800));
+      //   notifications.value = [
+      //     // NotificationModel(
+      //     //   id: '1',
+      //     //   title: 'Demande acceptée',
+      //     //   message:
+      //     //       'Votre demande pour rejoindre le trajet Dakar → Saint-Louis a été acceptée par le conducteur.',
+      //     //   type: NotificationType.tripAccepted,
+      //     //   time: DateTime.now().subtract(Duration(minutes: 15)),
+      //     //   isRead: false,
+      //     //   actionData: {'tripId': 'T123', 'driverId': 'D456'},
+      //     // ),
+      //     // NotificationModel(
+      //     //   id: '2',
+      //     //   title: 'Nouveau message',
+      //     //   message: 'Amadou: À quelle heure comptez-vous arriver à Thiès?',
+      //     //   type: NotificationType.message,
+      //     //   time: DateTime.now().subtract(Duration(hours: 2)),
+      //     //   isRead: false,
+      //     //   actionData: {'chatId': 'C789', 'senderId': 'U567'},
+      //     // ),
+      //     // NotificationModel(
+      //     //   id: '3',
+      //     //   title: 'Rappel de trajet',
+      //     //   message:
+      //     //       'Votre trajet vers Mbour démarre dans 2 heures. Préparez-vous!',
+      //     //   type: NotificationType.reminder,
+      //     //   time: DateTime.now().subtract(Duration(hours: 6)),
+      //     //   isRead: true,
+      //     //   actionData: {'tripId': 'T456'},
+      //     // ),
+      //     // NotificationModel(
+      //     //   id: '4',
+      //     //   title: 'Annulation de trajet',
+      //     //   message:
+      //     //       'Désolé, le trajet Dakar → Touba du 10 mai a été annulé par le conducteur.',
+      //     //   type: NotificationType.tripCancelled,
+      //     //   time: DateTime.now().subtract(Duration(days: 1)),
+      //     //   isRead: true,
+      //     //   actionData: {'tripId': 'T789'},
+      //     // ),
+      //     // NotificationModel(
+      //     //   id: '5',
+      //     //   title: 'Promotion spéciale',
+      //     //   message:
+      //     //       '50% de réduction sur votre prochain trajet! Utilisez le code TYVAA50.',
+      //     //   type: NotificationType.promo,
+      //     //   time: DateTime.now().subtract(Duration(days: 2)),
+      //     //   isRead: true,
+      //     //   actionData: {'promoCode': 'TYVAA50'},
+      //     // ),
+      //   ];
+      // }
     } catch (e) {
       hasError.value = true;
+      print('Error fetching notifications: $e');
     } finally {
       isLoading.value = false;
     }
@@ -86,6 +112,9 @@ class NotificationController extends GetxController {
       notification.isRead = true;
       notifications[index] = notification;
       notifications.refresh();
+
+      // Update in storage via service
+      _notificationService.markAsRead(notificationId);
     }
   }
 
@@ -94,16 +123,28 @@ class NotificationController extends GetxController {
       final notification = notifications[i];
       notification.isRead = true;
       notifications[i] = notification;
+
+      // Update each in storage
+      _notificationService.markAsRead(notification.id);
     }
     notifications.refresh();
   }
 
   void deleteNotification(String notificationId) {
     notifications.removeWhere((n) => n.id == notificationId);
+    // TODO: Add method to remove individual notification from storage
   }
 
   void clearAllNotifications() {
     notifications.clear();
+    _notificationService.clearAllNotifications();
+  }
+
+  // Method to add a new notification (called from service)
+  void addNotification(NotificationModel notification) {
+    // Add to the beginning of the list
+    notifications.insert(0, notification);
+    notifications.refresh();
   }
 }
 
