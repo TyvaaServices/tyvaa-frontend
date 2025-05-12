@@ -9,7 +9,7 @@
 
 
     <application
-        android:label="passenger_tyvaa"
+        android:label="Tyvaa"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
