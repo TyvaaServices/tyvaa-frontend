@@ -74,11 +74,9 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  // New properties for the redesigned HomeScreen
   final isPassengerMode = true.obs;
   final isDriverOnline = false.obs;
 
-  // New methods for the redesigned HomeScreen
   void setPassengerMode() {
     isPassengerMode.value = true;
   }
@@ -89,7 +87,6 @@ class HomeController extends GetxController {
 
   void toggleDriverOnline() {
     isDriverOnline.value = !isDriverOnline.value;
-    // Here you can add code to actually go online/offline
     if (isDriverOnline.value) {
       Get.snackbar(
         'En ligne',
