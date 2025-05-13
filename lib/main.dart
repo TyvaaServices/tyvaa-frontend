@@ -32,14 +32,15 @@ void main() async {
   // Initialize notification service
   final notificationService = Get.put(NotificationService());
   await notificationService.init();
-
+  // print("im here");
+  // print(Get.deviceLocale!.languageCode);
   runApp(
     ConnectivityListener(
       child: GetMaterialApp(
         title: "Tyvaa",
         debugShowCheckedModeBanner: false,
         translations: TyvaaTranslation(),
-        locale: Get.deviceLocale,
+        locale: Locale('fr'), //TODO en pro on remplace par Get.deviceLocale
         fallbackLocale: Locale('en'),
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
