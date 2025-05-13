@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 
 import '../controllers/notification_controller.dart';
@@ -25,7 +24,7 @@ class NotificationsScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: backgroundColor,
         title: Text(
-          'Notifications',
+          'notifications'.tr,
           style: TextStyle(
             color: textColor,
             fontSize: 18,
@@ -50,18 +49,16 @@ class NotificationsScreen extends StatelessWidget {
                             context: context,
                             builder:
                                 (context) => AlertDialog(
-                                  title: Text('Supprimer les notifications'),
-                                  content: Text(
-                                    'Êtes-vous sûr de vouloir supprimer toutes les notifications?',
-                                  ),
+                                  title: Text('delete_notifications'.tr),
+                                  content: Text('delete_confirmation'.tr),
                                   actions: [
                                     TextButton(
-                                      child: Text('Annuler'),
+                                      child: Text('cancel'.tr),
                                       onPressed:
                                           () => Navigator.of(context).pop(),
                                     ),
                                     TextButton(
-                                      child: Text('Supprimer'),
+                                      child: Text('delete'.tr),
                                       onPressed: () {
                                         controller.clearAllNotifications();
                                         Navigator.of(context).pop();
@@ -121,7 +118,7 @@ class NotificationsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Impossible de charger les notifications',
+                  'retry'.tr,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -166,7 +163,7 @@ class NotificationsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 Text(
-                  'Aucune notification',
+                  'no_notifications'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -175,7 +172,7 @@ class NotificationsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Vous n\'avez pas de notifications pour le moment',
+                  'no_notifications_message'.tr,
                   style: TextStyle(
                     fontSize: 14,
                     color: textColor.withOpacity(0.7),
@@ -192,7 +189,7 @@ class NotificationsScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => controller.fetchNotifications(),
-                  child: Text('Actualiser'),
+                  child: Text('refresh'.tr),
                 ),
               ],
             ),
@@ -222,7 +219,7 @@ class NotificationsScreen extends StatelessWidget {
                       Icon(Icons.delete_outline, color: Colors.white),
                       SizedBox(width: 8),
                       Text(
-                        'Supprimer',
+                        'delete_notification'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -372,7 +369,7 @@ class NotificationsScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () => controller.markAsRead(notification.id),
                           child: Text(
-                            'Marquer comme lu',
+                            'mark_as_read'.tr,
                             style: TextStyle(
                               fontSize: 12,
                               color: notification.color,
@@ -396,13 +393,15 @@ class NotificationsScreen extends StatelessWidget {
     final difference = now.difference(time);
 
     if (difference.inDays > 0) {
-      return DateFormat('d MMM, HH:mm').format(time);
+      return 'days_ago'.trParams({'days': difference.inDays.toString()});
     } else if (difference.inHours > 0) {
-      return 'Il y a ${difference.inHours} heure${difference.inHours > 1 ? 's' : ''}';
+      return 'hours_ago'.trParams({'hours': difference.inHours.toString()});
     } else if (difference.inMinutes > 0) {
-      return 'Il y a ${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''}';
+      return 'minutes_ago'.trParams({
+        'minutes': difference.inMinutes.toString(),
+      });
     } else {
-      return 'À l\'instant';
+      return 'just_now'.tr;
     }
   }
 }
