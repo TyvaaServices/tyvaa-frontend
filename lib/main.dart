@@ -40,6 +40,7 @@ void main() async {
         debugShowCheckedModeBanner: false,
         translations: TyvaaTranslation(),
         locale: Get.deviceLocale,
+        fallbackLocale: Locale('en'),
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
         theme: lightTheme,
