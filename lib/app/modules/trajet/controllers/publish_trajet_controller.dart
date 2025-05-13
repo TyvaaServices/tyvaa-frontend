@@ -23,4 +23,20 @@ class PublishTrajetController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+
+  bool validateForm() {
+    if (departure.value.isEmpty ||
+        destination.value.isEmpty ||
+        dateTime.value == null ||
+        places.value <= 0 ||
+        price.value.isEmpty) {
+      Get.snackbar(
+        'Erreur',
+        'Veuillez remplir tous les champs',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return false;
+    }
+    return true;
+  }
 }
