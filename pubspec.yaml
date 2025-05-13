@@ -13,16 +13,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.2
   dots_indicator: ^4.0.1
-  dio: any
-  flutter_secure_storage: any
+  dio: ^5.8.0+1
+  flutter_secure_storage: ^9.2.4
   mask_text_input_formatter: ^2.9.0
-  smooth_page_indicator: any
+  smooth_page_indicator: ^1.2.1
   carousel_slider: ^5.0.0
   image_picker: ^1.1.2
-  convex_bottom_bar: any
+  convex_bottom_bar: ^3.2.0
   stylish_bottom_bar: ^1.1.1
-  flutter_spinkit: any
-  lottie: any
+  flutter_spinkit: ^5.2.1
+  lottie: ^3.3.1
   permission_handler: ^12.0.0+1
   geolocator: ^14.0.0
   geocoding: ^3.0.0
@@ -33,21 +33,22 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   modal_bottom_sheet: ^3.0.0
   change_app_package_name: ^1.5.0
-  firebase_core: any
-  firebase_messaging: any
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
   auto_size_text: ^3.0.0
   hive: any
   animated_text_kit: ^4.2.3
   socket_io_client: ^3.1.2
   connectivity_plus: ^6.1.4
   internet_connection_checker: ^3.0.1
+  confetti: ^0.8.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
 
 flutter:
-
   uses-material-design: true
   assets:
     - assets/

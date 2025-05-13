@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,6 +16,7 @@ class HomeController extends GetxController {
   late StreamSubscription<Position> _positionStream;
   RxBool isDriver = true.obs;
 
+  late ConfettiController confettiController;
   final banners = [
     {
       'image': 'assets/promo1.png',
@@ -51,6 +53,13 @@ class HomeController extends GetxController {
   void onInit() {
     _determinePosition();
     super.onInit();
+    confettiController = ConfettiController(
+      duration: const Duration(seconds: 5),
+    );
+
+    Future.delayed(Duration(milliseconds: 500), () {
+      confettiController.play();
+    });
     bannerController.addListener(() {
       final page = bannerController.page?.round() ?? 0;
       currentBanner.value = page;
@@ -71,6 +80,7 @@ class HomeController extends GetxController {
   void onClose() {
     _bannerTimer.cancel();
     bannerController.dispose();
+    confettiController.dispose();
     super.onClose();
   }
 
