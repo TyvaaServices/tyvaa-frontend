@@ -3,8 +3,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
+import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/services/connectivity_service.dart';
 import 'app/services/notification_service.dart';
 import 'app/themes/tyvaa_theme.dart';
 import 'firebase_options.dart';
@@ -18,6 +20,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
+  Get.put(ConnectivityController(), permanent: true);
   Get.put(ApiClient(), permanent: true);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -30,14 +33,16 @@ void main() async {
   await notificationService.init();
 
   runApp(
-    GetMaterialApp(
-      title: "Tyvaa",
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+    ConnectivityListener(
+      child: GetMaterialApp(
+        title: "Tyvaa",
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppPages.INITIAL,
+        getPages: AppPages.routes,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.system,
+      ),
     ),
   );
 }
