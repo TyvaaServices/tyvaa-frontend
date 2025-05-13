@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/socket/SocketService.dart';
 
 class HomeController extends GetxController {
   final bannerController = PageController(viewportFraction: 0.9);
@@ -141,6 +142,7 @@ class HomeController extends GetxController {
           position.latitude,
           position.longitude,
         );
+        SocketService().initSocket("1", position.latitude, position.longitude);
         Placemark place = placemarks.first;
         currentAddress.value =
             '${place.thoroughfare} ${place.locality}, ${place.country}';
