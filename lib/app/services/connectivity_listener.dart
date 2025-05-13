@@ -3,35 +3,50 @@ import 'package:get/get.dart';
 
 import 'connectivity_service.dart';
 
-class ConnectivityListener extends StatelessWidget {
+class ConnectivityListener extends StatefulWidget {
   final Widget child;
 
   const ConnectivityListener({Key? key, required this.child}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<ConnectivityController>();
-    bool previouslyConnected = controller.isConnected.value;
+  _ConnectivityListenerState createState() => _ConnectivityListenerState();
+}
 
-    controller.isConnected.listen((connected) {
-      if (!connected && previouslyConnected) {
+class _ConnectivityListenerState extends State<ConnectivityListener> {
+  late ConnectivityController controller;
+  late bool previouslyOnline;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ConnectivityController>();
+    previouslyOnline = controller.hasInternet.value;
+
+    // Listen to changes in the internet status only once
+    controller.hasInternet.listen((online) {
+      if (!online && previouslyOnline) {
         Get.snackbar(
-          'No Internet',
-          'You are offline.',
+          'Pas d\'Internet', // French translation
+          'Vous êtes hors ligne ou votre réseau est inutilisable.', // French translation
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM, // Position at the bottom
         );
-      } else if (connected && !previouslyConnected) {
+      } else if (online && !previouslyOnline) {
         Get.snackbar(
-          'Back Online',
-          'Internet connection restored.',
+          'Retour en ligne',
+          'La connexion Internet a été rétablie.',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
         );
       }
-      previouslyConnected = connected;
+      previouslyOnline = online;
     });
+  }
 
-    return child;
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

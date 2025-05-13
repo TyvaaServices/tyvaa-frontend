@@ -1,29 +1,35 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ConnectivityController extends GetxController {
-  final Connectivity _connectivity = Connectivity();
   final RxBool isConnected = true.obs;
+  final RxBool hasInternet = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-
-    // Check initial status
-    _checkInitialConnection();
-
-    // Listen to changes
-    _connectivity.onConnectivityChanged.listen((
-      List<ConnectivityResult> results,
-    ) {
-      final result =
-          results.isNotEmpty ? results.first : ConnectivityResult.none;
-      isConnected.value = result != ConnectivityResult.none;
-    });
+    _initConnectivityMonitoring();
   }
 
-  Future<void> _checkInitialConnection() async {
-    final result = await _connectivity.checkConnectivity();
-    isConnected.value = result != ConnectivityResult.none;
+  void _initConnectivityMonitoring() {
+    // Listen to connectivity changes (Wi-Fi, Mobile, None)
+    Connectivity().onConnectivityChanged.listen((_) async {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      isConnected.value = connectivityResult != ConnectivityResult.none;
+    });
+
+    InternetConnectionChecker.instance.onStatusChange.listen((status) {
+      hasInternet.value = status == InternetConnectionStatus.connected;
+    });
+
+    _initialCheck();
+  }
+
+  Future<void> _initialCheck() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    isConnected.value = connectivityResult != ConnectivityResult.none;
+
+    hasInternet.value = await InternetConnectionChecker.instance.hasConnection;
   }
 }
