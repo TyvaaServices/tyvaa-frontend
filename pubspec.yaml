@@ -39,6 +39,7 @@ dependencies:
   hive: any
   animated_text_kit: ^4.2.3
   socket_io_client: ^3.1.2
+  connectivity_plus: ^6.1.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
