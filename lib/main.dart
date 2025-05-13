@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
+import 'package:passenger_tyvaa/app/i18n/translations.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 
 import 'app/routes/app_pages.dart';
@@ -37,6 +38,8 @@ void main() async {
       child: GetMaterialApp(
         title: "Tyvaa",
         debugShowCheckedModeBanner: false,
+        translations: TyvaaTranslation(),
+        locale: Get.deviceLocale,
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
         theme: lightTheme,
