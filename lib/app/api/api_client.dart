@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 
 class ApiClient {
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://10.0.2.2:2003',
+      baseUrl: 'http://10.0.2.2:2000',
       connectTimeout: Duration(milliseconds: 5000),
       receiveTimeout: Duration(milliseconds: 5000),
       headers: {
@@ -27,7 +28,9 @@ class ApiClient {
           return handler.next(options);
         },
         onError: (error, handler) {
-          if (error.response?.statusCode == 401) {}
+          if (error.response?.statusCode == 401) {
+            Get.offAllNamed('/login');
+          }
           return handler.next(error);
         },
       ),
