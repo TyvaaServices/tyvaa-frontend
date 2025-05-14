@@ -6,7 +6,7 @@ import 'connectivity_service.dart';
 class ConnectivityListener extends StatefulWidget {
   final Widget child;
 
-  const ConnectivityListener({Key? key, required this.child}) : super(key: key);
+  const ConnectivityListener({super.key, required this.child});
 
   @override
   _ConnectivityListenerState createState() => _ConnectivityListenerState();

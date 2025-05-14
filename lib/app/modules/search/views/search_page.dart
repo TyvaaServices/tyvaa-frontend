@@ -400,7 +400,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                       textColor,
                       isDark,
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
     );
@@ -498,7 +498,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
             textColor,
             isDark,
           );
-        }).toList(),
+        }),
       ],
     );
   }

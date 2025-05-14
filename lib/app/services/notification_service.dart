@@ -325,10 +325,8 @@ class NotificationService extends GetxService {
       // Update controller if available and notifications screen is open
       if (Get.isRegistered<NotificationController>()) {
         final controller = Get.find<NotificationController>();
-        if (controller != null) {
-          controller.markAsRead(notificationId);
-        }
-      }
+        controller.markAsRead(notificationId);
+            }
     } catch (e) {
       print('Error marking notification as read: $e');
     }

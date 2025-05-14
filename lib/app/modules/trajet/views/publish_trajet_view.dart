@@ -269,7 +269,7 @@ class PublishTrajetView extends GetView<PublishTrajetController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
-                    onChanged: controller.departure,
+                    onChanged: controller.departure.call,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
                       hintText: 'Point de départ',
@@ -299,7 +299,7 @@ class PublishTrajetView extends GetView<PublishTrajetController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
-                    onChanged: controller.destination,
+                    onChanged: controller.destination.call,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
                       hintText: 'Destination',
@@ -573,7 +573,7 @@ class PublishTrajetView extends GetView<PublishTrajetController> {
           ),
           const SizedBox(height: 12),
           TextField(
-            onChanged: controller.comment,
+            onChanged: controller.comment.call,
             maxLines: 3,
             style: TextStyle(color: textColor),
             decoration: InputDecoration(
@@ -623,7 +623,7 @@ class PublishTrajetView extends GetView<PublishTrajetController> {
           ),
           const SizedBox(height: 12),
           TextField(
-            onChanged: controller.price,
+            onChanged: controller.price.call,
             keyboardType: TextInputType.number,
             style: TextStyle(color: textColor),
             decoration: InputDecoration(
