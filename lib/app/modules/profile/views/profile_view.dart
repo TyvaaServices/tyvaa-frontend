@@ -20,6 +20,7 @@ class ProfileScreen extends GetView<ProfileController> {
     final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
     final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
     final accentColor = Color(0xFF8A6FFF);
+    final dangerColor = Color(0xFFFF5252);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -68,6 +69,8 @@ class ProfileScreen extends GetView<ProfileController> {
               _buildRatingsSection(context, isDark, textColor, surfaceColor),
               SizedBox(height: 30),
               // _buildPreferencesSection(context, isDark, textColor, surfaceColor, primaryColor),
+              SizedBox(height: 30),
+              _buildLogoutButton(context, isDark, dangerColor, surfaceColor),
               SizedBox(height: 40),
             ],
           ),
@@ -503,6 +506,87 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           Expanded(flex: 10, child: Container()),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(
+    BuildContext context,
+    bool isDark,
+    Color dangerColor,
+    Color surfaceColor,
+  ) {
+    final textColor = isDark ? Colors.white : Colors.black87;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            // Afficher dialogue de confirmation
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Déconnexion'),
+                  content: Text('Êtes-vous sûr de vouloir vous déconnecter?'),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Annuler'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        // Ici, ajoutez la logique de déconnexion
+                        controller.logout();
+                      },
+                      child: Text(
+                        'Déconnexion',
+                        style: TextStyle(color: dangerColor),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.logout_rounded, color: dangerColor, size: 24),
+                SizedBox(width: 12),
+                Text(
+                  'Déconnexion',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: dangerColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

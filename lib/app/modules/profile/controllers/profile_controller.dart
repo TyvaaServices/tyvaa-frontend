@@ -55,4 +55,12 @@ class ProfileController extends GetxController {
       duration: Duration(seconds: 2),
     );
   }
+
+  //A TESTER AVEC LE BACKEND
+  void logout() async {
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.delete(key: 'auth_token');
+    await storage.deleteAll();
+    Get.offAllNamed('/login');
+  }
 }
