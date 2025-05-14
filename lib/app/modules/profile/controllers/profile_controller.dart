@@ -61,6 +61,7 @@ class ProfileController extends GetxController {
     const FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.delete(key: 'auth_token');
     await storage.deleteAll();
+    await Future.delayed(2.seconds);
     Get.offAllNamed('/login');
   }
 }

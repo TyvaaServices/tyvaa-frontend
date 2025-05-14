@@ -81,13 +81,13 @@ class LoginController extends GetxController
 
     try {
       final response = await _apiClient.dio.post(
-        '/login',
+        '/users/login',
         data: {'phoneNumber': unmasked.value},
       );
-
+      await Future.delayed(3.seconds);
       final data = response.data;
 
-      Get.toNamed('/otp', arguments: data['otp']);
+      Get.toNamed('/otp', arguments: [data['otp'], data['token']]);
     } catch (e) {
       Get.snackbar('Error', 'Login failed. Please try again.');
     } finally {

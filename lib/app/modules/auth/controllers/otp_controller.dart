@@ -11,7 +11,7 @@ import '../../../constants/app_constants.dart';
 class OtpVerificationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final int otpLength = AppConstants.otpLength;
-  String correctOtp = ""; // Initialize as empty
+  String correctOtp = "";
   final int resendDelaySeconds = AppConstants.otpResendDelaySeconds;
 
   late List<TextEditingController> digitControllers;
@@ -35,7 +35,7 @@ class OtpVerificationController extends GetxController
     super.onInit();
 
     if (Get.arguments != null) {
-      correctOtp = Get.arguments.toString();
+      correctOtp = Get.arguments[0];
       print(Get.arguments);
       debugPrint("Correct OTP set from token: $correctOtp");
     } else {
@@ -94,7 +94,7 @@ class OtpVerificationController extends GetxController
       if (completeOtp == correctOtp) {
         isVerified.value = true;
 
-        await _secureStorage.write(key: 'auth_token', value: correctOtp);
+        await _secureStorage.write(key: 'auth_token', value: Get.arguments[1]);
         Get.offAllNamed('/main');
         return;
       }
