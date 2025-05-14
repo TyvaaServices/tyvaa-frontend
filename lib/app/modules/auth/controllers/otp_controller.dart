@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 import '../../../api/api_client.dart';
 import '../../../constants/app_constants.dart';
@@ -36,6 +37,8 @@ class OtpVerificationController extends GetxController
 
     if (Get.arguments != null) {
       correctOtp = Get.arguments[0];
+      var logger = Logger();
+      logger.d(Get.arguments);
       print(Get.arguments);
       debugPrint("Correct OTP set from token: $correctOtp");
     } else {
