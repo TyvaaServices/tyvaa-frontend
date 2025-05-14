@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -50,7 +51,12 @@ class HomeController extends GetxController {
   //   super.onInit();
   // }
   @override
-  void onInit() {
+  Future<void> onInit() async {
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    var value = await storage.read(key: 'auth_token');
+    if (value == null) {
+      Get.offAllNamed('/login');
+    }
     _determinePosition();
     super.onInit();
     confettiController = ConfettiController(
