@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 class ApiClient {
@@ -56,6 +57,30 @@ class ApiClient {
     } on DioException catch (e) {
       logger.e('Error updating user profile on server: ${e.message}');
       return false;
+    }
+  }
+
+  Future<List<LongRide>> getRidesByDestination() async {
+    try {
+      final response = await dio.get('/rides');
+
+      if (response.data is List) {
+        return (response.data as List)
+            .map((rideJson) => LongRide.fromJson(rideJson))
+            .toList();
+      } else if (response.data is Map && response.data['rideDetails'] is List) {
+        return (response.data['rideDetails'] as List)
+            .map((rideJson) => LongRide.fromJson(rideJson))
+            .toList();
+      } else {
+        throw FormatException('Invalid response format');
+      }
+    } on DioException catch (e) {
+      logger.d('Error fetching rides: ${e.message}');
+      rethrow;
+    } catch (e) {
+      logger.d('Unexpected error: $e');
+      rethrow;
     }
   }
 }
