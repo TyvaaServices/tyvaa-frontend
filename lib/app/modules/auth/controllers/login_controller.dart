@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 import '../../../api/api_client.dart';
 
@@ -86,6 +89,11 @@ class LoginController extends GetxController
       );
       await Future.delayed(3.seconds);
       final data = response.data;
+      User user = User.fromJson(data['user']);
+      final box = Hive.box<User>('users');
+      var logger = Logger();
+      logger.d(user);
+      await box.put('currentUser', user);
 
       Get.toNamed('/otp', arguments: [data['otp'], data['token']]);
     } catch (e) {

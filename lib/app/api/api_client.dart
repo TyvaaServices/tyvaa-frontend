@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 class ApiClient {
+  var logger = Logger();
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: 'http://10.0.2.2:2000',
@@ -29,11 +31,31 @@ class ApiClient {
         },
         onError: (error, handler) {
           if (error.response?.statusCode == 401) {
-            Get.offAllNamed('/login');
+            // Get.offAllNamed('/login');
           }
           return handler.next(error);
         },
       ),
     );
+  }
+  Future<User?> getUserProfile(id) async {
+    try {
+      final response = await dio.get('/users/$id');
+      return User.fromJson(response.data);
+    } on DioException catch (e) {
+      logger.d('Error fetching user profile: ${e.message}');
+      return null;
+    }
+  }
+
+  Future<bool> updateUserProfile(User user) async {
+    try {
+      final response = await dio.put('/users/${user.id}', data: user.toJson());
+      logger.d('User profile updated successfully on server');
+      return response.statusCode == 200;
+    } on DioException catch (e) {
+      logger.e('Error updating user profile on server: ${e.message}');
+      return false;
+    }
   }
 }
