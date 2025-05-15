@@ -348,7 +348,6 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
       automaticallyImplyLeading: false,
       title: Row(
         children: [
-          // Back button with custom styling
           GestureDetector(
             onTap: () {
               controller.showChatInterface.value = false;
@@ -363,7 +362,6 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
             ),
           ),
           SizedBox(width: 16),
-          // Avatar
           Hero(
             tag: 'avatar_${controller.selectedChatbot.value}',
             child: Container(
@@ -416,17 +414,39 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
           ),
           Spacer(),
           // Options button
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: textColor.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
+          // Options button
+          // Options popup menu
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'change_bot') {
+                controller.showChatInterface.value = false;
+              }
+            },
+            icon: Icon(
               Icons.more_vert,
               color: textColor.withOpacity(0.7),
               size: 20,
             ),
+            itemBuilder:
+                (context) => [
+                  PopupMenuItem(
+                    value: 'change_bot',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.sync,
+                          color: textColor.withOpacity(0.7),
+                          size: 18,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Changer d’assistant',
+                          style: TextStyle(color: textColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
           ),
         ],
       ),
