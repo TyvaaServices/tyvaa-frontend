@@ -400,9 +400,6 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
             ],
           ),
           Spacer(),
-          // Options button
-          // Options button
-          // Options popup menu
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'change_bot') {

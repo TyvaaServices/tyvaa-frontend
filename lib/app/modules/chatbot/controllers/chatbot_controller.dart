@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -63,6 +64,7 @@ class ChatbotController extends GetxController {
     messages.add(
       Message(text: greeting, isUserMessage: false, timestamp: DateTime.now()),
     );
+    HapticFeedback.lightImpact();
   }
 
   Future<void> _loadSavedChatbot() async {
@@ -97,6 +99,8 @@ class ChatbotController extends GetxController {
         messages.take(50).toList(),
       );
       messages.add(botReply);
+      HapticFeedback.lightImpact();
+      SystemSound.play(SystemSoundType.alert);
     } catch (e) {
       messages.add(
         Message(
@@ -108,6 +112,8 @@ class ChatbotController extends GetxController {
           timestamp: DateTime.now(),
         ),
       );
+      HapticFeedback.mediumImpact();
+      SystemSound.play(SystemSoundType.alert);
     }
 
     isTyping.value = false;
