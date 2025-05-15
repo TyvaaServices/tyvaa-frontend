@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 
 import '../../../themes/tyvaa_theme.dart';
 import '../controllers/profile_controller.dart';
@@ -137,7 +138,6 @@ class ProfileScreen extends GetView<ProfileController> {
               ),
             ),
 
-            // Edit icon
             Positioned(
               bottom: 0,
               right: 0,
@@ -182,7 +182,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          controller.userName.value,
+                          controller.user.value!.nomComplet!,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -231,7 +231,8 @@ class ProfileScreen extends GetView<ProfileController> {
           suffixIcon: IconButton(
             icon: Icon(Icons.check, color: primaryColor),
             onPressed: () {
-              controller.userName.value = controller.nameController.text;
+              controller.user.value!.nomComplet =
+                  controller.nameController.text;
               controller.isEditingName.value = false;
             },
           ),
@@ -289,7 +290,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   isDark,
                   Icons.phone_outlined,
                   'Téléphone',
-                  controller.phoneNumber.value,
+                  controller.user.value!.phoneNumber,
                   Colors.green,
                 ),
                 Divider(height: 30),
@@ -298,7 +299,9 @@ class ProfileScreen extends GetView<ProfileController> {
                   isDark,
                   Icons.calendar_today_outlined,
                   'Membre depuis',
-                  'Mars 2025',
+                  Jiffy.parseFromDateTime(
+                    controller.user.value!.createdAt,
+                  ).format(pattern: 'MMMM yyyy'),
                   Colors.amber,
                 ),
               ],
@@ -418,7 +421,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       CircleAvatar(
                         backgroundImage: AssetImage(
-                          'assets/images/avatar1.png',
+                          'assets/images/default_profile.png',
                         ),
                         radius: 16,
                       ),
