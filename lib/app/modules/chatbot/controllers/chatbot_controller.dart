@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 import '../../../../domain/entities/message.dart';
@@ -15,9 +16,18 @@ class ChatbotController extends GetxController {
   final isTyping = false.obs;
   final ScrollController chatScrollController = ScrollController();
   final RxBool showChatInterface = false.obs;
-  var isPressingSend = false.obs;
+  final isPressingSend = false.obs;
+
+  final _storage = const FlutterSecureStorage();
+  static const _chatbotKey = 'selected_chatbot';
 
   ChatbotController({required this.chatRepository});
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadSavedChatbot();
+  }
 
   @override
   void onClose() {
@@ -36,8 +46,9 @@ class ChatbotController extends GetxController {
     }
   }
 
-  void saveChatbotPreference(String chatbotName) {
+  Future<void> saveChatbotPreference(String chatbotName) async {
     selectedChatbot.value = chatbotName;
+    await _storage.write(key: _chatbotKey, value: chatbotName);
     messages.clear();
     _sendBotGreeting();
     print("Chatbot selected: $chatbotName");
@@ -52,6 +63,15 @@ class ChatbotController extends GetxController {
     messages.add(
       Message(text: greeting, isUserMessage: false, timestamp: DateTime.now()),
     );
+  }
+
+  Future<void> _loadSavedChatbot() async {
+    final saved = await _storage.read(key: _chatbotKey);
+    if (saved != null && saved.isNotEmpty) {
+      selectedChatbot.value = saved;
+      _sendBotGreeting();
+      print("✅ Restored saved chatbot: $saved");
+    }
   }
 
   Future<void> sendMessage() async {
@@ -82,8 +102,8 @@ class ChatbotController extends GetxController {
         Message(
           text:
               personality == 'm'
-                  ? "Euh verifier votre connexion svp mdr"
-                  : "Uhm vous etes actuellement pas connecter ?",
+                  ? "Euh vérifier votre connexion svp mdr"
+                  : "Uhm vous êtes actuellement pas connecté ?",
           isUserMessage: false,
           timestamp: DateTime.now(),
         ),
