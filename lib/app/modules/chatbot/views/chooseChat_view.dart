@@ -348,19 +348,6 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
       automaticallyImplyLeading: false,
       title: Row(
         children: [
-          GestureDetector(
-            onTap: () {
-              controller.showChatInterface.value = false;
-            },
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: botColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.arrow_back, color: botColor, size: 20),
-            ),
-          ),
           SizedBox(width: 16),
           Hero(
             tag: 'avatar_${controller.selectedChatbot.value}',
