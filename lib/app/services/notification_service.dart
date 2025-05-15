@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../domain/entities/user.dart';
 import '../api/api_client.dart'; // Import for ApiClient
 import '../modules/notification/controllers/notification_controller.dart';
 
@@ -14,10 +16,12 @@ class NotificationService extends GetxService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final RxBool isInitialized = false.obs;
   late ApiClient _apiClient; // ApiClient instance
+  User? user;
 
   Future<NotificationService> init() async {
     // Initialize ApiClient
     _apiClient = Get.find<ApiClient>();
+    user = Hive.box<User>('users').get('currentUser');
 
     // Request permission for notifications
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
@@ -279,11 +283,9 @@ class NotificationService extends GetxService {
 
     try {
       final response = await _apiClient.dio.post(
-        '/users/fcm-token',
+        '/users/${user!.id}/fcm-token',
         data: {
-          'token': token,
-          'userId':
-              'current_user_id', // Replace with actual user ID from storage
+          'fcmToken': token, // Replace with actual user ID from storage
         },
       );
 
@@ -326,7 +328,7 @@ class NotificationService extends GetxService {
       if (Get.isRegistered<NotificationController>()) {
         final controller = Get.find<NotificationController>();
         controller.markAsRead(notificationId);
-            }
+      }
     } catch (e) {
       print('Error marking notification as read: $e');
     }
