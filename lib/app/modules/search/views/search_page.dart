@@ -210,7 +210,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                       GestureDetector(
                         onTap: () {
                           HapticFeedback.mediumImpact();
-                          controller.swapLocations();
+                          // controller.swapLocations();
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
@@ -242,7 +242,6 @@ class LocationSearchModal extends GetView<SearchViewController> {
                   ),
                 ),
 
-                // Destination field
                 IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -275,7 +274,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           ),
                         ),
                       ),
-                      // Clear or Map button
+
                       Obx(
                         () =>
                             controller.showClearButton.value
