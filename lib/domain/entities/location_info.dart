@@ -1,4 +1,3 @@
-
 class LocationInfo {
   final String placeId;
   final String osmId;
@@ -8,8 +7,9 @@ class LocationInfo {
   final String displayName;
   final String displayPlace;
   final String displayAddress;
-  final String category; // 'class' in JSON
+  final String category;
   final String type;
+  final AddressInfo address;
 
   LocationInfo({
     required this.placeId,
@@ -22,6 +22,7 @@ class LocationInfo {
     required this.displayAddress,
     required this.category,
     required this.type,
+    required this.address,
   });
 
   factory LocationInfo.fromJson(Map<String, dynamic> json) {
@@ -36,6 +37,7 @@ class LocationInfo {
       displayAddress: json['display_address'] ?? '',
       category: json['class'] ?? '',
       type: json['type'] ?? '',
+      address: AddressInfo.fromJson(json['address']),
     );
   }
 
@@ -51,6 +53,51 @@ class LocationInfo {
       'display_address': displayAddress,
       'class': category,
       'type': type,
+      'address': address?.toJson(),
+    };
+  }
+}
+
+class AddressInfo {
+  final String? name;
+  final String? suburb;
+  final String? city;
+  final String? county;
+  final String? state;
+  final String? country;
+  final String? countryCode;
+
+  AddressInfo({
+    this.name,
+    this.suburb,
+    this.city,
+    this.county,
+    this.state,
+    this.country,
+    this.countryCode,
+  });
+
+  factory AddressInfo.fromJson(Map<String, dynamic> json) {
+    return AddressInfo(
+      name: json['name'],
+      suburb: json['suburb'],
+      city: json['city'],
+      county: json['county'],
+      state: json['state'],
+      country: json['country'],
+      countryCode: json['country_code'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'suburb': suburb,
+      'city': city,
+      'county': county,
+      'state': state,
+      'country': country,
+      'country_code': countryCode,
     };
   }
 }

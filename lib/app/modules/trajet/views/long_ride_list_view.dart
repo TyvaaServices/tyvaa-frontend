@@ -1,13 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:passenger_tyvaa/domain/entities/location_info.dart';
+import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../api/api_client.dart';
 import '../../../themes/tyvaa_theme.dart';
 
-class RideListController extends GetxController {
-  final RxList<RideModel> rides = <RideModel>[].obs;
+class LongRideListController extends GetxController {
+  LocationInfo? locationInfo;
+  final ApiClient apiClient = ApiClient();
+  final RxList<LongRide> rides = <LongRide>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
@@ -34,110 +38,10 @@ class RideListController extends GetxController {
 
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 1));
-
-      // Mock data for demonstration - replace with actual API call
-      rides.value = [
-        RideModel(
-          id: '1',
-          driverId: 'd1',
-          driverName: 'Jean Dupont',
-          driverPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
-          driverRating: 4.8,
-          driverTrips: 42,
-          origin: 'Paris',
-          destination: 'Lyon',
-          departureDate: DateTime.now().add(const Duration(days: 1)),
-          price: 35.0,
-          availableSeats: 3,
-          totalSeats: 4,
-          description:
-              'Voyage confortable en berline climatisée. Départ de la gare de Lyon. Un petit bagage par personne autorisé.',
-          estimatedDuration: '4h 15min',
-          carModel: 'Tesla Model 3',
-          carColor: 'Blanc',
-          amenities: ['Climatisation', 'USB', 'Musique'],
-        ),
-        RideModel(
-          id: '2',
-          driverId: 'd2',
-          driverName: 'Marie Laurent',
-          driverPhoto: 'https://randomuser.me/api/portraits/women/44.jpg',
-          driverRating: 4.9,
-          driverTrips: 89,
-          origin: 'Marseille',
-          destination: 'Nice',
-          departureDate: DateTime.now().add(const Duration(days: 2)),
-          price: 25000.0,
-          availableSeats: 2,
-          totalSeats: 4,
-          description:
-              'Trajet direct par l\'autoroute. Je m\'arrête uniquement sur l\'aire de repos de Brignoles pour une pause de 15 minutes.',
-          estimatedDuration: '2h 20min',
-          carModel: 'Peugeot 3008',
-          carColor: 'Gris',
-          amenities: ['Climatisation', 'USB', 'Animal accepté'],
-        ),
-        RideModel(
-          id: '3',
-          driverId: 'd3',
-          driverName: 'Ahmed Benali',
-          driverPhoto: 'https://randomuser.me/api/portraits/men/22.jpg',
-          driverRating: 4.6,
-          driverTrips: 27,
-          origin: 'Bordeaux',
-          destination: 'Toulouse',
-          departureDate: DateTime.now().add(const Duration(days: 1, hours: 12)),
-          price: 28.0,
-          availableSeats: 1,
-          totalSeats: 3,
-          description:
-              'Je passe par l\'autoroute A62. Voiture spacieuse et propre, coffre disponible pour bagages.',
-          estimatedDuration: '2h 45min',
-          carModel: 'Renault Clio',
-          carColor: 'Bleu',
-          amenities: ['Climatisation', 'USB', 'Non-fumeur'],
-        ),
-        RideModel(
-          id: '4',
-          driverId: 'd4',
-          driverName: 'Sophie Moreau',
-          driverPhoto: 'https://randomuser.me/api/portraits/women/65.jpg',
-          driverRating: 5.0,
-          driverTrips: 103,
-          origin: 'Lille',
-          destination: 'Paris',
-          departureDate: DateTime.now().add(const Duration(hours: 6)),
-          price: 32.0,
-          availableSeats: 2,
-          totalSeats: 3,
-          description:
-              'Voyage en voiture électrique, arrêt possible à Arras sur demande. Pas d\'animaux s\'il vous plaît.',
-          estimatedDuration: '2h 35min',
-          carModel: 'Volkswagen ID.3',
-          carColor: 'Noir',
-          amenities: ['Climatisation', 'USB', 'Non-fumeur', 'Électrique'],
-        ),
-        RideModel(
-          id: '5',
-          driverId: 'd5',
-          driverName: 'Thomas Leroy',
-          driverPhoto: 'https://randomuser.me/api/portraits/men/54.jpg',
-          driverRating: 4.7,
-          driverTrips: 51,
-          origin: 'Nantes',
-          destination: 'Rennes',
-          departureDate: DateTime.now().add(const Duration(days: 3)),
-          price: 18.0,
-          availableSeats: 3,
-          totalSeats: 4,
-          description:
-              'Trajet rapide d\'1h30. Départ du centre commercial Atlantis. Musique au choix des passagers.',
-          estimatedDuration: '1h 30min',
-          carModel: 'Citroën C4',
-          carColor: 'Rouge',
-          amenities: ['Climatisation', 'USB', 'Musique'],
-        ),
-      ];
+      locationInfo = Get.arguments;
+      if (locationInfo != null) {
+        rides.value = await apiClient.getRidesByDestination(locationInfo!);
+      }
 
       isLoading(false);
     } catch (e) {
@@ -162,12 +66,12 @@ class RideListController extends GetxController {
   }
 }
 
-class RideListScreen extends GetView<RideListController> {
-  const RideListScreen({super.key});
+class LongRideListScreen extends GetView<LongRideListController> {
+  const LongRideListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(RideListController());
+    Get.lazyPut(() => LongRideListController(), fenix: true);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -522,13 +426,16 @@ class RideListScreen extends GetView<RideListController> {
     );
   }
 
-  Widget _buildRideCard(BuildContext context, RideModel ride) {
+  Widget _buildRideCard(BuildContext context, LongRide ride) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final date = DateFormat('dd MMM', 'fr_FR').format(ride.departureDate);
-    final time = DateFormat('HH:mm', 'fr_FR').format(ride.departureDate);
+
+    final date = Jiffy.parseFromDateTime(ride.dateTime).format(pattern: 'EEEE');
+    final time = Jiffy.parseFromDateTime(
+      ride.dateTime,
+    ).format(pattern: 'HH:mm');
 
     return GestureDetector(
-      onTap: () => controller.navigateToRideDetails(ride.id),
+      onTap: () => controller.navigateToRideDetails(ride.id.toString()),
       child: Container(
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 16),
@@ -566,7 +473,7 @@ class RideListScreen extends GetView<RideListController> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${ride.price.toStringAsFixed(0)} €',
+                    '${ride.price.toStringAsFixed(0)} FCFA',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -582,7 +489,7 @@ class RideListScreen extends GetView<RideListController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _locationText(ride.origin, AppColors.primary, context),
+                _locationText(ride.departure, AppColors.primary, context),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Container(
@@ -601,7 +508,7 @@ class RideListScreen extends GetView<RideListController> {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(ride.driverPhoto),
+                  // backgroundImage: CachedNetworkImageProvider(ride.driverPhoto),
                   radius: 22,
                 ),
                 const SizedBox(width: 12),
@@ -610,7 +517,7 @@ class RideListScreen extends GetView<RideListController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        ride.driverName,
+                        ride.driverId.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white : AppColors.textPrimary,
@@ -620,24 +527,20 @@ class RideListScreen extends GetView<RideListController> {
                         children: [
                           const Icon(Icons.star, size: 14, color: Colors.amber),
                           const SizedBox(width: 4),
-                          Text(
-                            '${ride.driverRating} • ${ride.driverTrips} trajets',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark ? Colors.white54 : Colors.grey[600],
-                            ),
-                          ),
+                          // Text(
+                          //   '${ride.driverRating} • ${ride.driverTrips} trajets',
+                          //   style: TextStyle(
+                          //     fontSize: 13,
+                          //     color: isDark ? Colors.white54 : Colors.grey[600],
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 8),
-                _infoPill(
-                  Icons.event_seat,
-                  '${ride.availableSeats} dispo',
-                  context,
-                ),
+                _infoPill(Icons.event_seat, '${ride.places} dispo', context),
               ],
             ),
           ],
