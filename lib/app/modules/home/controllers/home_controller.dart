@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
 import 'package:passenger_tyvaa/app/socket/SocketService.dart';
 
 class HomeController extends GetxController {
@@ -142,17 +143,33 @@ class HomeController extends GetxController {
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter: 10, // meters
+          distanceFilter: 10,
         ),
       ).listen((Position position) async {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-        SocketService().initSocket("1", position.latitude, position.longitude);
-        Placemark place = placemarks.first;
-        currentAddress.value =
-            '${place.thoroughfare} ${place.locality}, ${place.country}';
+        final searchViewController = Get.find<SearchViewController>();
+
+        final oldLat = searchViewController.user.value?.latitude;
+        final oldLon = searchViewController.user.value?.longitude;
+
+        final newLat = position.latitude;
+        final newLon = position.longitude;
+
+        if ((oldLat == null || oldLon == null) ||
+            (Geolocator.distanceBetween(oldLat, oldLon, newLat, newLon) > 10)) {
+          searchViewController.user.value!.latitude = newLat;
+          searchViewController.user.value!.longitude = newLon;
+
+          SocketService().initSocket(
+            "1",
+            newLat,
+            newLon,
+          ); // avoid reconnecting unnecessarily
+          final placemarks = await placemarkFromCoordinates(newLat, newLon);
+          final place = placemarks.first;
+
+          currentAddress.value =
+              '${place.thoroughfare ?? ''} ${place.locality ?? ''}, ${place.country ?? ''}';
+        }
       });
     } else {
       currentAddress.value = 'Localisation refusée';
