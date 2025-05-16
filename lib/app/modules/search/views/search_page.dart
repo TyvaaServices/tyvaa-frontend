@@ -292,8 +292,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 ),
 
                 IntrinsicHeight(
-                  child:
-                  RawAutocomplete<Map<String, dynamic>>(
+                  child: RawAutocomplete<Map<String, dynamic>>(
                     key: Key('destination_field'),
                     focusNode: controller.destinationFocusNode,
                     textEditingController: controller.destinationController,
@@ -309,10 +308,10 @@ class LocationSearchModal extends GetView<SearchViewController> {
                       );
                     },
                     optionsViewBuilder: (
-                        BuildContext context,
-                        AutocompleteOnSelected<Map<String, dynamic>> onSelected,
-                        Iterable<Map<String, dynamic>> options,
-                        ) {
+                      BuildContext context,
+                      AutocompleteOnSelected<Map<String, dynamic>> onSelected,
+                      Iterable<Map<String, dynamic>> options,
+                    ) {
                       return Material(
                         elevation: 8,
                         color: surfaceColor,
@@ -323,21 +322,29 @@ class LocationSearchModal extends GetView<SearchViewController> {
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: options.length,
-                            separatorBuilder: (_, __) => Divider(
-                              height: 1,
-                              color: isDark ? Colors.white10 : Colors.grey.shade200,
-                            ),
+                            separatorBuilder:
+                                (_, __) => Divider(
+                                  height: 1,
+                                  color:
+                                      isDark
+                                          ? Colors.white10
+                                          : Colors.grey.shade200,
+                                ),
                             itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
                               return InkWell(
                                 onTap: () {
                                   onSelected(option);
                                   var location = LocationInfo.fromJson(option);
-                                  controller.destinationController.text = location.displayName;
+
                                   controller.checkTripLength(
                                     location.lat,
                                     location.lon,
                                   );
+                                  controller.destinationController.text =
+                                      location.address.name!;
+
+                                  controller.destinationLocation = location;
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -345,7 +352,8 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                     vertical: 12,
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.location_on_outlined,
@@ -354,12 +362,16 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                       ),
                                       const SizedBox(width: 12),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             width: Get.width * 0.8,
                                             child: AutoSizeText(
-                                              option['display_name']?.split(',').first ?? 'Unknown',
+                                              option['display_name']
+                                                      ?.split(',')
+                                                      .first ??
+                                                  'Unknown',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
@@ -377,7 +389,9 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                               option['display_name'] ?? '',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: textColor.withOpacity(0.6),
+                                                color: textColor.withOpacity(
+                                                  0.6,
+                                                ),
                                               ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -396,11 +410,11 @@ class LocationSearchModal extends GetView<SearchViewController> {
                       );
                     },
                     fieldViewBuilder: (
-                        BuildContext context,
-                        TextEditingController textEditingController,
-                        FocusNode focusNode,
-                        VoidCallback onFieldSubmitted,
-                        ) {
+                      BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted,
+                    ) {
                       return Row(
                         children: [
                           _buildLocationIcon(
@@ -436,49 +450,48 @@ class LocationSearchModal extends GetView<SearchViewController> {
                     },
                   ),
 
-// Clear/Map Button - Uncommented
-//                   Obx(
-//                         () => controller.showClearButton.value
-//                         ? GestureDetector(
-//                       onTap: () {
-//                         HapticFeedback.lightImpact();
-//                         controller.clearDestination();
-//                       },
-//                       child: Container(
-//                         padding: const EdgeInsets.all(8),
-//                         margin: const EdgeInsets.only(right: 10),
-//                         decoration: BoxDecoration(
-//                           color: isDark ? Colors.white12 : Colors.black.withOpacity(0.05),
-//                           shape: BoxShape.circle,
-//                         ),
-//                         child: Icon(
-//                           Icons.close_rounded,
-//                           color: textColor.withOpacity(0.5),
-//                           size: 18,
-//                         ),
-//                       ),
-//                     )
-//                         : GestureDetector(
-//                       onTap: () {
-//                         HapticFeedback.mediumImpact();
-//                         // Open map selection
-//                       },
-//                       child: Container(
-//                         padding: const EdgeInsets.all(8),
-//                         margin: const EdgeInsets.only(right: 10),
-//                         decoration: BoxDecoration(
-//                           color: primaryColor.withOpacity(0.15),
-//                           borderRadius: BorderRadius.circular(12),
-//                         ),
-//                         child: Icon(
-//                           Icons.map_rounded,
-//                           color: primaryColor,
-//                           size: 20,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-
+                  // Clear/Map Button - Uncommented
+                  //                   Obx(
+                  //                         () => controller.showClearButton.value
+                  //                         ? GestureDetector(
+                  //                       onTap: () {
+                  //                         HapticFeedback.lightImpact();
+                  //                         controller.clearDestination();
+                  //                       },
+                  //                       child: Container(
+                  //                         padding: const EdgeInsets.all(8),
+                  //                         margin: const EdgeInsets.only(right: 10),
+                  //                         decoration: BoxDecoration(
+                  //                           color: isDark ? Colors.white12 : Colors.black.withOpacity(0.05),
+                  //                           shape: BoxShape.circle,
+                  //                         ),
+                  //                         child: Icon(
+                  //                           Icons.close_rounded,
+                  //                           color: textColor.withOpacity(0.5),
+                  //                           size: 18,
+                  //                         ),
+                  //                       ),
+                  //                     )
+                  //                         : GestureDetector(
+                  //                       onTap: () {
+                  //                         HapticFeedback.mediumImpact();
+                  //                         // Open map selection
+                  //                       },
+                  //                       child: Container(
+                  //                         padding: const EdgeInsets.all(8),
+                  //                         margin: const EdgeInsets.only(right: 10),
+                  //                         decoration: BoxDecoration(
+                  //                           color: primaryColor.withOpacity(0.15),
+                  //                           borderRadius: BorderRadius.circular(12),
+                  //                         ),
+                  //                         child: Icon(
+                  //                           Icons.map_rounded,
+                  //                           color: primaryColor,
+                  //                           size: 20,
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ),
                 ),
               ],
             ),

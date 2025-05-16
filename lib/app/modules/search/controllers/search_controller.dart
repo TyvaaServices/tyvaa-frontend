@@ -6,11 +6,14 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
+import 'package:passenger_tyvaa/app/routes/app_pages.dart';
+import 'package:passenger_tyvaa/domain/entities/location_info.dart';
 
 import '../../../../domain/entities/user.dart';
 
 class SearchViewController extends GetxController {
   Rxn<User> user = Rxn<User>();
+  late LocationInfo destinationLocation;
   final TextEditingController currentLocationController = TextEditingController(
     text: "Votre position actuelle",
   );
@@ -114,6 +117,7 @@ class SearchViewController extends GetxController {
       final temp = currentLocationController.text;
       currentLocationController.text = destinationController.text;
       destinationController.text = temp;
+      if (destinationController.text.contains('Votre Position Actuelle')) {}
     }
   }
 
@@ -146,6 +150,9 @@ class SearchViewController extends GetxController {
       duration: const Duration(seconds: 3),
       margin: const EdgeInsets.all(12),
     );
+    if (isLong) {
+      Get.toNamed(Routes.LONG_RIDE_LIST, arguments: destinationLocation);
+    }
   }
 
   @override
