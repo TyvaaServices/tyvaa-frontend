@@ -1,22 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
 
 import '../../../../domain/entities/user.dart';
 
 class SearchViewController extends GetxController {
   Rxn<User> user = Rxn<User>();
-  final box = Hive.box<User>('users');
   final TextEditingController currentLocationController = TextEditingController(
     text: "Votre position actuelle",
   );
   final RxDouble currentLat = 0.0.obs;
   final RxDouble currentLon = 0.0.obs;
-  final RxString countryCode = 'sn'.obs; // Default to Senegal (SN)
-  // Call this when you get the user's location
+  final RxString countryCode = 'sn'.obs;
   void setLocationContext(double lat, double lon, String country) {
     currentLat.value = lat;
     currentLon.value = lon;
@@ -55,7 +55,8 @@ class SearchViewController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    user.value = await box.get('currentUser');
+    final box = Hive.box<User>('users');
+    user.value = box.get('currentUser');
     currentLat.value = user.value?.latitude ?? 0;
     currentLon.value = user.value?.longitude ?? 0;
     setupListeners();
@@ -119,6 +120,32 @@ class SearchViewController extends GetxController {
   void selectDestination(String destination) {
     destinationController.text = destination;
     destinationFocusNode.unfocus();
+  }
+
+  Future<void> checkTripLength(double destLat, double destLon) async {
+    final distanceInMeters = Geolocator.distanceBetween(
+      currentLat.value,
+      currentLon.value,
+      destLat,
+      destLon,
+    );
+    var logger = Logger();
+    logger.d(" cheikht ${user.value!.latitude} ${user.value!.longitude}");
+    logger.d(" cheikhtt ${destLat} ${destLon}");
+
+    final distanceInKm = distanceInMeters / 1000;
+
+    final isLong = distanceInKm > 60;
+
+    Get.snackbar(
+      isLong ? "Long voyage" : "Court voyage",
+      'Distance: ${distanceInKm.toStringAsFixed(2)} km',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: isLong ? Colors.deepOrange : Colors.green,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+      margin: const EdgeInsets.all(12),
+    );
   }
 
   @override
