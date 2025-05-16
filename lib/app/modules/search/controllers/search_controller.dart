@@ -1,10 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:passenger_tyvaa/app/modules/search/views/search_page.dart';
+
+import '../../../../domain/entities/user.dart';
 
 class SearchViewController extends GetxController {
+  Rxn<User> user = Rxn<User>();
+  final box = Hive.box<User>('users');
   final TextEditingController currentLocationController = TextEditingController(
     text: "Votre position actuelle",
   );
+  final RxDouble currentLat = 0.0.obs;
+  final RxDouble currentLon = 0.0.obs;
+  final RxString countryCode = 'sn'.obs; // Default to Senegal (SN)
+  // Call this when you get the user's location
+  void setLocationContext(double lat, double lon, String country) {
+    currentLat.value = lat;
+    currentLon.value = lon;
+    countryCode.value = country.toLowerCase();
+  }
+
   final TextEditingController destinationController = TextEditingController();
 
   final FocusNode currentLocationFocusNode = FocusNode();
@@ -35,34 +53,47 @@ class SearchViewController extends GetxController {
   ];
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    user.value = await box.get('currentUser');
+    currentLat.value = user.value?.latitude ?? 0;
+    currentLon.value = user.value?.longitude ?? 0;
     setupListeners();
     forceFocus();
   }
 
-  void setupListeners() {
-    // Monitor text changes to show clear button when appropriate
-    destinationController.addListener(() {
-      showClearButton.value = destinationController.text.isNotEmpty;
+  Timer? _debounce;
 
-      // Simple search simulation
-      if (destinationController.text.isNotEmpty) {
-        isSearching.value = true;
-        // Simulated search results - in a real app would call an API
-        searchResults.value =
-            recentLocations
-                .where(
-                  (location) => location.title.toLowerCase().contains(
-                    destinationController.text.toLowerCase(),
-                  ),
-                )
-                .map((e) => e.title)
-                .toList();
-      } else {
-        isSearching.value = false;
-        searchResults.clear();
-      }
+  void setupListeners() {
+    destinationController.addListener(() {
+      final query = destinationController.text;
+
+      showClearButton.value = query.isNotEmpty;
+
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+      _debounce = Timer(const Duration(milliseconds: 400), () async {
+        if (query.isNotEmpty) {
+          isSearching.value = true;
+
+          try {
+            final results = await searchLocations(
+              query,
+              lat: currentLat.value,
+              lon: currentLon.value,
+              countryCode: countryCode.value,
+            );
+
+            searchResults.value =
+                results.map((item) => item['display_name'] as String).toList();
+          } catch (e) {
+            debugPrint('Search error: $e');
+          }
+        } else {
+          isSearching.value = false;
+          searchResults.clear();
+        }
+      });
     });
   }
 
