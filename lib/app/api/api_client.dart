@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/domain/entities/location_info.dart';
 import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
@@ -60,27 +63,18 @@ class ApiClient {
     }
   }
 
-  Future<List<LongRide>> getRidesByDestination() async {
+  Future<List<LongRide>> getRidesByDestination(LocationInfo location) async {
     try {
-      final response = await dio.get('/rides');
-
-      if (response.data is List) {
-        return (response.data as List)
-            .map((rideJson) => LongRide.fromJson(rideJson))
-            .toList();
-      } else if (response.data is Map && response.data['rideDetails'] is List) {
-        return (response.data['rideDetails'] as List)
-            .map((rideJson) => LongRide.fromJson(rideJson))
-            .toList();
-      } else {
-        throw FormatException('Invalid response format');
-      }
+      final response = await dio.post(
+        '/rides/find',
+        data: jsonEncode(location),
+      );
+      return (response.data as List)
+          .map((ride) => LongRide.fromJson(ride))
+          .toList();
     } on DioException catch (e) {
-      logger.d('Error fetching rides: ${e.message}');
-      rethrow;
-    } catch (e) {
-      logger.d('Unexpected error: $e');
-      rethrow;
+      logger.e('Error fetching rides by destination: ${e.message}');
+      return [];
     }
   }
 }
