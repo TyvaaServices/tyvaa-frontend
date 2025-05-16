@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import '../../../themes/tyvaa_theme.dart';
 import '../controllers/search_controller.dart';
@@ -172,8 +177,10 @@ class LocationSearchModal extends GetView<SearchViewController> {
           color: Colors.transparent,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Origin field
+                // Origin field with TypeAhead
                 IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -184,33 +191,74 @@ class LocationSearchModal extends GetView<SearchViewController> {
                         isDark: isDark,
                       ),
                       Expanded(
-                        child: TextField(
-                          controller: controller.currentLocationController,
+                        child: RawAutocomplete<Map<String, dynamic>>(
                           focusNode: controller.currentLocationFocusNode,
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Votre position actuelle',
-                            hintStyle: TextStyle(
-                              color: textColor.withOpacity(0.5),
-                              fontSize: 16,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 20,
-                              horizontal: 16,
-                            ),
-                          ),
+                          textEditingController:
+                              controller.currentLocationController,
+                          optionsBuilder: (
+                            TextEditingValue textEditingValue,
+                          ) async {
+                            if (textEditingValue.text.isEmpty) {
+                              return const Iterable<
+                                Map<String, dynamic>
+                              >.empty();
+                            }
+                            return await searchLocations(
+                              textEditingValue.text,
+                              lat: controller.currentLat.value,
+                              lon: controller.currentLon.value,
+                              countryCode: controller.countryCode.value,
+                            );
+                          },
+                          optionsViewBuilder: (
+                            BuildContext context,
+                            AutocompleteOnSelected<Map<String, dynamic>>
+                            onSelected,
+                            Iterable<Map<String, dynamic>> options,
+                          ) {
+                            return _buildOptionsView(
+                              context,
+                              onSelected,
+                              options,
+                              textColor,
+                              isDark,
+                            );
+                          },
+                          fieldViewBuilder: (
+                            BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted,
+                          ) {
+                            return TextField(
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Votre position actuelle',
+                                hintStyle: TextStyle(
+                                  color: textColor.withOpacity(0.5),
+                                  fontSize: 16,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                  horizontal: 16,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       // Swap button
                       GestureDetector(
                         onTap: () {
                           HapticFeedback.mediumImpact();
-                          // controller.swapLocations();
+                          controller.swapLocations();
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
@@ -243,90 +291,256 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 ),
 
                 IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildLocationIcon(
-                        color: primaryColor,
-                        icon: Icons.place_rounded,
-                        isDark: isDark,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: controller.destinationController,
-                          focusNode: controller.destinationFocusNode,
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Où souhaitez-vous aller ?',
-                            hintStyle: TextStyle(
-                              color: textColor.withOpacity(0.5),
-                              fontSize: 16,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 20,
-                              horizontal: 16,
-                            ),
-                          ),
-                        ),
-                      ),
+                  child:
+                  // _buildLocationIcon(
+                  //   color: primaryColor,
+                  //   icon: Icons.place_rounded,
+                  //   isDark: isDark,
+                  // ),
+                  RawAutocomplete<Map<String, dynamic>>(
+                    key: Key('destination_field'),
+                    focusNode: controller.destinationFocusNode,
+                    textEditingController: controller.destinationController,
+                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<Map<String, dynamic>>.empty();
+                      }
+                      return await searchLocations(
+                        textEditingValue.text,
+                        lat: controller.currentLat.value,
+                        lon: controller.currentLon.value,
+                        countryCode: controller.countryCode.value,
+                      );
+                    },
+                    optionsViewBuilder: (
+                      BuildContext context,
+                      AutocompleteOnSelected<Map<String, dynamic>> onSelected,
+                      Iterable<Map<String, dynamic>> options,
+                    ) {
+                      return Material(
+                        elevation: 8,
+                        color: surfaceColor,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
 
-                      Obx(
-                        () =>
-                            controller.showClearButton.value
-                                ? GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    controller.clearDestination();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    margin: const EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isDark
-                                              ? Colors.white12
-                                              : Colors.black.withOpacity(0.05),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.close_rounded,
-                                      color: textColor.withOpacity(0.5),
-                                      size: 18,
-                                    ),
+                          child: ListView.separated(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: options.length,
+                            separatorBuilder:
+                                (_, __) => Divider(
+                                  height: 1,
+                                  color:
+                                      isDark
+                                          ? Colors.white10
+                                          : Colors.grey.shade200,
+                                ),
+                            itemBuilder: (BuildContext context, int index) {
+                              final option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () => onSelected(option),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
                                   ),
-                                )
-                                : GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.mediumImpact();
-                                    // Open map selection
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    margin: const EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                      color: primaryColor.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Icon(
-                                      Icons.map_rounded,
-                                      color: primaryColor,
-                                      size: 20,
-                                    ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color: primaryColor,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: Get.width * 0.8,
+                                            child: AutoSizeText(
+                                              option['display_name']
+                                                      ?.split(',')
+                                                      .first ??
+                                                  'Unknown',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: textColor,
+                                              ),
+                                              softWrap: true,
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          SizedBox(
+                                            width: Get.width * 0.8,
+                                            child: AutoSizeText(
+                                              option['display_name'] ?? '',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: textColor.withOpacity(
+                                                  0.6,
+                                                ),
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                      ),
-                    ],
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                    fieldViewBuilder: (
+                      BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted,
+                    ) {
+                      return TextField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Où souhaitez-vous aller ?',
+                          hintStyle: TextStyle(
+                            color: textColor.withOpacity(0.5),
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 16,
+                          ),
+                        ),
+                      );
+                    },
                   ),
+
+                  // Obx(
+                  //   () =>
+                  //       controller.showClearButton.value
+                  //           ? GestureDetector(
+                  //             onTap: () {
+                  //               HapticFeedback.lightImpact();
+                  //               controller.clearDestination();
+                  //             },
+                  //             child: Container(
+                  //               padding: const EdgeInsets.all(8),
+                  //               margin: const EdgeInsets.only(right: 10),
+                  //               decoration: BoxDecoration(
+                  //                 color:
+                  //                     isDark
+                  //                         ? Colors.white12
+                  //                         : Colors.black.withOpacity(0.05),
+                  //                 shape: BoxShape.circle,
+                  //               ),
+                  //               child: Icon(
+                  //                 Icons.close_rounded,
+                  //                 color: textColor.withOpacity(0.5),
+                  //                 size: 18,
+                  //               ),
+                  //             ),
+                  //           )
+                  //           : GestureDetector(
+                  //             onTap: () {
+                  //               HapticFeedback.mediumImpact();
+                  //               // Open map selection
+                  //             },
+                  //             child: Container(
+                  //               padding: const EdgeInsets.all(8),
+                  //               margin: const EdgeInsets.only(right: 10),
+                  //               decoration: BoxDecoration(
+                  //                 color: primaryColor.withOpacity(0.15),
+                  //                 borderRadius: BorderRadius.circular(12),
+                  //               ),
+                  //               child: Icon(
+                  //                 Icons.map_rounded,
+                  //                 color: primaryColor,
+                  //                 size: 20,
+                  //               ),
+                  //             ),
+                  //           ),
+                  // ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildOptionsView(
+    BuildContext context,
+    AutocompleteOnSelected<Map<String, dynamic>> onSelected,
+    Iterable<Map<String, dynamic>> options,
+    Color textColor,
+    bool isDark,
+  ) {
+    return Material(
+      elevation: 4.0,
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        itemCount: options.length,
+        itemBuilder: (BuildContext context, int index) {
+          final Map<String, dynamic> option = options.elementAt(index);
+          return InkWell(
+            onTap: () {
+              onSelected(option);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.place_outlined,
+                    color: textColor.withOpacity(0.6),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        option['display_name']?.split(',').first ??
+                            'Unknown location',
+                        style: TextStyle(color: textColor, fontSize: 16),
+                      ),
+                      Text(
+                        option['display_name'] ?? '',
+                        style: TextStyle(
+                          color: textColor.withOpacity(0.6),
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -547,11 +761,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: Get.width * 0.6,
+                        child: Text(
                           title,
                           style: TextStyle(
                             fontSize: 15,
@@ -559,8 +774,11 @@ class LocationSearchModal extends GetView<SearchViewController> {
                             color: textColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: Get.width * 0.6,
+                        child: AutoSizeText(
                           subtitle,
                           style: TextStyle(
                             fontSize: 13,
@@ -569,9 +787,10 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: textColor.withOpacity(0.3),
@@ -584,5 +803,58 @@ class LocationSearchModal extends GetView<SearchViewController> {
         ),
       ),
     );
+  }
+}
+
+final Map<String, List<Map<String, dynamic>>> _searchCache = {};
+
+Future<List<Map<String, dynamic>>> searchLocations(
+  String query, {
+  double? lat,
+  double? lon,
+  String? countryCode,
+}) async {
+  const String apiKey = 'pk.fe687b0ad84ae94af226f986ac078a5e';
+  final cacheKey = '$query|${lat ?? ''}|${lon ?? ''}|${countryCode ?? ''}';
+
+  // ✅ Return cached results if available
+  if (_searchCache.containsKey(cacheKey)) {
+    return _searchCache[cacheKey]!;
+  }
+
+  final url = Uri.parse(
+    'https://api.locationiq.com/v1/autocomplete'
+    '?q=$query'
+    '&key=$apiKey'
+    '&format=json'
+    '${countryCode != null ? '&countrycodes=$countryCode' : ''}'
+    '&limit=5',
+  );
+  var logger = Logger();
+  logger.d('Fetching location data for query: $query');
+  logger.d('URL: $url');
+  logger.d('Cache key: $apiKey');
+
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final List data = jsonDecode(response.body);
+    final result =
+        data
+            .map<Map<String, dynamic>>((e) => e as Map<String, dynamic>)
+            .toList();
+
+    // ✅ Store in cache
+    _searchCache[cacheKey] = result;
+
+    return result;
+  } else if (response.statusCode == 429) {
+    throw Exception('Rate limit exceeded (429)');
+  } else if (response.statusCode == 403 || response.statusCode == 401) {
+    throw Exception('Unauthorized or invalid API key');
+  } else if (response.statusCode == 404) {
+    throw Exception('Location not found (404)');
+  } else {
+    throw Exception('LocationIQ error: ${response.statusCode}');
   }
 }
