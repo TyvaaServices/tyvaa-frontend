@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/domain/entities/location_info.dart';
 
 import '../../../themes/tyvaa_theme.dart';
 import '../controllers/search_controller.dart';
@@ -339,7 +340,13 @@ class LocationSearchModal extends GetView<SearchViewController> {
                             itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
                               return InkWell(
-                                onTap: () => onSelected(option),
+                                onTap: () {
+                                  onSelected(option);
+                                  var location = LocationInfo.fromJson(option);
+                                  controller.destinationController.text =
+                                      location.displayName;
+                                  controller.checkTripLength(location.lat, location.lon);
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
