@@ -110,6 +110,7 @@ class LoginScreen extends GetView<LoginController> {
                           key: controller.formKey,
                           child: AnimatedContainer(duration: const Duration(milliseconds: 300),curve: Curves.easeOut,margin: EdgeInsets.only(bottom: Get.bottomBarHeight * 0.5),child: Container(
                             padding: const EdgeInsets.all(24),
+
                             decoration: BoxDecoration(
                               color: cardColor,
                               borderRadius: BorderRadius.circular(24),
@@ -254,6 +255,26 @@ class LoginScreen extends GetView<LoginController> {
                                           width: 2,
                                         ),
                                       ),
+                                      errorStyle: TextStyle(
+                                        color: Colors.red[700],
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(
+                                          color: Colors.red[400]!,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(
+                                          color: Colors.red[700]!,
+                                          width: 2,
+                                        ),
+                                      ),
+
                                       filled: true,
                                       fillColor:
                                       isDark

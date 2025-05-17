@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
@@ -87,6 +88,7 @@ class LoginController extends GetxController
 
     isLoading.value = true;
 
+
     try {
 
       await Future.delayed(3.seconds);
@@ -103,6 +105,7 @@ class LoginController extends GetxController
 
       Get.toNamed('/otp', arguments: [data['otp'], data['token']]);
     } catch (e) {
+      HapticFeedback.heavyImpact();
       Get.snackbar('Error', 'Login failed. Please try again.');
     } finally {
       isLoading.value = false;
