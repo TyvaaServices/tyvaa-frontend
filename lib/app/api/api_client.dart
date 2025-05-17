@@ -52,6 +52,25 @@ class ApiClient {
     }
   }
 
+  Future<bool> registerUser(String fullName, String phoneNumber) async {
+    try {
+      final response = await dio.post('/users', data:{
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+      });
+      if (response.statusCode == 201) {
+        logger.d('User registered successfully');
+        return true;
+      } else {
+        logger.e('Failed to register user: ${response.statusCode}');
+        return false;
+      }
+    } on DioException catch (e) {
+      logger.e('Error registering user: ${e.message}');
+      return false;
+    }
+  }
+
   Future<bool> updateUserProfile(User user) async {
     try {
       final response = await dio.put('/users/${user.id}', data: user.toJson());
