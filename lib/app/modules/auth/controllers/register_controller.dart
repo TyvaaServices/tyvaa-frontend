@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:passenger_tyvaa/app/api/api_client.dart';
 
 class RegisterController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -72,10 +73,17 @@ class RegisterController extends GetxController
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
+    final fullName = nameController.text;
+    final phoneNumber = unmasked.value;
+    bool isRegistered =  await ApiClient().registerUser(fullName, phoneNumber);
 
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+    if (!isRegistered) {
+      isLoading.value = false;
+      Get.snackbar('Erreur', 'Échec de l\'inscription');
+      return;
+    }
     isLoading.value = false;
-    Get.snackbar('Succès', 'Compte créé avec succès !');
   }
 
   @override
