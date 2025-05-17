@@ -5,23 +5,25 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 class RegisterController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
-
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
-
   final phoneFocus = FocusNode();
 
   final isLoading = false.obs;
-  final isValid = false.obs;
-  final hasInput = false.obs;
+  final unmasked = ''.obs;
   final isDriver = false.obs;
+  final hasInput = false.obs;
+  final isValid = false.obs;
 
   late AnimationController animationController;
   late Animation<double> fadeInAnimation;
+  late ScrollController scrollController;
 
-  final phoneMask = MaskTextInputFormatter(mask: '## ### ## ##');
+  final phoneMask = MaskTextInputFormatter(
+    mask: '+221 ## ### ## ##',
+    filter: {"#": RegExp(r'\d')},
+  );
 
-  final scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -30,21 +32,40 @@ class RegisterController extends GetxController
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
-    );
+    )..forward();
 
     fadeInAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(animationController);
+    ).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeOut),
+    );
 
-    phoneController.addListener(_validatePhone);
-    animationController.forward();
-  }
+    scrollController = ScrollController();
 
-  void _validatePhone() {
-    final phone = phoneMask.getUnmaskedText();
-    hasInput.value = phone.isNotEmpty;
-    isValid.value = RegExp(r'^(7[05678]\d{7})$').hasMatch(phone);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      phoneFocus.requestFocus();
+    });
+
+    phoneFocus.addListener(() {
+      if (phoneFocus.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 400), () {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent + 100,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+    });
+
+    phoneController.addListener(() {
+      unmasked.value = phoneMask.getUnmaskedText();
+      hasInput.value = unmasked.value.isNotEmpty;
+      isValid.value = unmasked.value.length == 9;
+    });
   }
 
   void handleRegister() async {
@@ -52,9 +73,7 @@ class RegisterController extends GetxController
 
     isLoading.value = true;
 
-    await Future.delayed(const Duration(seconds: 2)); // simulation API call
-    //redirige au niveau du formulaire pour permetrre AU USER SOUHAITANT DEVENIR chauffeur de remplir les infos
-    if (isDriver.value) {}
+    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
     isLoading.value = false;
     Get.snackbar('Succès', 'Compte créé avec succès !');
   }

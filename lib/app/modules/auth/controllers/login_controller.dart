@@ -49,25 +49,30 @@ class LoginController extends GetxController
       phoneFocus.requestFocus();
     });
 
-    phoneFocus.addListener(() {
-      if (phoneFocus.hasFocus) {
-        Future.delayed(const Duration(milliseconds: 400), () {
-          if (scrollController.hasClients) {
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent + 100,
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeOut,
-            );
-          }
-        });
-      }
-    });
+    void setupKeyboardHandling() {
+      phoneFocus.addListener(() {
+        if (phoneFocus.hasFocus) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            final offset = _calculateOptimalOffset();
+            if (scrollController.hasClients) {
+              scrollController.animateTo(
+                offset,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+              );
+            }
+          });
+        }
+      });
+    }
 
     phoneController.addListener(() {
       unmasked.value = phoneMask.getUnmaskedText();
     });
   }
-
+  double _calculateOptimalOffset() {
+    return scrollController.position.maxScrollExtent * 1.65;
+  }
   @override
   void onClose() {
     animationController.dispose();
@@ -83,11 +88,12 @@ class LoginController extends GetxController
     isLoading.value = true;
 
     try {
+
+      await Future.delayed(3.seconds);
       final response = await _apiClient.dio.post(
         '/users/login',
         data: {'phoneNumber': unmasked.value},
       );
-      await Future.delayed(3.seconds);
       final data = response.data;
       User user = User.fromJson(data['user']);
       final box = Hive.box<User>('users');
