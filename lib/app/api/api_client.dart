@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as box;
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/location_info.dart';
