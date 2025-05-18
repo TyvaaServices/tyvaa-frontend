@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
+import 'package:passenger_tyvaa/app/repositories/user_repository.dart';
+import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
+import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 class RegisterController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -9,12 +12,19 @@ class RegisterController extends GetxController
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final phoneFocus = FocusNode();
+  var otp = '';
+  var token = '';
 
   final isLoading = false.obs;
   final unmasked = ''.obs;
   final isDriver = false.obs;
   final hasInput = false.obs;
   final isValid = false.obs;
+
+  // Reference to our repositories and services
+  final _userRepository = UserRepository();
+  final _apiClient = Get.find<ApiClient>();
+  final _connectivityController = Get.find<ConnectivityController>();
 
   late AnimationController animationController;
   late Animation<double> fadeInAnimation;
@@ -24,7 +34,6 @@ class RegisterController extends GetxController
     mask: '+221 ## ### ## ##',
     filter: {"#": RegExp(r'\d')},
   );
-
 
   @override
   void onInit() {
@@ -75,16 +84,62 @@ class RegisterController extends GetxController
     isLoading.value = true;
     final fullName = nameController.text;
     final phoneNumber = unmasked.value;
-    bool isRegistered =  await ApiClient().registerUser(fullName, phoneNumber);
 
-    await Future.delayed(const Duration(seconds: 2));
-    if (!isRegistered) {
-      isLoading.value = false;
-      Get.snackbar('Erreur', 'Échec de l\'inscription');
-      return;
+    try {
+      if (!_connectivityController.hasInternet.value) {
+        // No internet connection, show error message
+        Get.snackbar(
+          'Pas de connexion internet',
+          'Veuillez vérifier votre connexion internet et réessayer.',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // Online registration flow
+      final registerResult = await _apiClient.registerUser(
+        fullName,
+        phoneNumber,
+        isDriver: isDriver.value
+      );
+
+      if (registerResult != null) {
+        // Extract OTP and token from registration result
+        otp = registerResult['otp'];
+        token = registerResult['token'];
+
+        // Save user using repository
+        final user = User.fromJson(registerResult['user']);
+        await _userRepository.saveUser(user);
+
+        isLoading.value = false;
+        // Navigate to OTP screen with required data
+        Get.offAllNamed('/otp', arguments: [otp, token]);
+        return;
+      } else {
+        // Server registration failed
+        Get.snackbar(
+          'Erreur',
+          'Échec de l\'inscription sur le serveur. Réessayez plus tard.',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Erreur',
+        'Une erreur inattendue s\'est produite: $e',
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
     }
+
     isLoading.value = false;
-    Get.offAllNamed('/welcome', arguments: {'name': fullName});
   }
 
   @override

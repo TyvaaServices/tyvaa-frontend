@@ -182,7 +182,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          controller.user.value!.nomComplet!,
+                          controller.user.value!.fullName!,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class ProfileScreen extends GetView<ProfileController> {
           suffixIcon: IconButton(
             icon: Icon(Icons.check, color: primaryColor),
             onPressed: () {
-              controller.user.value!.nomComplet =
+              controller.user.value!.fullName =
                   controller.nameController.text;
               controller.isEditingName.value = false;
             },
