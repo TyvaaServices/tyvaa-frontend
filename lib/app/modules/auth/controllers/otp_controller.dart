@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
@@ -30,6 +31,7 @@ class OtpVerificationController extends GetxController
 
   final _apiClient = ApiClient();
   final _secureStorage = const FlutterSecureStorage();
+  final _logger = Logger();
 
   @override
   void onInit() {
@@ -37,8 +39,7 @@ class OtpVerificationController extends GetxController
 
     if (Get.arguments != null) {
       correctOtp = Get.arguments[0];
-      var logger = Logger();
-      logger.d(Get.arguments);
+      _logger.d(Get.arguments);
       print(Get.arguments);
       debugPrint("Correct OTP set from token: $correctOtp");
     } else {
@@ -98,7 +99,17 @@ class OtpVerificationController extends GetxController
         isVerified.value = true;
 
         await _secureStorage.write(key: 'auth_token', value: Get.arguments[1]);
-        Get.offAllNamed('/main');
+
+        // Just check if permission is needed, but don't request it
+        final needsPermission = await _needsLocationPermission();
+
+        if (needsPermission) {
+          // Navigate to our custom location permission screen
+          Get.offAllNamed('/location-permission');
+        } else {
+          // Permission already granted, go directly to main screen
+          Get.offAllNamed('/main');
+        }
         return;
       }
 
@@ -110,7 +121,17 @@ class OtpVerificationController extends GetxController
 
       if (response.statusCode == 200) {
         isVerified.value = true;
-        Get.offAllNamed('/main');
+
+        // Just check if permission is needed, but don't request it
+        final needsPermission = await _needsLocationPermission();
+
+        if (needsPermission) {
+          // Navigate to our custom location permission screen
+          Get.offAllNamed('/location-permission');
+        } else {
+          // Permission already granted, go directly to main screen
+          Get.offAllNamed('/main');
+        }
       } else {
         hasError.value = true;
         errorMessage.value = 'Invalid OTP. Please try again.';
@@ -123,6 +144,16 @@ class OtpVerificationController extends GetxController
     } finally {
       isVerifying.value = false;
     }
+  }
+
+  // Check if location permission is needed without requesting it
+  Future<bool> _needsLocationPermission() async {
+    final permissionStatus = await Geolocator.checkPermission();
+    final locationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    return permissionStatus == LocationPermission.denied ||
+        permissionStatus == LocationPermission.deniedForever ||
+        !locationServiceEnabled;
   }
 
   void _shakeError() {
@@ -178,12 +209,3 @@ class OtpVerificationController extends GetxController
   }
 }
 
-// Get.snackbar(
-//   'Code envoyé',
-//   'Un nouveau code a été envoyé à votre numéro WhatsApp',
-//   backgroundColor: Get.theme.primaryColor.withOpacity(0.8),
-//   colorText: Colors.white,
-//   snackPosition: SnackPosition.BOTTOM,
-//   margin: const EdgeInsets.all(16),
-//   borderRadius: 12,
-// );
