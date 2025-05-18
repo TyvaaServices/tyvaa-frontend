@@ -12,21 +12,15 @@ class Assets {
   static const String assetsPromo1 = 'assets/promo1.png';
   static const String assetsPromo2 = 'assets/promo2.png';
   static const String assetsPromo3 = 'assets/promo3.png';
-  static const String chatbotPicChyxAvatar =
-      'assets/chatbot_pic/chyx_avatar.png';
-  static const String chatbotPicOulyxAvatar =
-      'assets/chatbot_pic/oulyx_avatar.png';
+  static const String chatbotPicChyxAvatar = 'assets/chatbot_pic/chyx_avatar.png';
+  static const String chatbotPicOulyxAvatar = 'assets/chatbot_pic/oulyx_avatar.png';
   static const String flagsSn = 'assets/flags/sn.png';
   static const String iconsIconWa = 'assets/icons/icon_wa.png';
   static const String iconsWaIcon = 'assets/icons/wa_icon.png';
-  static const String imagesDefaultProfile =
-      'assets/images/default_profile.png';
-  static const String imagesPublierTrajet1 =
-      'assets/images/publier_trajet_1.png';
-  static const String imagesPublierTrajet2 =
-      'assets/images/publier_trajet_2.png';
-  static const String imagesPublierTrajet3 =
-      'assets/images/publier_trajet_3.png';
-  static const String imagesPublierTrajet4 =
-      'assets/images/publier_trajet_4.png';
+  static const String imagesDefaultProfile = 'assets/images/default_profile.png';
+  static const String imagesPublierTrajet1 = 'assets/images/publier_trajet_1.png';
+  static const String imagesPublierTrajet2 = 'assets/images/publier_trajet_2.png';
+  static const String imagesPublierTrajet3 = 'assets/images/publier_trajet_3.png';
+  static const String imagesPublierTrajet4 = 'assets/images/publier_trajet_4.png';
+
 }

@@ -110,7 +110,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Lottie.asset(
-                        'assets/animations/success.json',
+                        'assets/animations/succes.json',
                         width: 140,
                         height: 140,
                         repeat: false,
