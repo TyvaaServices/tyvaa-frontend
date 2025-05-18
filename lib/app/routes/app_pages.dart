@@ -10,6 +10,7 @@ import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_b
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 import 'package:passenger_tyvaa/app/modules/trajet/bindings/publish_trajet_binding.dart';
 import 'package:passenger_tyvaa/app/modules/trajet/views/long_ride_list_view.dart';
+import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -94,5 +95,10 @@ class AppPages {
       binding: PublishTrajetBinding(),
     ),
     GetPage(name: _Paths.LONG_RIDE_LIST, page: () => LongRideListScreen()),
+    GetPage(
+      name: '/welcome',
+      page: () => const WelcomeView(),
+      transition: Transition.fadeIn,
+    ),
   ];
 }

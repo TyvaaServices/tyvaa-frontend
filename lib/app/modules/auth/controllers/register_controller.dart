@@ -84,6 +84,7 @@ class RegisterController extends GetxController
       return;
     }
     isLoading.value = false;
+    Get.offAllNamed('/welcome', arguments: {'name': fullName});
   }
 
   @override
