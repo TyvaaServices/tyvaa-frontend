@@ -135,7 +135,7 @@ class SearchViewController extends GetxController {
     );
     var logger = Logger();
     logger.d(" cheikht ${user.value!.latitude} ${user.value!.longitude}");
-    logger.d(" cheikhtt ${destLat} ${destLon}");
+    logger.d(" cheikhtt $destLat $destLon");
 
     final distanceInKm = distanceInMeters / 1000;
 
@@ -152,6 +152,8 @@ class SearchViewController extends GetxController {
     );
     if (isLong) {
       Get.toNamed(Routes.LONG_RIDE_LIST, arguments: destinationLocation);
+    }else{
+      Get.toNamed(Routes.QUICK_RIDE, arguments: destinationLocation);
     }
   }
 

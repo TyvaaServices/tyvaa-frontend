@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 
 class WelcomeView extends StatefulWidget {
-  const WelcomeView({Key? key}) : super(key: key);
+  const WelcomeView({super.key});
 
   @override
   State<WelcomeView> createState() => _WelcomeViewState();
