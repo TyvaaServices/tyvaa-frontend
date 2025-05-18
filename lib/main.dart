@@ -35,6 +35,7 @@ void main() async {
           'fr',
         ), // TODO: Replace with Get.deviceLocale in production
         fallbackLocale: Locale('en'),
+        //tu intervertis ici rek si tu veux sauter le login
         initialRoute: token != null ? AppPages.INITIAL : Routes.LOGIN,
         getPages: AppPages.routes,
         theme: lightTheme,
