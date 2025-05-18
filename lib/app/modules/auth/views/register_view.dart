@@ -25,7 +25,6 @@ class RegisterScreen extends GetView<RegisterController> {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // Decorative background circles
           Positioned(
             top: -Get.height * .15,
             right: -Get.width * .2,
