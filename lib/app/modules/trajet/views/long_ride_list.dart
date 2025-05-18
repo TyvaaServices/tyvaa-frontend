@@ -101,43 +101,43 @@ class LongRideListScreen extends GetView<LongRideListController> {
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
                 color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : AppColors.textPrimary,
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : AppColors.textPrimary,
               ),
             ),
             const Spacer(),
             Obx(
-              () =>
-                  controller.isSearching.value
-                      ? IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white70
-                                  : AppColors.textSecondary,
-                        ),
-                        onPressed: controller.toggleSearch,
-                      )
-                      : IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          color:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white70
-                                  : AppColors.textSecondary,
-                        ),
-                        onPressed: controller.toggleSearch,
-                      ),
+                  () =>
+              controller.isSearching.value
+                  ? IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white70
+                      : AppColors.textSecondary,
+                ),
+                onPressed: controller.toggleSearch,
+              )
+                  : IconButton(
+                icon: Icon(
+                  Icons.search,
+                  color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white70
+                      : AppColors.textSecondary,
+                ),
+                onPressed: controller.toggleSearch,
+              ),
             ),
             IconButton(
               icon: Icon(
                 Icons.notifications_none_outlined,
                 color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white70
-                        : AppColors.textSecondary,
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white70
+                    : AppColors.textSecondary,
               ),
               onPressed: () {
                 // Implement notification functionality
@@ -155,13 +155,13 @@ class LongRideListScreen extends GetView<LongRideListController> {
         children: [
           // Search bar (conditionally visible)
           Obx(
-            () =>
-                controller.isSearching.value
-                    ? Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: _buildSearchBar(context),
-                    )
-                    : const SizedBox.shrink(),
+                () =>
+            controller.isSearching.value
+                ? Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: _buildSearchBar(context),
+            )
+                : const SizedBox.shrink(),
           ),
 
           // Filter chips
@@ -230,25 +230,25 @@ class LongRideListScreen extends GetView<LongRideListController> {
                 selected: isSelected,
                 onSelected: (_) => controller.setFilter(option),
                 backgroundColor:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[800]
-                        : Colors.grey[100],
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[800]
+                    : Colors.grey[100],
                 selectedColor: AppColors.primary.withOpacity(0.2),
                 labelStyle: TextStyle(
                   color:
-                      isSelected
-                          ? AppColors.primary
-                          : Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white70
-                          : AppColors.textSecondary,
+                  isSelected
+                      ? AppColors.primary
+                      : Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white70
+                      : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                   side:
-                      isSelected
-                          ? BorderSide(color: AppColors.primary, width: 1)
-                          : BorderSide.none,
+                  isSelected
+                      ? BorderSide(color: AppColors.primary, width: 1)
+                      : BorderSide.none,
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
@@ -443,15 +443,15 @@ class LongRideListScreen extends GetView<LongRideListController> {
           color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow:
-              isDark
-                  ? []
-                  : [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+          isDark
+              ? []
+              : [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
