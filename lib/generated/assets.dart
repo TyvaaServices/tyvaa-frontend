@@ -3,6 +3,7 @@ class Assets {
   Assets._();
 
   static const String animationsLoading = 'assets/animations/loading.json';
+  static const String animationsLocationPermission = 'assets/animations/location_permission.json';
   static const String animationsSucces = 'assets/animations/succes.json';
   static const String assetsLoginIllustration = 'assets/login_illustration.png';
   static const String assetsOnboarding1 = 'assets/onboarding_1.png';

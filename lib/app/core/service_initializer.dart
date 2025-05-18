@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/app/services/notification_service.dart';
+import 'package:passenger_tyvaa/app/services/permission_service.dart';
 import 'package:passenger_tyvaa/app/services/synchronization_service.dart';
 import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
@@ -29,6 +30,7 @@ class ServiceInitializer {
 
     Get.put(ConnectivityController(), permanent: true);
     Get.put(ApiClient(), permanent: true);
+    await Get.putAsync(() => PermissionService().init());
     await Get.putAsync(() => SynchronizationService().init());
     await Get.putAsync(() => NotificationService().init());
   }
