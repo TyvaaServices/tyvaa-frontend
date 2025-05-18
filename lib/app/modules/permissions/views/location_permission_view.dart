@@ -20,7 +20,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // Decorative background circles
+          // Decorative circles
           Positioned(
             top: -Get.height * .15,
             right: -Get.width * .2,
@@ -46,72 +46,57 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
             ),
           ),
 
-          // Main content - made scrollable to fix overflow
+          // Main content
           SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: Get.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: Get.height * 0.02),
-
-                      // Location animation - made responsive with adaptive sizing
-                      SizedBox(
-                        width: Get.width * 0.6,
-                        height: Get.width * 0.6,
-                        child: Lottie.asset(
-                          'assets/animations/location_permission.json',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-
-                      SizedBox(height: Get.height * 0.03),
-
-                      // Title
-                      Text(
-                        'Activer la localisation',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      SizedBox(height: Get.height * 0.015),
-
-                      // Description
-                      Text(
-                        'Pour vous offrir la meilleure expérience, Tyvaa a besoin d\'accéder à votre position',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: secondaryTextColor,
-                          height: 1.4,
-                        ),
-                      ),
-                      const Spacer(),
-
-                      SizedBox(height: Get.height * 0.03),
-                      Container(
-                        width: double.infinity,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: primaryColor.withOpacity(.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          SizedBox(height: Get.height * 0.06),
+                          SizedBox(
+                            width: Get.width * 0.6,
+                            height: Get.width * 0.6,
+                            child: Lottie.asset(
+                              'assets/animations/location_permission.json',
+                              fit: BoxFit.contain,
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: Get.height * 0.03),
+                          Text(
+                            'Activer la localisation',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: Get.height * 0.015),
+                          Text(
+                            'Pour vous offrir la meilleure expérience, Tyvaa a besoin d\'accéder à votre position',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: secondaryTextColor,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Button at bottom
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 64, // taller button
                         child: ElevatedButton(
                           onPressed: () => controller.requestLocationPermission(),
                           style: ElevatedButton.styleFrom(
@@ -122,19 +107,15 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Activer la localisation',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 17,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
-
-                      SizedBox(height: Get.height * 0.02),
-
-                      // Maybe later button
                       TextButton(
                         onPressed: () => controller.skipPermission(),
                         child: Text(
@@ -146,11 +127,10 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                           ),
                         ),
                       ),
-
                       SizedBox(height: Get.height * 0.02),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
