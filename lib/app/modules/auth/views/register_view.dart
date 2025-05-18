@@ -52,7 +52,7 @@ class RegisterScreen extends GetView<RegisterController> {
           ),
 
          GestureDetector(
-           onTap: () => FocusScope.of(context).unfocus(), // Dismiss keyboard on tap
+           onTap: () => FocusScope.of(context).unfocus(),
            behavior: HitTestBehavior.translucent,
            child:  SafeArea(
              child: SingleChildScrollView(
@@ -63,7 +63,7 @@ class RegisterScreen extends GetView<RegisterController> {
                    24,
                    0,
                    24,
-                   MediaQuery.of(context).viewInsets.bottom + 24,
+                   0
                  ),
                  child: FadeTransition(
                    opacity: controller.fadeInAnimation,
