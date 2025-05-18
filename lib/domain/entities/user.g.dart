@@ -24,7 +24,7 @@ class UserAdapter extends TypeAdapter<User> {
       isVerified: fields[4] as bool,
       isBlocked: fields[5] as bool,
       createdAt: fields[12] as DateTime,
-      nomComplet: fields[6] as String?,
+      fullName: fields[6] as String?,
       fcmToken: fields[7] as String?,
       driverLicense: fields[8] as String?,
       carImage: fields[9] as String?,
@@ -50,7 +50,7 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(5)
       ..write(obj.isBlocked)
       ..writeByte(6)
-      ..write(obj.nomComplet)
+      ..write(obj.fullName)
       ..writeByte(7)
       ..write(obj.fcmToken)
       ..writeByte(8)

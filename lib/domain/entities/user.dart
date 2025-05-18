@@ -23,7 +23,7 @@ class User extends HiveObject {
   bool isBlocked;
 
   @HiveField(6)
-  String? nomComplet;
+  String? fullName;
 
   @HiveField(7)
   String? fcmToken;
@@ -51,7 +51,7 @@ class User extends HiveObject {
     required this.isVerified,
     required this.isBlocked,
     required this.createdAt,
-    this.nomComplet,
+    this.fullName,
     this.fcmToken,
     this.driverLicense,
     this.carImage,
@@ -67,7 +67,7 @@ class User extends HiveObject {
       isDriver: json['isDriver'],
       isVerified: json['isVerified'],
       isBlocked: json['isBlocked'],
-      nomComplet: json['nomComplet'],
+      fullName: json['fullName'],
       fcmToken: json['fcmToken'],
       driverLicense: json['driverLicense'],
       carImage: json['carImage'],
@@ -91,7 +91,7 @@ class User extends HiveObject {
       'isDriver': isDriver,
       'isVerified': isVerified,
       'isBlocked': isBlocked,
-      'nomComplet': nomComplet,
+      'nomComplet': fullName,
       'fcmToken': fcmToken,
       'driverLicense': driverLicense,
       'carImage': carImage,

@@ -141,8 +141,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Go to home or main screen
-                            Get.offAllNamed('/home');
+                            Get.offAllNamed('/main');
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
