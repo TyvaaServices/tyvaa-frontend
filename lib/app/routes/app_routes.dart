@@ -16,6 +16,7 @@ abstract class Routes {
   static const ONBOARDINGCHAUFFEUR = _Paths.ONBOARDINGCHAUFFEUR;
   static const PUBLISH_TRAJET = _Paths.PUBLISH_TRAJET;
   static const LONG_RIDE_LIST = _Paths.LONG_RIDE_LIST;
+  static const LOCATION_PERMISSION = _Paths.LOCATION_PERMISSION;
 }
 
 abstract class _Paths {
@@ -35,4 +36,5 @@ abstract class _Paths {
   static const ONBOARDINGCHAUFFEUR = '/publier-trajet';
   static const PUBLISH_TRAJET = '/publish-trajet';
   static const LONG_RIDE_LIST = '/long_ride_list';
+  static const LOCATION_PERMISSION = '/location-permission';
 }

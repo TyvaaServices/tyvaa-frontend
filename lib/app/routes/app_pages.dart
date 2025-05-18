@@ -8,6 +8,8 @@ import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
 import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
+import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
+import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
 import 'package:passenger_tyvaa/app/modules/trajet/bindings/publish_trajet_binding.dart';
 import 'package:passenger_tyvaa/app/modules/trajet/views/long_ride_list_view.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
@@ -99,6 +101,13 @@ class AppPages {
       name: '/welcome',
       page: () => const WelcomeView(),
       transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: _Paths.LOCATION_PERMISSION,
+      page: () => LocationPermissionScreen(),
+      binding: LocationPermissionBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 800),
     ),
   ];
 }
