@@ -11,7 +11,9 @@ import 'package:passenger_tyvaa/app/modules/notification/views/notification_view
 import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
 import 'package:passenger_tyvaa/app/modules/trajet/bindings/publish_trajet_binding.dart';
-import 'package:passenger_tyvaa/app/modules/trajet/views/long_ride_list_view.dart';
+import 'package:passenger_tyvaa/app/modules/trajet/bindings/quick_ride_binding.dart';
+import 'package:passenger_tyvaa/app/modules/trajet/views/long_ride_list.dart';
+import 'package:passenger_tyvaa/app/modules/trajet/views/quick_ride_view.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
@@ -96,7 +98,7 @@ class AppPages {
       page: () => PublishTrajetView(),
       binding: PublishTrajetBinding(),
     ),
-    GetPage(name: _Paths.LONG_RIDE_LIST, page: () => LongRideListScreen()),
+
     GetPage(
       name: '/welcome',
       page: () => const WelcomeView(),
@@ -108,6 +110,19 @@ class AppPages {
       binding: LocationPermissionBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.QUICK_RIDE,
+      page: () => QuickRideView(),
+      binding: QuickRideBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: _Paths.LONG_RIDE_LIST,
+      page: () => LongRideListScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
     ),
   ];
 }

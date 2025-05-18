@@ -17,6 +17,7 @@ abstract class Routes {
   static const PUBLISH_TRAJET = _Paths.PUBLISH_TRAJET;
   static const LONG_RIDE_LIST = _Paths.LONG_RIDE_LIST;
   static const LOCATION_PERMISSION = _Paths.LOCATION_PERMISSION;
+  static const QUICK_RIDE = _Paths.QUICK_RIDE;
 }
 
 abstract class _Paths {
@@ -37,4 +38,5 @@ abstract class _Paths {
   static const PUBLISH_TRAJET = '/publish-trajet';
   static const LONG_RIDE_LIST = '/long_ride_list';
   static const LOCATION_PERMISSION = '/location-permission';
+  static const QUICK_RIDE = '/quick-ride';
 }
