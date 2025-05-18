@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
 import 'package:passenger_tyvaa/app/socket/SocketService.dart';
-import 'package:passenger_tyvaa/app/services/permission_service.dart';
 
 class HomeController extends GetxController {
   final bannerController = PageController(viewportFraction: 0.9);

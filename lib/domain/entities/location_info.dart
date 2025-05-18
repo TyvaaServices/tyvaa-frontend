@@ -53,7 +53,7 @@ class LocationInfo {
       'display_address': displayAddress,
       'class': category,
       'type': type,
-      'address': address?.toJson(),
+      'address': address.toJson(),
     };
   }
 }
