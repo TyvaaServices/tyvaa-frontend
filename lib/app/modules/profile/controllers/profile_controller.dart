@@ -29,7 +29,7 @@ class ProfileController extends GetxController {
 
     if (box.containsKey('currentUser')) {
       user.value = box.get('currentUser')!;
-      nameController.text = user.value!.nomComplet ?? '';
+      nameController.text = user.value!.fullName ?? '';
       logger.d(user.value);
     } else {
       logger.d('No user found in Hive');
@@ -61,7 +61,7 @@ class ProfileController extends GetxController {
 
   void saveChanges() async {
     if (user.value != null) {
-      user.value!.nomComplet = nameController.text.trim();
+      user.value!.fullName = nameController.text.trim();
 
       var box = Hive.box<User>('users');
       await box.put('currentUser', user.value!);

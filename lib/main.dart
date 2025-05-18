@@ -23,6 +23,7 @@ void main() async {
 
   final storage = FlutterSecureStorage();
   final token = await storage.read(key: "auth_token");
+  await storage.deleteAll();
   Jiffy.setLocale('fr');
   runApp(
     ConnectivityListener(
