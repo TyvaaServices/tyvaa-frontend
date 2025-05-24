@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
-import 'package:passenger_tyvaa/domain/entities/location_info.dart';
-import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 class ApiClient {
@@ -83,18 +78,25 @@ class ApiClient {
   }
 
   // Updated: Return null if register fails, otherwise the full response
-  Future<Map<String, dynamic>?> registerUser(String fullName, String phoneNumber, {bool isDriver = false}) async {
+  Future<Map<String, dynamic>?> registerUser(
+    String fullName,
+    String phoneNumber, {
+    bool isDriver = false,
+  }) async {
     if (!_connectivityController.hasInternet.value) {
       logger.w('No internet connection. Unable to register user.');
       return null;
     }
 
     try {
-      final response = await dio.post('/users/register', data: {
-        'fullName': fullName,
-        'phoneNumber': phoneNumber,
-        'isDriver': isDriver,
-      });
+      final response = await dio.post(
+        '/users/register',
+        data: {
+          'fullName': fullName,
+          'phoneNumber': phoneNumber,
+          'isDriver': isDriver,
+        },
+      );
 
       if (response.statusCode == 201) {
         final data = response.data;
@@ -102,7 +104,7 @@ class ApiClient {
         return {
           'user': data['user'],
           'otp': data['otp'],
-          'token': data['token']
+          'token': data['token'],
         };
       } else {
         logger.e('Failed to register user: ${response.statusCode}');
@@ -148,7 +150,7 @@ class ApiClient {
         return {
           'user': data['user'],
           'otp': data['otp'],
-          'token': data['token']
+          'token': data['token'],
         };
       } else {
         logger.e('Failed to login user: ${response.statusCode}');
@@ -157,40 +159,6 @@ class ApiClient {
     } on DioException catch (e) {
       logger.e('Error logging in user: ${e.message}');
       return null;
-    }
-  }
-
-  Future<List<LongRide>> getRidesByDestination(LocationInfo location) async {
-    if (!_connectivityController.hasInternet.value) {
-      logger.w('No internet connection. Unable to fetch rides.');
-      // Return cached rides from Hive if available
-      final ridesBox = Hive.box<LongRide>('long_rides');
-      return ridesBox.values.toList();
-    }
-
-    try {
-      final response = await dio.post(
-        '/rides/find',
-        data: jsonEncode(location),
-      );
-
-      final rides = (response.data as List)
-          .map((ride) => LongRide.fromJson(ride))
-          .toList();
-
-      // Cache the fetched rides
-      final ridesBox = Hive.box<LongRide>('long_rides');
-      await ridesBox.clear(); // Clear old data
-      for (var ride in rides) {
-        await ridesBox.add(ride);
-      }
-
-      return rides;
-    } on DioException catch (e) {
-      logger.e('Error fetching rides by destination: ${e.message}');
-      // Return cached data as fallback
-      final ridesBox = Hive.box<LongRide>('long_rides');
-      return ridesBox.values.toList();
     }
   }
 }
