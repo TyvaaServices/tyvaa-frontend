@@ -9,11 +9,14 @@ class UserRepository {
   final _logger = Logger();
   final _userBox = Hive.box<User>('users');
   final ApiClient _apiClient = Get.find<ApiClient>();
-  final ConnectivityController _connectivity = Get.find<ConnectivityController>();
+  final ConnectivityController _connectivity =
+      Get.find<ConnectivityController>();
 
   // Singleton instance
   static final UserRepository _instance = UserRepository._();
+
   factory UserRepository() => _instance;
+
   UserRepository._();
 
   /// Gets the current user from local storage

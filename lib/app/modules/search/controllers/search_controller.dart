@@ -20,6 +20,7 @@ class SearchViewController extends GetxController {
   final RxDouble currentLat = 0.0.obs;
   final RxDouble currentLon = 0.0.obs;
   final RxString countryCode = 'sn'.obs;
+
   void setLocationContext(double lat, double lon, String country) {
     currentLat.value = lat;
     currentLon.value = lon;
@@ -152,7 +153,7 @@ class SearchViewController extends GetxController {
     );
     if (isLong) {
       Get.toNamed(Routes.LONG_RIDE_LIST, arguments: destinationLocation);
-    }else{
+    } else {
       Get.toNamed(Routes.QUICK_RIDE, arguments: destinationLocation);
     }
   }

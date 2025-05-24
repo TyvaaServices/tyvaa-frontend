@@ -1,6 +1,6 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:confetti/confetti.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
 
@@ -17,7 +17,9 @@ class _WelcomeViewState extends State<WelcomeView> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _confettiController.play();
     });
@@ -33,10 +35,12 @@ class _WelcomeViewState extends State<WelcomeView> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
+    final backgroundColor =
+        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor = isDark ? Colors.white70 : const Color(0xFF9194A1);
+    final secondaryTextColor =
+        isDark ? Colors.white70 : const Color(0xFF9194A1);
 
     final name = (Get.arguments?['name'] ?? '').toString();
 
