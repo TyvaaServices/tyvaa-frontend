@@ -74,10 +74,9 @@ class HomeController extends GetxController {
 
       // If permission not granted or location service disabled, show our custom screen
       if ((permission == LocationPermission.denied ||
-           permission == LocationPermission.deniedForever ||
-           !serviceEnabled) &&
-           !permissionChecked.value) {
-
+              permission == LocationPermission.deniedForever ||
+              !serviceEnabled) &&
+          !permissionChecked.value) {
         permissionChecked.value = true;
 
         // Small delay to ensure UI is ready
@@ -86,7 +85,7 @@ class HomeController extends GetxController {
         // Navigate to our custom permission screen
         Get.toNamed('/location-permission');
       } else if (permission == LocationPermission.whileInUse ||
-                permission == LocationPermission.always) {
+          permission == LocationPermission.always) {
         // If permission already granted, initialize location tracking
         _startLocationTracking();
       }

@@ -27,7 +27,8 @@ class _ConnectivityListenerState extends State<ConnectivityListener> {
       if (!online && previouslyOnline) {
         Get.snackbar(
           'Pas d\'Internet', // French translation
-          'Vous êtes hors ligne ou votre réseau est inutilisable.', // French translation
+          'Vous êtes hors ligne ou votre réseau est inutilisable.',
+          // French translation
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM, // Position at the bottom

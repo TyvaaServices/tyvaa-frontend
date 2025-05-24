@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/otp_view.dart';
+import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
@@ -10,7 +11,6 @@ import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_b
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
-import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
