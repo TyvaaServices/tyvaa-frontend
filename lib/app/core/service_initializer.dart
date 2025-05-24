@@ -8,7 +8,6 @@ import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/app/services/notification_service.dart';
 import 'package:passenger_tyvaa/app/services/permission_service.dart';
 import 'package:passenger_tyvaa/app/services/synchronization_service.dart';
-import 'package:passenger_tyvaa/domain/entities/long_ride.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 import 'package:passenger_tyvaa/firebase_options.dart';
 
@@ -24,9 +23,7 @@ class ServiceInitializer {
 
     await Hive.initFlutter();
     Hive.registerAdapter(UserAdapter());
-    Hive.registerAdapter(LongRideAdapter());
     await Hive.openBox<User>('users');
-    await Hive.openBox<LongRide>('long_rides');
 
     Get.put(ConnectivityController(), permanent: true);
     Get.put(ApiClient(), permanent: true);
