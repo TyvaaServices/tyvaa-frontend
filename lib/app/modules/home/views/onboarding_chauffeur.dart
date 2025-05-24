@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/trajet/controllers/publish_trajet_controller.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
 import '../../../themes/tyvaa_theme.dart';
@@ -18,8 +17,6 @@ class PublierTrajetOnboarding extends StatefulWidget {
 class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
-  final PublishTrajetController _publishTrajetController =
-      PublishTrajetController();
   final RxInt _currentPage = 0.obs;
 
   late AnimationController _animationController;

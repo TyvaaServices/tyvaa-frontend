@@ -40,9 +40,7 @@ class MainScreen extends GetView<HomeController> {
     return Obx(() {
       final List<Widget> pages = [
         HomeScreen(key: const ValueKey('home')),
-        controller.isDriver.value
-            ? DriverHomeView(key: const ValueKey('trajets'))
-            : HistoriqueScreen(key: const ValueKey('historique')),
+        const HistoriqueScreen(key: const ValueKey('historique')),
         const ChooseChatbotScreen(key: ValueKey('chat')),
         const ProfileScreen(key: ValueKey('profile')),
       ];
@@ -69,24 +67,11 @@ class MainScreen extends GetView<HomeController> {
               selectedIcon: Icon(Icons.home, color: selectedIconColor),
             ),
             BottomBarItem(
-              icon: Icon(
-                controller.isDriver.value
-                    ? Icons.directions_car_outlined
-                    : Icons.history_outlined,
-                color: iconColor,
-              ),
-              title: Text(
-                controller.isDriver.value ? 'Trajets' : 'Historique',
-                style: TextStyle(color: selectedColor),
-              ),
+              icon: Icon(Icons.history_outlined, color: iconColor),
+              title: Text('Historique', style: TextStyle(color: selectedColor)),
               backgroundColor: bottomNavBackgroundColor,
               selectedColor: selectedIconColor,
-              selectedIcon: Icon(
-                controller.isDriver.value
-                    ? Icons.directions_car
-                    : Icons.history,
-                color: selectedIconColor,
-              ),
+              selectedIcon: Icon(Icons.history, color: selectedIconColor),
             ),
             BottomBarItem(
               icon: Icon(Icons.chat_outlined, color: iconColor),
