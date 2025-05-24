@@ -208,4 +208,3 @@ class OtpVerificationController extends GetxController
     }
   }
 }
-

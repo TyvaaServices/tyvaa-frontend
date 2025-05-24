@@ -38,7 +38,8 @@ class LocationPermissionController extends GetxController {
       }
 
       // Now we explicitly request the permission - this will show the system dialog
-      LocationPermission permission = await permissionService.requestLocationPermission();
+      LocationPermission permission =
+          await permissionService.requestLocationPermission();
 
       // Handle the permission result
       if (permission == LocationPermission.always ||
@@ -66,7 +67,7 @@ class LocationPermissionController extends GetxController {
             content: Text(
               'Vous avez refusé définitivement l\'accès à votre localisation. '
               'Pour utiliser toutes les fonctionnalités de l\'application, veuillez '
-              'activer la permission dans les paramètres de votre appareil.'
+              'activer la permission dans les paramètres de votre appareil.',
             ),
             actions: [
               TextButton(
@@ -111,7 +112,7 @@ class LocationPermissionController extends GetxController {
         content: Text(
           'Sans l\'accès à votre localisation, certaines fonctionnalités clés comme '
           'la recherche de trajets à proximité ne fonctionneront pas correctement.\n\n'
-          'Souhaitez-vous vraiment continuer sans activer la localisation?'
+          'Souhaitez-vous vraiment continuer sans activer la localisation?',
         ),
         actions: [
           TextButton(
@@ -157,7 +158,7 @@ class LocationPermissionController extends GetxController {
           title: Text('Services de localisation désactivés'),
           content: Text(
             'Les services de localisation sont désactivés sur votre appareil. '
-            'Veuillez les activer pour utiliser toutes les fonctionnalités de l\'application.'
+            'Veuillez les activer pour utiliser toutes les fonctionnalités de l\'application.',
           ),
           actions: [
             TextButton(
@@ -185,4 +186,3 @@ class LocationPermissionController extends GetxController {
     }
   }
 }
-

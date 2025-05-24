@@ -15,7 +15,8 @@ class PermissionService extends GetxService {
   final locationDeniedForever = false.obs;
 
   // Constants for storage keys
-  static const String _locationPermissionDeniedPermanently = 'location_denied_permanently';
+  static const String _locationPermissionDeniedPermanently =
+      'location_denied_permanently';
 
   Future<PermissionService> init() async {
     _logger.d('Initializing PermissionService');
@@ -27,7 +28,8 @@ class PermissionService extends GetxService {
   Future<LocationPermission> _checkLocationPermission() async {
     try {
       // Check if location services are enabled
-      isLocationServiceEnabled.value = await Geolocator.isLocationServiceEnabled();
+      isLocationServiceEnabled.value =
+          await Geolocator.isLocationServiceEnabled();
 
       // Only check permission status, don't request it
       final permission = await Geolocator.checkPermission();
@@ -37,13 +39,14 @@ class PermissionService extends GetxService {
           permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always;
 
-      locationDeniedForever.value = permission == LocationPermission.deniedForever;
+      locationDeniedForever.value =
+          permission == LocationPermission.deniedForever;
 
       // Save denial status for future app launches
       if (permission == LocationPermission.deniedForever) {
         await _secureStorage.write(
           key: _locationPermissionDeniedPermanently,
-          value: 'true'
+          value: 'true',
         );
       }
 
@@ -74,13 +77,14 @@ class PermissionService extends GetxService {
           permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always;
 
-      locationDeniedForever.value = permission == LocationPermission.deniedForever;
+      locationDeniedForever.value =
+          permission == LocationPermission.deniedForever;
 
       // Save denial status for future app launches
       if (permission == LocationPermission.deniedForever) {
         await _secureStorage.write(
           key: _locationPermissionDeniedPermanently,
-          value: 'true'
+          value: 'true',
         );
       }
 
@@ -109,56 +113,51 @@ class PermissionService extends GetxService {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: cardColor,
-        title: Text(
-          'Localisation requise',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: cardColor,
+            title: Text(
+              'Localisation requise',
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Pour offrir une expérience optimale, Tyvaa a besoin de votre position pour:',
+                  style: TextStyle(color: textColor),
+                ),
+                const SizedBox(height: 16),
+                _buildFeatureItem(
+                  icon: Icons.location_on_rounded,
+                  text: 'Trouver des trajets à proximité',
+                  textColor: textColor,
+                ),
+                const SizedBox(height: 8),
+                _buildFeatureItem(
+                  icon: Icons.people_rounded,
+                  text: 'Connecter avec des conducteurs proches',
+                  textColor: textColor,
+                ),
+                const SizedBox(height: 8),
+                _buildFeatureItem(
+                  icon: Icons.map_rounded,
+                  text: 'Calculer des itinéraires précis',
+                  textColor: textColor,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () => Get.back(), child: Text('Plus tard')),
+              ElevatedButton(
+                onPressed: () {
+                  Get.back();
+                  Get.toNamed('/location-permission');
+                },
+                child: Text('Activer'),
+              ),
+            ],
           ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Pour offrir une expérience optimale, Tyvaa a besoin de votre position pour:',
-              style: TextStyle(color: textColor),
-            ),
-            const SizedBox(height: 16),
-            _buildFeatureItem(
-              icon: Icons.location_on_rounded,
-              text: 'Trouver des trajets à proximité',
-              textColor: textColor,
-            ),
-            const SizedBox(height: 8),
-            _buildFeatureItem(
-              icon: Icons.people_rounded,
-              text: 'Connecter avec des conducteurs proches',
-              textColor: textColor,
-            ),
-            const SizedBox(height: 8),
-            _buildFeatureItem(
-              icon: Icons.map_rounded,
-              text: 'Calculer des itinéraires précis',
-              textColor: textColor,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Plus tard'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-              Get.toNamed('/location-permission');
-            },
-            child: Text('Activer'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -171,12 +170,7 @@ class PermissionService extends GetxService {
       children: [
         Icon(icon, color: Get.theme.colorScheme.primary),
         const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(color: textColor),
-          ),
-        ),
+        Expanded(child: Text(text, style: TextStyle(color: textColor))),
       ],
     );
   }
@@ -188,7 +182,7 @@ class PermissionService extends GetxService {
     final isEnabled = await Geolocator.isLocationServiceEnabled();
 
     return permissionStatus == LocationPermission.denied ||
-           permissionStatus == LocationPermission.deniedForever ||
-           !isEnabled;
+        permissionStatus == LocationPermission.deniedForever ||
+        !isEnabled;
   }
 }

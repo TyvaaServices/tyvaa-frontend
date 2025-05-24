@@ -132,7 +132,6 @@ class LoginController extends GetxController
       isLoading.value = false;
       // Navigate to OTP verification
       Get.toNamed('/otp', arguments: [response['otp'], response['token']]);
-
     } catch (e) {
       HapticFeedback.heavyImpact();
       _logger.e('Login error: $e');

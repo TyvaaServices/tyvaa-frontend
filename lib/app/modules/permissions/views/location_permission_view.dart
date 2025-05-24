@@ -11,10 +11,12 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
+    final backgroundColor =
+        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor = isDark ? Colors.white70 : const Color(0xFF9194A1);
+    final secondaryTextColor =
+        isDark ? Colors.white70 : const Color(0xFF9194A1);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -98,7 +100,8 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                         width: double.infinity,
                         height: 64, // taller button
                         child: ElevatedButton(
-                          onPressed: () => controller.requestLocationPermission(),
+                          onPressed:
+                              () => controller.requestLocationPermission(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
                             foregroundColor: Colors.white,

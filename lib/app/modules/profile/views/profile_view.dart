@@ -231,8 +231,7 @@ class ProfileScreen extends GetView<ProfileController> {
           suffixIcon: IconButton(
             icon: Icon(Icons.check, color: primaryColor),
             onPressed: () {
-              controller.user.value!.fullName =
-                  controller.nameController.text;
+              controller.user.value!.fullName = controller.nameController.text;
               controller.isEditingName.value = false;
             },
           ),

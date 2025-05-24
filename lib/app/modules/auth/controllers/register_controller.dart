@@ -44,10 +44,7 @@ class RegisterController extends GetxController
       duration: const Duration(milliseconds: 700),
     )..forward();
 
-    fadeInAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: animationController, curve: Curves.easeOut),
     );
 
@@ -105,7 +102,7 @@ class RegisterController extends GetxController
       final registerResult = await _apiClient.registerUser(
         fullName,
         phoneNumber,
-        isDriver: isDriver.value
+        isDriver: isDriver.value,
       );
 
       if (registerResult != null) {
