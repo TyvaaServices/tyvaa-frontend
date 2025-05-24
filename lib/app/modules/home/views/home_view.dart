@@ -28,7 +28,20 @@ class HomeScreen extends GetView<HomeController> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      floatingActionButton: _buildSpeedDial(isDark, primaryColor, surfaceColor),
+      // floatingActionButton: _buildSpeedDial(isDark, primaryColor, surfaceColor),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Get.toNamed('/publier-trajet'),
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        label: const Text(
+          'Publier un trajet',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        ),
+        icon: const Icon(Icons.add_road_rounded),
+      ),
+
       body: SafeArea(
         child: Stack(
           children: [
@@ -61,32 +74,35 @@ class HomeScreen extends GetView<HomeController> {
             CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                _buildAppBar(isDark, primaryColor, textColor, surfaceColor),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Use a responsive padding at the top
                         SizedBox(height: Get.height * 0.02),
+                        // AppBar content moved to body
+                        _buildInlineAppBar(
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          surfaceColor,
+                        ),
+                        // Use consistent spacing between sections
+                        SizedBox(height: Get.height * 0.03),
                         _buildWelcomeCard(isDark, primaryColor, context),
-                        SizedBox(height: Get.height * 0.035),
+                        SizedBox(height: Get.height * 0.03),
                         _buildSearchBar(
                           isDark,
                           surfaceColor,
                           textColor,
                           context,
                         ),
-                        SizedBox(height: Get.height * 0.035),
-                        // Quick Actions section removed
-                        _buildRecentTripSection(
-                          isDark,
-                          surfaceColor,
-                          textColor,
-                        ),
-                        SizedBox(height: Get.height * 0.035),
+                        SizedBox(height: Get.height * 0.03),
                         _buildPromoSection(isDark, textColor),
-                        SizedBox(height: Get.height * 0.08),
+                        // Add bottom padding for scrolling
+                        SizedBox(height: Get.height * 0.03),
                       ],
                     ),
                   ),
@@ -159,22 +175,15 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildAppBar(
+  Widget _buildInlineAppBar(
     bool isDark,
     Color primaryColor,
     Color textColor,
     Color surfaceColor,
   ) {
-    return SliverAppBar(
-      pinned: true,
-      snap: false,
-      floating: true,
-      elevation: 0,
-      toolbarHeight: 70,
-      surfaceTintColor: Colors.transparent,
-      backgroundColor:
-          isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE),
-      title: Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
         children: [
           Hero(
             tag: 'profile_image',
@@ -215,7 +224,7 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Get.width * 0.03),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -260,60 +269,62 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ],
           ),
-        ],
-      ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Obx(() {
-            final hasNotifications =
-                notificationController.notifications.isNotEmpty;
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.notifications_outlined,
-                    color: textColor,
-                    size: 22,
-                  ),
-                  onPressed: () => Get.toNamed('/notification'),
-                  style: IconButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
+          Spacer(),
+          Container(
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-                if (hasNotifications)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: surfaceColor, width: 1.5),
+              ],
+            ),
+            child: Obx(() {
+              final hasNotifications =
+                  notificationController.notifications.isNotEmpty;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.notifications_outlined,
+                      color: textColor,
+                      size: Get.width * 0.055,
+                    ),
+                    onPressed: () => Get.toNamed('/notification'),
+                    padding: EdgeInsets.all(Get.width * 0.02),
+                    constraints: BoxConstraints(
+                      minWidth: Get.width * 0.1,
+                      minHeight: Get.width * 0.1,
+                    ),
+                    style: IconButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
-              ],
-            );
-          }),
-        ),
-      ],
+                  if (hasNotifications)
+                    Positioned(
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: surfaceColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -524,59 +535,59 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildRecentTripSection(
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Trajets récents',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: Get.theme.primaryColor,
-                padding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-              ),
-              child: const Text('Voir tout'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        _buildRecentTripCard(
-          isDark,
-          surfaceColor,
-          textColor,
-          'Dakar',
-          'Kaolack',
-          '130 km',
-          '13 Mai 2025',
-        ),
-        const SizedBox(height: 12),
-        _buildRecentTripCard(
-          isDark,
-          surfaceColor,
-          textColor,
-          'Dakar',
-          'Mbour',
-          '45 km',
-          '8 Mai 2025',
-        ),
-      ],
-    );
-  }
+  // Widget _buildRecentTripSection(
+  //   bool isDark,
+  //   Color surfaceColor,
+  //   Color textColor,
+  // ) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Text(
+  //             'Trajets récents',
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //               color: textColor,
+  //             ),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {},
+  //             style: TextButton.styleFrom(
+  //               foregroundColor: Get.theme.primaryColor,
+  //               padding: EdgeInsets.zero,
+  //               visualDensity: VisualDensity.compact,
+  //             ),
+  //             child: const Text('Voir tout'),
+  //           ),
+  //         ],
+  //       ),
+  //       const SizedBox(height: 16),
+  //       _buildRecentTripCard(
+  //         isDark,
+  //         surfaceColor,
+  //         textColor,
+  //         'Dakar',
+  //         'Kaolack',
+  //         '130 km',
+  //         '13 Mai 2025',
+  //       ),
+  //       const SizedBox(height: 12),
+  //       _buildRecentTripCard(
+  //         isDark,
+  //         surfaceColor,
+  //         textColor,
+  //         'Dakar',
+  //         'Mbour',
+  //         '45 km',
+  //         '8 Mai 2025',
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildRecentTripCard(
     bool isDark,
