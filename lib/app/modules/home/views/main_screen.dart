@@ -14,29 +14,6 @@ class MainScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-
-    Color iconColor =
-        brightness == Brightness.dark
-            ? AppColors.textPrimaryDark
-            : AppColors.textPrimary;
-    Color selectedColor =
-        brightness == Brightness.dark
-            ? AppColors.textPrimaryDark
-            : AppColors.background;
-    Color backgroundColor =
-        brightness == Brightness.dark
-            ? AppColors.darkBackground
-            : AppColors.background;
-    Color bottomNavBackgroundColor =
-        brightness == Brightness.dark
-            ? AppColors.primaryDark
-            : AppColors.primary;
-    Color selectedIconColor =
-        brightness == Brightness.dark
-            ? AppColors.background
-            : AppColors.background;
-
     return Obx(() {
       final List<Widget> pages = [
         HomeScreen(key: const ValueKey('home')),
@@ -57,35 +34,47 @@ class MainScreen extends GetView<HomeController> {
           option: BubbleBarOptions(barStyle: BubbleBarStyle.horizontal),
           currentIndex: controller.selectedIndex.value,
           onTap: controller.changeTab,
-          backgroundColor: backgroundColor,
+          backgroundColor: AppColors.backgroundColor,
           items: [
             BottomBarItem(
-              icon: Icon(Icons.home_outlined, color: iconColor),
-              title: Text('Accueil', style: TextStyle(color: selectedColor)),
-              backgroundColor: bottomNavBackgroundColor,
-              selectedColor: selectedIconColor,
-              selectedIcon: Icon(Icons.home, color: selectedIconColor),
+              icon: Icon(Icons.home_outlined, color: AppColors.textColor),
+              title: Text(
+                'Accueil',
+                style: TextStyle(color: AppColors.textColor),
+              ),
+              backgroundColor: AppColors.primaryColor,
+              selectedColor: Colors.white,
+              selectedIcon: Icon(Icons.home, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.history_outlined, color: iconColor),
-              title: Text('Historique', style: TextStyle(color: selectedColor)),
-              backgroundColor: bottomNavBackgroundColor,
-              selectedColor: selectedIconColor,
-              selectedIcon: Icon(Icons.history, color: selectedIconColor),
+              icon: Icon(Icons.history_outlined, color: AppColors.textColor),
+              title: Text(
+                'Historique',
+                style: TextStyle(color: AppColors.textColor),
+              ),
+              backgroundColor: AppColors.primaryColor,
+              selectedColor: Colors.white,
+              selectedIcon: Icon(Icons.history, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.chat_outlined, color: iconColor),
-              title: Text('Assistant', style: TextStyle(color: selectedColor)),
-              backgroundColor: bottomNavBackgroundColor,
-              selectedColor: selectedIconColor,
-              selectedIcon: Icon(Icons.chat, color: selectedIconColor),
+              icon: Icon(Icons.chat_outlined, color: AppColors.textColor),
+              title: Text(
+                'Assistant',
+                style: TextStyle(color: AppColors.textColor),
+              ),
+              backgroundColor: AppColors.primaryColor,
+              selectedColor: Colors.white,
+              selectedIcon: Icon(Icons.chat, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.person_outline, color: iconColor),
-              title: Text('Profil', style: TextStyle(color: selectedColor)),
-              backgroundColor: bottomNavBackgroundColor,
-              selectedColor: selectedIconColor,
-              selectedIcon: Icon(Icons.person, color: selectedIconColor),
+              icon: Icon(Icons.person_outline, color: AppColors.textColor),
+              title: Text(
+                'Profil',
+                style: TextStyle(color: AppColors.textColor),
+              ),
+              backgroundColor: AppColors.primaryColor,
+              selectedColor: Colors.white,
+              selectedIcon: Icon(Icons.person, color: Colors.white),
             ),
           ],
         ),
@@ -99,18 +88,8 @@ class HistoriqueScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Get.isDarkMode;
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE);
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final subtitleColor =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
-
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -123,7 +102,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: primaryColor.withOpacity(0.05),
+                  color: AppColors.primaryColor.withOpacity(0.05),
                 ),
               ),
             ),
@@ -135,7 +114,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: primaryColor.withOpacity(0.05),
+                  color: AppColors.primaryColor.withOpacity(0.05),
                 ),
               ),
             ),
@@ -149,19 +128,22 @@ class HistoriqueScreen extends GetView<HomeController> {
                   floating: true,
                   snap: true,
                   elevation: 0,
-                  backgroundColor: backgroundColor,
+                  backgroundColor: AppColors.backgroundColor,
                   centerTitle: false,
                   title: Text(
                     'Historique',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: textColor,
+                      color: AppColors.textColor,
                     ),
                   ),
                   actions: [
                     IconButton(
-                      icon: Icon(Icons.filter_list, color: primaryColor),
+                      icon: Icon(
+                        Icons.filter_list,
+                        color: AppColors.primaryColor,
+                      ),
                       onPressed: () {
                         _showFilterBottomSheet(context);
                       },
@@ -175,7 +157,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: surfaceColor,
+                        color: AppColors.surfaceColor,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -188,8 +170,13 @@ class HistoriqueScreen extends GetView<HomeController> {
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Rechercher dans l\'historique',
-                          hintStyle: TextStyle(color: subtitleColor),
-                          prefixIcon: Icon(Icons.search, color: primaryColor),
+                          hintStyle: TextStyle(
+                            color: AppColors.secondaryTextColor,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: AppColors.primaryColor,
+                          ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 15,
@@ -212,7 +199,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: textColor,
+                            color: AppColors.textColor,
                           ),
                         ),
                         TextButton(
@@ -220,7 +207,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           child: Text(
                             'Voir tout',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: AppColors.primaryColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -233,10 +220,10 @@ class HistoriqueScreen extends GetView<HomeController> {
                 // Recurrent Rides List
                 SliverToBoxAdapter(
                   child: _buildRecurrentRidesList(
-                    surfaceColor,
-                    textColor,
-                    subtitleColor,
-                    primaryColor,
+                    AppColors.surfaceColor,
+                    AppColors.textColor,
+                    AppColors.secondaryTextColor,
+                    AppColors.primaryColor,
                   ),
                 ),
 
@@ -252,7 +239,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: textColor,
+                            color: AppColors.textColor,
                           ),
                         ),
                         TextButton(
@@ -260,7 +247,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           child: Text(
                             'Voir tout',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: AppColors.primaryColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -275,10 +262,10 @@ class HistoriqueScreen extends GetView<HomeController> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       return _buildRideHistoryItem(
-                        surfaceColor,
-                        textColor,
-                        subtitleColor,
-                        primaryColor,
+                        AppColors.surfaceColor,
+                        AppColors.textColor,
+                        AppColors.secondaryTextColor,
+                        AppColors.primaryColor,
                         index,
                       );
                     },
@@ -654,17 +641,9 @@ class HistoriqueScreen extends GetView<HomeController> {
   }
 
   void _showFilterBottomSheet(BuildContext context) {
-    final isDark = Get.isDarkMode;
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE);
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-
     showMaterialModalBottomSheet(
       context: context,
-      backgroundColor: surfaceColor,
+      backgroundColor: AppColors.surfaceColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -685,11 +664,11 @@ class HistoriqueScreen extends GetView<HomeController> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: textColor,
+                            color: AppColors.textColor,
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Icons.close, color: textColor),
+                          icon: Icon(Icons.close, color: AppColors.textColor),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -700,7 +679,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: textColor,
+                        color: AppColors.textColor,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -710,20 +689,20 @@ class HistoriqueScreen extends GetView<HomeController> {
                         _buildFilterChip(
                           'Tous',
                           true,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Récurrents',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Uniques',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                       ],
                     ),
@@ -733,7 +712,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: textColor,
+                        color: AppColors.textColor,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -743,20 +722,20 @@ class HistoriqueScreen extends GetView<HomeController> {
                         _buildFilterChip(
                           'Tous',
                           true,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Terminés',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Annulés',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                       ],
                     ),
@@ -766,7 +745,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: textColor,
+                        color: AppColors.textColor,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -776,26 +755,26 @@ class HistoriqueScreen extends GetView<HomeController> {
                         _buildFilterChip(
                           'Tout',
                           true,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Cette semaine',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Ce mois',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                         _buildFilterChip(
                           'Cette année',
                           false,
-                          primaryColor,
-                          surfaceColor,
+                          AppColors.primaryColor,
+                          AppColors.surfaceColor,
                         ),
                       ],
                     ),
@@ -807,7 +786,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
+                          backgroundColor: AppColors.primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
