@@ -283,8 +283,12 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildSearchBar(BuildContext context) {
-    return Hero(
-      tag: 'search_bar',
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: TSpacing.xs,
+        vertical: TSpacing.sm,
+      ),
+
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -296,122 +300,73 @@ class HomeScreen extends GetView<HomeController> {
                 shape: RoundedRectangleBorder(
                   borderRadius: TRadius.modalRadius,
                 ),
+                duration: const Duration(milliseconds: 200),
+                enableDrag: true,
               ),
-          borderRadius: TRadius.inputRadius,
+          borderRadius: BorderRadius.circular(TRadius.lg),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: TSpacing.lg,
+              horizontal: TSpacing.md,
               vertical: TSpacing.md,
             ),
             decoration: BoxDecoration(
               color: TColors.surface(context),
-              borderRadius: TRadius.inputRadius,
-              boxShadow: TShadows.subtle,
+              borderRadius: BorderRadius.circular(TRadius.lg),
             ),
             child: Row(
               children: [
-                Icon(Icons.search_rounded, color: TColors.primary, size: 22),
-                SizedBox(width: TSpacing.md),
-                Expanded(
-                  child: Text(
-                    'Où souhaitez-vous aller ?',
-                    style: TTypography.bodyMedium(
-                      context,
-                    ).copyWith(color: TColors.textSecondary(context)),
+                Container(
+                  padding: EdgeInsets.all(TSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: TColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.search_rounded,
+                    color: TColors.primary,
+                    size: 22,
                   ),
                 ),
-                Container(
+                SizedBox(width: TSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Où souhaitez-vous aller ?',
+                        style: TTypography.bodyLarge(context).copyWith(
+                          color: TColors.textPrimary(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Recherchez votre destination',
+                        style: TTypography.bodySmall(
+                          context,
+                        ).copyWith(color: TColors.textSecondary(context)),
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
                   padding: EdgeInsets.all(TSpacing.xs),
                   decoration: BoxDecoration(
                     color: TColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(TRadius.sm),
                   ),
                   child: Icon(
-                    Icons.tune_rounded,
+                    Icons.pin_drop_outlined,
                     color: TColors.primary,
-                    size: 18,
+                    size: 20,
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildRecentTripCard(
-    BuildContext context,
-    String from,
-    String to,
-    String distance,
-    String date,
-  ) {
-    return Container(
-      width: 180,
-      padding: EdgeInsets.all(TSpacing.md),
-      decoration: BoxDecoration(
-        color: TColors.surface(context),
-        borderRadius: TRadius.cardRadius,
-        boxShadow: TShadows.subtle,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(TSpacing.xs),
-            decoration: BoxDecoration(
-              color: TColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(TRadius.sm),
-            ),
-            child: Icon(Icons.route_rounded, color: TColors.primary, size: 20),
-          ),
-          SizedBox(height: TSpacing.sm),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  '$from → $to',
-                  style: TTypography.bodyMedium(
-                    context,
-                  ).copyWith(fontWeight: FontWeight.w600),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: TSpacing.xs),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: TSpacing.sm,
-              vertical: TSpacing.xs / 2,
-            ),
-            decoration: BoxDecoration(
-              color: TColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(TRadius.pill),
-            ),
-            child: Text(
-              distance,
-              style: TTypography.labelSmall(
-                context,
-              ).copyWith(color: TColors.primary, fontWeight: FontWeight.w600),
-            ),
-          ),
-          SizedBox(height: TSpacing.sm),
-          Row(
-            children: [
-              Icon(
-                Icons.access_time_rounded,
-                size: 12,
-                color: TColors.textSecondary(context),
-              ),
-              SizedBox(width: TSpacing.xs),
-              Text(date, style: TTypography.bodySmall(context)),
-            ],
-          ),
-        ],
       ),
     );
   }
