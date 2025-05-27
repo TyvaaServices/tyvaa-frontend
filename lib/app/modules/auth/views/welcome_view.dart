@@ -33,19 +33,10 @@ class _WelcomeViewState extends State<WelcomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor =
-        isDark ? Colors.white70 : const Color(0xFF9194A1);
-
     final name = (Get.arguments?['name'] ?? '').toString();
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
           // Decorative background
@@ -57,7 +48,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               height: Get.width * .85,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.12),
+                color: AppColors.primaryColor.withOpacity(.12),
               ),
             ),
           ),
@@ -69,7 +60,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               height: Get.width * .7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.08),
+                color: AppColors.primaryColor.withOpacity(.08),
               ),
             ),
           ),
@@ -85,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               maxBlastForce: 25,
               minBlastForce: 10,
               colors: [
-                primaryColor,
+                AppColors.primaryColor,
                 Colors.amber,
                 Colors.greenAccent,
                 Colors.blueAccent,
@@ -100,7 +91,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: cardColor,
+                    color: AppColors.cardColor,
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
@@ -125,7 +116,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
-                          color: textColor,
+                          color: AppColors.textColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -134,7 +125,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         "Votre inscription a été réussie.\nNous sommes ravis de vous compter parmi nous.",
                         style: TextStyle(
                           fontSize: 17,
-                          color: secondaryTextColor,
+                          color: AppColors.secondaryTextColor,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -148,7 +139,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                             Get.offAllNamed('/main');
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
+                            backgroundColor: AppColors.primaryColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
