@@ -15,19 +15,11 @@ class LoginScreen extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LoginController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor =
-        isDark ? Colors.white70 : const Color(0xFF9194A1);
     var width = Get.width;
     var height = Get.height;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
           Positioned(
@@ -38,7 +30,7 @@ class LoginScreen extends GetView<LoginController> {
               height: width * .8,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.1),
+                color: AppColors.primaryColor.withOpacity(.1),
               ),
             ),
           ),
@@ -50,7 +42,7 @@ class LoginScreen extends GetView<LoginController> {
               height: width * .7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.08),
+                color: AppColors.primaryColor.withOpacity(.08),
               ),
             ),
           ),
@@ -88,7 +80,7 @@ class LoginScreen extends GetView<LoginController> {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: textColor,
+                            color: AppColors.textColor,
                           ),
                         ),
                         SizedBox(height: height * 0.02),
@@ -96,7 +88,7 @@ class LoginScreen extends GetView<LoginController> {
                           'Connectez-vous avec votre numéro pour accéder à votre compte',
                           style: TextStyle(
                             fontSize: 16,
-                            color: secondaryTextColor,
+                            color: AppColors.secondaryTextColor,
                             height: 1.5,
                           ),
                         ),
@@ -114,7 +106,7 @@ class LoginScreen extends GetView<LoginController> {
                               padding: const EdgeInsets.all(24),
 
                               decoration: BoxDecoration(
-                                color: cardColor,
+                                color: AppColors.cardColor,
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: [
                                   BoxShadow(
@@ -132,7 +124,7 @@ class LoginScreen extends GetView<LoginController> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: secondaryTextColor,
+                                      color: AppColors.secondaryTextColor,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -144,10 +136,7 @@ class LoginScreen extends GetView<LoginController> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color:
-                                            isDark
-                                                ? Colors.grey[800]!
-                                                : Colors.grey[300]!,
+                                        color: AppColors.borderColor,
                                       ),
                                     ),
                                     child: DropdownButtonHideUnderline(
@@ -156,7 +145,7 @@ class LoginScreen extends GetView<LoginController> {
                                         isExpanded: true,
                                         icon: Icon(
                                           Icons.keyboard_arrow_down_rounded,
-                                          color: primaryColor,
+                                          color: AppColors.primaryColor,
                                         ),
                                         items: [
                                           DropdownMenuItem(
@@ -178,7 +167,9 @@ class LoginScreen extends GetView<LoginController> {
                                                           stack,
                                                         ) => Icon(
                                                           Icons.flag_rounded,
-                                                          color: primaryColor,
+                                                          color:
+                                                              AppColors
+                                                                  .primaryColor,
                                                         ),
                                                   ),
                                                 ),
@@ -186,7 +177,7 @@ class LoginScreen extends GetView<LoginController> {
                                                 Text(
                                                   'Sénégal (+221)',
                                                   style: TextStyle(
-                                                    color: textColor,
+                                                    color: AppColors.textColor,
                                                     fontSize: 16,
                                                   ),
                                                 ),
@@ -204,7 +195,7 @@ class LoginScreen extends GetView<LoginController> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: secondaryTextColor,
+                                      color: AppColors.secondaryTextColor,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -217,18 +208,17 @@ class LoginScreen extends GetView<LoginController> {
                                       inputFormatters: [controller.phoneMask],
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: textColor,
+                                        color: AppColors.textColor,
                                       ),
                                       decoration: InputDecoration(
                                         hintText: '78 277 55 79',
                                         hintStyle: TextStyle(
-                                          color: secondaryTextColor.withOpacity(
-                                            .7,
-                                          ),
+                                          color: AppColors.secondaryTextColor
+                                              .withOpacity(.7),
                                         ),
                                         prefixIcon: Icon(
                                           Icons.phone_android_rounded,
-                                          color: primaryColor,
+                                          color: AppColors.primaryColor,
                                         ),
                                         suffixIcon:
                                             controller.hasInput
@@ -252,9 +242,7 @@ class LoginScreen extends GetView<LoginController> {
                                                     ? (controller.isValid
                                                         ? Colors.green
                                                         : Colors.red)
-                                                    : (isDark
-                                                        ? Colors.grey[800]!
-                                                        : Colors.grey[300]!),
+                                                    : AppColors.borderColor,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
@@ -262,7 +250,7 @@ class LoginScreen extends GetView<LoginController> {
                                             16,
                                           ),
                                           borderSide: BorderSide(
-                                            color: primaryColor,
+                                            color: AppColors.primaryColor,
                                             width: 2,
                                           ),
                                         ),
@@ -291,10 +279,7 @@ class LoginScreen extends GetView<LoginController> {
                                         ),
 
                                         filled: true,
-                                        fillColor:
-                                            isDark
-                                                ? Colors.grey[900]
-                                                : Colors.grey[50],
+                                        fillColor: AppColors.fillColor,
                                       ),
                                       validator:
                                           (_) =>
@@ -318,7 +303,7 @@ class LoginScreen extends GetView<LoginController> {
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: primaryColor.withOpacity(.3),
+                                  color: AppColors.primaryColor.withOpacity(.3),
                                   blurRadius: 20,
                                   offset: const Offset(0, 8),
                                 ),
@@ -332,7 +317,7 @@ class LoginScreen extends GetView<LoginController> {
                                       ? null
                                       : controller.handleLogin,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                                backgroundColor: AppColors.primaryColor,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
@@ -372,7 +357,7 @@ class LoginScreen extends GetView<LoginController> {
                             child: Text(
                               'S\'inscrire',
                               style: TextStyle(
-                                color: primaryColor,
+                                color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -401,7 +386,7 @@ class LoginScreen extends GetView<LoginController> {
                             horizontal: 24,
                           ),
                           decoration: BoxDecoration(
-                            color: cardColor,
+                            color: AppColors.cardColor,
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Column(
@@ -418,7 +403,7 @@ class LoginScreen extends GetView<LoginController> {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: textColor,
+                                  color: AppColors.textColor,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -426,7 +411,7 @@ class LoginScreen extends GetView<LoginController> {
                                 'Nous préparons votre compte',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: secondaryTextColor,
+                                  color: AppColors.secondaryTextColor,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
