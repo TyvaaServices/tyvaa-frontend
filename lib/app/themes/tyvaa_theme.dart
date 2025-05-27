@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppColors {
   // Brand Colors
@@ -14,7 +15,7 @@ class AppColors {
   static const Color info = Color(0xFF2196F3); // Blue for information
 
   // Light Mode Backgrounds
-  static const Color background = Color(0xFFF8F9FB); // Light app background
+  static const Color background = Color(0xFFF8F9FE); // Light app background
   static const Color card = Color(0xFFFFFFFF); // Card color for light mode
   static const Color navBackground = Color(
     0xFFF8F9FB,
@@ -26,6 +27,7 @@ class AppColors {
   static const Color navBackgroundDark = Color(
     0xFF121212,
   ); // Dark background for nav
+  static const Color surfaceDark = Color(0xFF1E1E2E); // Dark surface color
 
   // Text colors (Light Mode)
   static const Color textPrimary = Color(
@@ -50,6 +52,37 @@ class AppColors {
   // Navigation (Light and Dark Mode)
   static const Color navActive = Color(0xFF6A0DAD); // Active nav item
   static const Color navInactive = Color(0xFF757575); // Inactive nav item
+
+  // Additional colors required by views
+  static const Color borderColor = Color(
+    0xFFE0E0E0,
+  ); // Border color for inputs and cards
+  static const Color fillColor = Color(0xFFF9F9F9); // Fill color for inputs
+  static const Color dragHandleColor = Color(
+    0xFFDDDDDD,
+  ); // Color for drag handles
+  static const Color shadowColor = Color(0x22000000); // Shadow color
+  static const Color destinationItemColor = Color(
+    0xFFF8F9FB,
+  ); // Background color for destination items
+  static const Color iconBackgroundColor = Color(
+    0xFFEEF2FF,
+  ); // Background color for icons
+  static const Color iconColor = Color(0xFF6A0DAD); // Color for icons
+
+  // Get the appropriate color based on the current theme
+  static Color get backgroundColor =>
+      Get.isDarkMode ? darkBackground : background;
+  static Color get textColor => Get.isDarkMode ? textPrimaryDark : textPrimary;
+  static Color get primaryColor => Get.isDarkMode ? primaryDark : primary;
+  static Color get surfaceColor => Get.isDarkMode ? surfaceDark : Colors.white;
+  static Color get secondaryTextColor =>
+      Get.isDarkMode ? textSecondaryDark : textSecondary;
+  static Color get dividerColor => Get.isDarkMode ? darkDivider : divider;
+  static Color get cardColor => Get.isDarkMode ? cardDark : card;
+
+  // Helper for easy dark mode checking
+  static bool get isDark => Get.isDarkMode;
 }
 
 class AppTextStyles {
