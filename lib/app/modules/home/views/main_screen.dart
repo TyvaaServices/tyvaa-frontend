@@ -38,40 +38,28 @@ class MainScreen extends GetView<HomeController> {
           items: [
             BottomBarItem(
               icon: Icon(Icons.home_outlined, color: AppColors.textColor),
-              title: Text(
-                'Accueil',
-                style: TextStyle(color: AppColors.textColor),
-              ),
+              title: Text('Accueil', style: TextStyle(color: Colors.white)),
               backgroundColor: AppColors.primaryColor,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.home, color: Colors.white),
             ),
             BottomBarItem(
               icon: Icon(Icons.history_outlined, color: AppColors.textColor),
-              title: Text(
-                'Historique',
-                style: TextStyle(color: AppColors.textColor),
-              ),
+              title: Text('Historique', style: TextStyle(color: Colors.white)),
               backgroundColor: AppColors.primaryColor,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.history, color: Colors.white),
             ),
             BottomBarItem(
               icon: Icon(Icons.chat_outlined, color: AppColors.textColor),
-              title: Text(
-                'Assistant',
-                style: TextStyle(color: AppColors.textColor),
-              ),
+              title: Text('Assistant', style: TextStyle(color: Colors.white)),
               backgroundColor: AppColors.primaryColor,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.chat, color: Colors.white),
             ),
             BottomBarItem(
               icon: Icon(Icons.person_outline, color: AppColors.textColor),
-              title: Text(
-                'Profil',
-                style: TextStyle(color: AppColors.textColor),
-              ),
+              title: Text('Profil', style: TextStyle(color: Colors.white)),
               backgroundColor: AppColors.primaryColor,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.person, color: Colors.white),
@@ -91,400 +79,211 @@ class HistoriqueScreen extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            // Background decorative elements
-            Positioned(
-              top: -100,
-              right: -50,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryColor.withOpacity(0.05),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -80,
-              left: -60,
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryColor.withOpacity(0.05),
-                ),
-              ),
-            ),
-
-            // Main content
-            CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // App Bar
-                SliverAppBar(
-                  floating: true,
-                  snap: true,
-                  elevation: 0,
-                  backgroundColor: AppColors.backgroundColor,
-                  centerTitle: false,
-                  title: Text(
-                    'Historique',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.filter_list,
-                        color: AppColors.primaryColor,
-                      ),
-                      onPressed: () {
-                        _showFilterBottomSheet(context);
-                      },
-                    ),
-                  ],
-                ),
-
-                // Search bar
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceColor,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Rechercher dans l\'historique',
-                          hintStyle: TextStyle(
-                            color: AppColors.secondaryTextColor,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: AppColors.primaryColor,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Recurrent Rides Section
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Trajets récurrents',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textColor,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Voir tout',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Recurrent Rides List
-                SliverToBoxAdapter(
-                  child: _buildRecurrentRidesList(
-                    AppColors.surfaceColor,
-                    AppColors.textColor,
-                    AppColors.secondaryTextColor,
-                    AppColors.primaryColor,
-                  ),
-                ),
-
-                // One-time Rides Section
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Trajets uniques',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textColor,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Voir tout',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // One-time Rides List
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return _buildRideHistoryItem(
-                        AppColors.surfaceColor,
-                        AppColors.textColor,
-                        AppColors.secondaryTextColor,
-                        AppColors.primaryColor,
-                        index,
-                      );
-                    },
-                    childCount: 10, // Replace with actual count from your data
-                  ),
-                ),
-
-                // Bottom spacing
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecurrentRidesList(
-    Color surfaceColor,
-    Color textColor,
-    Color subtitleColor,
-    Color primaryColor,
-  ) {
-    return SizedBox(
-      height: 190,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 5, // Replace with actual recurrent rides count
-        itemBuilder: (context, index) {
-          return Container(
-            width: 280,
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.repeat, size: 14, color: primaryColor),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Récurrent',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            // Clean, minimal header design
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Simple header with title and actions
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            size: 10,
-                            color: AppColors.success,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Dakar, Ouest Foire',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: textColor,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: Container(
-                          height: 25,
-                          width: 1,
-                          color: subtitleColor.withOpacity(0.3),
+                      // Clean title
+                      Text(
+                        'Historique',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textColor,
                         ),
                       ),
+
+                      // Simple action buttons
                       Row(
                         children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 10,
-                            color: AppColors.error,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Rufisque, Cité Tacko',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: textColor,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          IconButton(
+                            icon: Icon(
+                              Icons.search_rounded,
+                              color: AppColors.textColor,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                size: 14,
-                                color: subtitleColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Lun, Mer, Ven',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: subtitleColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                size: 14,
-                                color: subtitleColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '08:00',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: subtitleColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '2 500 FCFA',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
-                            ),
-                          ),
-                          OutlinedButton(
                             onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: primaryColor),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
-                              ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                          const SizedBox(width: 20),
+                          IconButton(
+                            icon: Icon(
+                              Icons.filter_list_rounded,
+                              color: AppColors.textColor,
                             ),
-                            child: Text(
-                              'Détails',
-                              style: TextStyle(color: primaryColor),
-                            ),
+                            onPressed: () => _showFilterActionSheet(context),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 16),
+
+                  // Clean search bar
+                  Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: AppColors.secondaryTextColor,
+                          size: 20,
+                        ),
+                        hintText: 'Rechercher un trajet...',
+                        hintStyle: TextStyle(
+                          color: AppColors.secondaryTextColor,
+                          fontSize: 15,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          );
-        },
+
+            // Simple filter tabs
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+              child: Row(
+                children: [
+                  _buildFilterTab('Tous', true),
+                  _buildFilterTab('Cette semaine', false),
+                  _buildFilterTab('Ce mois', false),
+                ],
+              ),
+            ),
+
+            // Replaced the ugly black divider with a subtle spacer
+            const SizedBox(height: 4),
+
+            // History list with existing iOS-style cards
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                itemCount: 20, // Replace with actual count
+                itemBuilder: (context, index) {
+                  return _buildHistoryCard(index);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showFilterActionSheet(context),
+        backgroundColor: AppColors.primaryColor,
+        child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildRideHistoryItem(
-    Color surfaceColor,
-    Color textColor,
-    Color subtitleColor,
-    Color primaryColor,
-    int index,
-  ) {
+  Widget _buildFilterTab(String text, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: Column(
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              color:
+                  isSelected
+                      ? AppColors.primaryColor
+                      : AppColors.secondaryTextColor,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Container(
+            height: 2,
+            width: text.length * 5.0,
+            color: isSelected ? AppColors.primaryColor : Colors.transparent,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String label, bool isSelected) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+      child: FilterChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (_) {},
+        backgroundColor: AppColors.surfaceColor,
+        selectedColor: AppColors.primaryColor.withOpacity(0.15),
+        checkmarkColor: AppColors.primaryColor,
+        labelStyle: TextStyle(
+          color: isSelected ? AppColors.primaryColor : AppColors.textColor,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          fontSize: 13,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: isSelected ? AppColors.primaryColor : AppColors.dividerColor,
+            width: 1,
+          ),
+        ),
+        elevation: isSelected ? 1 : 0,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+      ),
+    );
+  }
+
+  Widget _buildSegmentButton(String text, bool isSelected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color:
+                isSelected
+                    ? (AppColors.isDark ? Colors.black : Colors.white)
+                    : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              color:
+                  isSelected
+                      ? AppColors.primaryColor
+                      : AppColors.secondaryTextColor,
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryCard(int index) {
     // Alternate status for demo purposes
     final statuses = ['Terminé', 'Annulé', 'Terminé', 'Terminé', 'Annulé'];
     final status = statuses[index % statuses.length];
@@ -492,9 +291,9 @@ class HistoriqueScreen extends GetView<HomeController> {
         status == 'Terminé' ? AppColors.success : AppColors.error;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: surfaceColor,
+        color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -504,335 +303,315 @@ class HistoriqueScreen extends GetView<HomeController> {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Dismissible(
+          key: Key('history_$index'),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            color: AppColors.error,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
+                Icon(Icons.delete, color: Colors.white),
+                const SizedBox(height: 4),
                 Text(
-                  '${15 - index} Mai 2025',
+                  'Supprimer',
                   style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    status,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: statusColor,
-                    ),
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Icon(Icons.circle, size: 10, color: AppColors.success),
-                    Container(
-                      height: 25,
-                      width: 1,
-                      color: subtitleColor.withOpacity(0.3),
-                    ),
-                    Icon(Icons.location_on, size: 10, color: AppColors.error),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Dakar, Point E',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+          ),
+          confirmDismiss: (direction) async {
+            return await showDialog(
+              context: Get.context!,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Supprimer ce trajet?'),
+                    content: Text('Cette action est définitive.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Annuler'),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Mbour, Saly Portudal',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(
+                          'Supprimer',
+                          style: TextStyle(color: AppColors.error),
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: surfaceColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: subtitleColor.withOpacity(0.2)),
-                  ),
-                  child: Text(
-                    '${1500 + (index * 200)} FCFA',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: primaryColor.withOpacity(0.1),
-                      child: Icon(Icons.person, size: 18, color: primaryColor),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Amadou Diallo',
-                      style: TextStyle(fontSize: 14, color: textColor),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.star, size: 18, color: AppColors.accent),
-                    const SizedBox(width: 4),
-                    Text(
-                      '4.8',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: textColor,
+            );
+          },
+          onDismissed: (direction) {
+            Get.snackbar(
+              'Trajet supprimé',
+              'Le trajet a été supprimé de l\'historique',
+              snackPosition: SnackPosition.TOP,
+              margin: const EdgeInsets.all(16),
+              borderRadius: 10,
+              backgroundColor: AppColors.surfaceColor,
+              colorText: AppColors.textColor,
+              duration: const Duration(seconds: 2),
+            );
+          },
+          child: InkWell(
+            onTap:
+                () => Get.toNamed('/trajet-details', arguments: {'id': index}),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Header with date and status
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: AppColors.secondaryTextColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${15 - (index % 15)} Mai 2025',
+                            style: TextStyle(
+                              color: AppColors.secondaryTextColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          status,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: statusColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Trip details
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Route visualization
+                      Column(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 2,
+                            height: 30,
+                            color: AppColors.primaryColor.withOpacity(0.3),
+                          ),
+                          Icon(
+                            Icons.location_on,
+                            color: AppColors.primaryColor,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Origin and destination
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dakar, Point E',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              'Rufisque, Cité Tacko',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Footer with price and details button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundColor: AppColors.primaryColor.withOpacity(
+                              0.1,
+                            ),
+                            backgroundImage: AssetImage(
+                              'assets/images/default_profile.png',
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Amadou D.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${1500 + (index * 200)} FCFA',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  void _showFilterBottomSheet(BuildContext context) {
-    showMaterialModalBottomSheet(
+  void _showFilterActionSheet(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.surfaceColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder:
-          (context) => StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Filtrer l\'historique',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textColor,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, color: AppColors.textColor),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
+          (context) => Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    height: 5,
+                    width: 40,
+                    margin: EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryTextColor.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(2.5),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Type de trajet',
+                    alignment: Alignment.center,
+                  ),
+                  Text(
+                    'Filtrer par',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildActionSheetButton('Tous les trajets', true),
+                  _buildActionSheetButton('Cette semaine', false),
+                  _buildActionSheetButton('Ce mois', false),
+                  _buildActionSheetButton('Trajets terminés', false),
+                  _buildActionSheetButton('Trajets annulés', false),
+                  _buildActionSheetButton('En tant que passager', false),
+                  _buildActionSheetButton('En tant que conducteur', false),
+
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Annuler',
                       style: TextStyle(
-                        fontSize: 16,
+                        color: AppColors.primaryColor,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textColor,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      children: [
-                        _buildFilterChip(
-                          'Tous',
-                          true,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Récurrents',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Uniques',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Statut',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      children: [
-                        _buildFilterChip(
-                          'Tous',
-                          true,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Terminés',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Annulés',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Période',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      children: [
-                        _buildFilterChip(
-                          'Tout',
-                          true,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Cette semaine',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Ce mois',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                        _buildFilterChip(
-                          'Cette année',
-                          false,
-                          AppColors.primaryColor,
-                          AppColors.surfaceColor,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Appliquer les filtres',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              );
-            },
+                  ),
+                ],
+              ),
+            ),
           ),
     );
   }
 
-  Widget _buildFilterChip(
-    String label,
-    bool isSelected,
-    Color primaryColor,
-    Color surfaceColor,
-  ) {
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) {},
-      backgroundColor: surfaceColor,
-      selectedColor: primaryColor.withOpacity(0.1),
-      checkmarkColor: primaryColor,
-      labelStyle: TextStyle(
-        color: isSelected ? primaryColor : Colors.grey,
-        fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+  Widget _buildActionSheetButton(String text, bool isSelected) {
+    return TextButton(
+      onPressed: () => Navigator.of(Get.context!).pop(),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 12),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isSelected ? primaryColor : Colors.grey.withOpacity(0.3),
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 17,
+              color: AppColors.textColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          if (isSelected) Icon(Icons.check, color: AppColors.primaryColor),
+        ],
       ),
     );
   }
