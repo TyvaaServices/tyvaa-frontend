@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
+import '../../../themes/tyvaa_theme.dart';
 import '../../search/views/search_page.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -19,77 +19,44 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      // floatingActionButton: _buildSpeedDial(isDark, primaryColor, surfaceColor),
+      backgroundColor: TColors.background(context),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed('/publier-trajet'),
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: TColors.primary,
         foregroundColor: Colors.white,
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        label: const Text(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: TRadius.buttonRadius),
+        label: Text(
           'Publier un trajet',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          style: TTypography.labelLarge(
+            context,
+          ).copyWith(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         icon: const Icon(Icons.add_road_rounded),
       ),
-
       body: SafeArea(
-        child: Stack(
-          children: [
-            Positioned(
-              top: -100,
-              right: -50,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryColor.withOpacity(0.05),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.all(TSpacing.md),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(context),
+                    SizedBox(height: TSpacing.lg),
+                    _buildWelcomeCard(context),
+                    SizedBox(height: TSpacing.lg),
+                    _buildSearchBar(context),
+                    SizedBox(height: TSpacing.xl),
+                    _buildPromoSection(context),
+                    SizedBox(height: TSpacing.xl),
+                    _buildUpcomingRidesSection(context),
+                    SizedBox(height: TSpacing.xl),
+                  ],
                 ),
               ),
-            ),
-            Positioned(
-              bottom: -80,
-              left: -60,
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryColor.withOpacity(0.05),
-                ),
-              ),
-            ),
-
-            // Main content
-            CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Use a responsive padding at the top
-                        SizedBox(height: Get.height * 0.02),
-                        // AppBar content moved to body
-                        _buildInlineAppBar(),
-                        // Use consistent spacing between sections
-                        SizedBox(height: Get.height * 0.03),
-                        _buildWelcomeCard(context),
-                        SizedBox(height: Get.height * 0.03),
-                        _buildSearchBar(context),
-                        SizedBox(height: Get.height * 0.03),
-                        _buildPromoSection(),
-                        // Add bottom padding for scrolling
-                        SizedBox(height: Get.height * 0.03),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),
@@ -97,146 +64,67 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildSpeedDial() {
-    return SpeedDial(
-      icon: Icons.add,
-      activeIcon: Icons.close,
-      spacing: 3,
-      childPadding: const EdgeInsets.all(5),
-      spaceBetweenChildren: 4,
-      elevation: 8.0,
-      animationCurve: Curves.elasticInOut,
-      animationDuration: const Duration(milliseconds: 300),
-      backgroundColor: AppColors.primaryColor,
-      foregroundColor: Colors.white,
-      activeBackgroundColor: AppColors.surfaceColor,
-      activeForegroundColor: AppColors.primaryColor,
-      buttonSize: const Size(60, 60),
-      childrenButtonSize: const Size(56, 56),
-      overlayColor: Colors.black,
-      overlayOpacity: 0.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+  Widget _buildHeader(BuildContext context) {
+    return Row(
       children: [
-        SpeedDialChild(
-          child: const Icon(Icons.add_road_rounded),
-          backgroundColor: const Color(0xFF6C63FF),
-          foregroundColor: Colors.white,
-          label: 'Publier trajet',
-          labelStyle: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Get.isDarkMode ? Colors.white : Colors.black,
-          ),
-          labelBackgroundColor: AppColors.surfaceColor,
-          onTap: () => Get.toNamed('/publier-trajet'),
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.history_rounded),
-          backgroundColor: const Color(0xFF4ECDC4),
-          foregroundColor: Colors.white,
-          label: 'Historique des trajets',
-          labelStyle: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Get.isDarkMode ? Colors.white : Colors.black,
-          ),
-          labelBackgroundColor: AppColors.surfaceColor,
-          onTap: () {},
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.support_agent_rounded),
-          backgroundColor: const Color(0xFFFF6B6B),
-          foregroundColor: Colors.white,
-          label: 'Centre d\'aide',
-          labelStyle: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Get.isDarkMode ? Colors.white : Colors.black,
-          ),
-          labelBackgroundColor: AppColors.surfaceColor,
-          onTap: () => Get.toNamed(Routes.AIDE),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInlineAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Hero(
-            tag: 'profile_image',
+        Hero(
+          tag: 'profile_image',
+          child: GestureDetector(
+            onTap: () => controller.changeTab(3),
             child: Container(
-              height: 45,
-              width: 45,
+              height: 48,
+              width: 48,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(TRadius.md),
                 border: Border.all(
-                  color: AppColors.primaryColor.withOpacity(0.3),
+                  color: TColors.primary.withOpacity(0.2),
                   width: 2,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryColor.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: TShadows.subtle,
               ),
-              child: GestureDetector(
-                onTap: () => controller.changeTab(3),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13),
-                  child:
-                      profileController.profileImage.value != null
-                          ? Image(
-                            image: FileImage(
-                              profileController.profileImage.value!,
-                            ),
-                            fit: BoxFit.cover,
-                          )
-                          : Image.asset(
-                            'assets/images/default_profile.png',
-                            fit: BoxFit.cover,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(TRadius.md - 2),
+                child:
+                    profileController.profileImage.value != null
+                        ? Image(
+                          image: FileImage(
+                            profileController.profileImage.value!,
                           ),
-                ),
+                          fit: BoxFit.cover,
+                        )
+                        : Image.asset(
+                          'assets/images/default_profile.png',
+                          fit: BoxFit.cover,
+                        ),
               ),
             ),
           ),
-          SizedBox(width: Get.width * 0.03),
-          Column(
+        ),
+        SizedBox(width: TSpacing.md),
+        Expanded(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: Get.width * 0.4,
-                child: Text(
-                  'Salut, ${profileController.nameController.text} 👋',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textColor,
-                  ),
-                  softWrap: true,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                'Salut, ${profileController.nameController.text} 👋',
+                style: TTypography.headingSmall(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: TSpacing.xs),
               Obx(
                 () => Row(
                   children: [
                     Icon(
                       Icons.location_on,
-                      size: 12,
-                      color: AppColors.primaryColor.withOpacity(0.7),
+                      size: 14,
+                      color: TColors.primary.withOpacity(0.7),
                     ),
-                    const SizedBox(width: 4),
-                    SizedBox(
-                      width: Get.width * 0.35,
+                    SizedBox(width: TSpacing.xs),
+                    Expanded(
                       child: Text(
                         controller.currentAddress.value,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textColor.withOpacity(0.6),
-                        ),
+                        style: TTypography.bodySmall(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -246,262 +134,201 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ],
           ),
-          Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.surfaceColor,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      Get.isDarkMode
-                          ? Colors.black12
-                          : Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+        ),
+        _buildNotificationButton(context),
+      ],
+    );
+  }
+
+  Widget _buildNotificationButton(BuildContext context) {
+    return Obx(() {
+      final hasNotifications = notificationController.notifications.isNotEmpty;
+
+      return Container(
+        decoration: BoxDecoration(
+          color: TColors.surface(context),
+          borderRadius: BorderRadius.circular(TRadius.md),
+          boxShadow: TShadows.subtle,
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => Get.toNamed('/notification'),
+                borderRadius: BorderRadius.circular(TRadius.md),
+                child: Padding(
+                  padding: EdgeInsets.all(TSpacing.md),
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: TColors.textPrimary(context),
+                    size: 24,
+                  ),
                 ),
-              ],
+              ),
             ),
-            child: Obx(() {
-              final hasNotifications =
-                  notificationController.notifications.isNotEmpty;
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                      color: AppColors.textColor,
-                      size: Get.width * 0.055,
-                    ),
-                    onPressed: () => Get.toNamed('/notification'),
-                    padding: EdgeInsets.all(Get.width * 0.02),
-                    constraints: BoxConstraints(
-                      minWidth: Get.width * 0.1,
-                      minHeight: Get.width * 0.1,
-                    ),
-                    style: IconButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+            if (hasNotifications)
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: TColors.error,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: TColors.surface(context),
+                      width: 2,
                     ),
                   ),
-                  if (hasNotifications)
-                    Positioned(
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.surfaceColor,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            }),
-          ),
-        ],
-      ),
-    );
+                ),
+              ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildWelcomeCard(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color:
-                Get.isDarkMode
-                    ? Colors.black26
-                    : AppColors.primaryColor.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: TRadius.cardRadius,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [TColors.primary, TColors.primaryLight],
+        ),
+        boxShadow: TShadows.medium,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Stack(
-          children: [
-            Container(
-              height: Get.height * 0.22,
+      child: Stack(
+        children: [
+          // Visual elements
+          Positioned(
+            right: -30,
+            top: -20,
+            child: Container(
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primaryColor, const Color(0xFF8A6FFF)],
-                ),
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
-            // Design elements
-            Positioned(
-              right: -Get.width * 0.12,
-              top: -Get.height * 0.06,
-              child: CircleAvatar(
-                radius: Get.width * 0.18,
-                backgroundColor: Colors.white.withOpacity(0.1),
+          ),
+          Positioned(
+            left: -20,
+            bottom: -30,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
-            Positioned(
-              left: -Get.width * 0.06,
-              bottom: -Get.height * 0.04,
-              child: CircleAvatar(
-                radius: Get.width * 0.12,
-                backgroundColor: Colors.white.withOpacity(0.1),
-              ),
-            ),
-            // Small circles
-            Positioned(
-              left: Get.width * 0.3,
-              top: Get.height * 0.04,
-              child: CircleAvatar(
-                radius: 6,
-                backgroundColor: Colors.white.withOpacity(0.2),
-              ),
-            ),
-            Positioned(
-              right: Get.width * 0.2,
-              bottom: Get.height * 0.04,
-              child: CircleAvatar(
-                radius: 4,
-                backgroundColor: Colors.white.withOpacity(0.2),
-              ),
-            ),
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
+          ),
+
+          // Content
+          Padding(
+            padding: EdgeInsets.all(TSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(TSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(TRadius.sm),
+                      ),
+                      child: const Icon(
                         Icons.directions_car_filled_rounded,
                         color: Colors.white,
-                        size: 24,
+                        size: 20,
                       ),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Tyvaa',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: Get.height * 0.015),
-                  const Text(
-                    'Voyagez ensemble,\néconomisez ensemble',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      height: 1.2,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Trouvez des trajets partagés ou proposez les vôtres',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 13,
+                    SizedBox(width: TSpacing.sm),
+                    Text(
+                      'Tyvaa',
+                      style: TTypography.headingMedium(
+                        context,
+                      ).copyWith(color: Colors.white, letterSpacing: 0.5),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                SizedBox(height: TSpacing.md),
+                Text(
+                  'Voyagez ensemble,\néconomisez ensemble',
+                  style: TTypography.displaySmall(
+                    context,
+                  ).copyWith(color: Colors.white, height: 1.2),
+                ),
+                SizedBox(height: TSpacing.sm),
+                Text(
+                  'Trouvez des trajets partagés ou proposez les vôtres',
+                  style: TTypography.bodyMedium(
+                    context,
+                  ).copyWith(color: Colors.white.withOpacity(0.9)),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSearchBar(BuildContext context) {
     return Hero(
-      key: const Key('search_bar'),
-      transitionOnUserGestures: true,
       tag: 'search_bar',
       child: Material(
         color: Colors.transparent,
-        child: GestureDetector(
+        child: InkWell(
           onTap:
               () => showMaterialModalBottomSheet(
                 context: context,
                 backgroundColor: Colors.transparent,
                 builder: (context) => LocationSearchModal(),
-                enableDrag: true,
-                bounce: true,
-                duration: const Duration(milliseconds: 400),
-                barrierColor: Colors.black54,
-                elevation: 0,
-                expand: false,
-                isDismissible: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: TRadius.modalRadius,
                 ),
               ),
+          borderRadius: TRadius.inputRadius,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            padding: EdgeInsets.symmetric(
+              horizontal: TSpacing.lg,
+              vertical: TSpacing.md,
+            ),
             decoration: BoxDecoration(
-              color: AppColors.surfaceColor,
-              borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Get.isDarkMode ? const Color(0xFF252543) : Colors.white,
-                  Get.isDarkMode
-                      ? const Color(0xFF1E1E2E)
-                      : const Color(0xFFF8F9FE),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      Get.isDarkMode
-                          ? Colors.black12
-                          : Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: TColors.surface(context),
+              borderRadius: TRadius.inputRadius,
+              boxShadow: TShadows.subtle,
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.search_rounded,
-                  color: Get.theme.primaryColor,
-                  size: 22,
-                ),
-                const SizedBox(width: 14),
+                Icon(Icons.search_rounded, color: TColors.primary, size: 22),
+                SizedBox(width: TSpacing.md),
                 Expanded(
                   child: Text(
                     'Où souhaitez-vous aller ?',
-                    style: TextStyle(
-                      color: AppColors.textColor.withOpacity(0.6),
-                      fontSize: 15,
-                    ),
+                    style: TTypography.bodyMedium(
+                      context,
+                    ).copyWith(color: TColors.textSecondary(context)),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(TSpacing.xs),
                   decoration: BoxDecoration(
-                    color: Get.theme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: TColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(TRadius.sm),
                   ),
                   child: Icon(
                     Icons.tune_rounded,
-                    color: Get.theme.primaryColor,
+                    color: TColors.primary,
                     size: 18,
                   ),
                 ),
@@ -513,44 +340,105 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPromoSection() {
+  Widget _buildRecentTripCard(
+    BuildContext context,
+    String from,
+    String to,
+    String distance,
+    String date,
+  ) {
+    return Container(
+      width: 180,
+      padding: EdgeInsets.all(TSpacing.md),
+      decoration: BoxDecoration(
+        color: TColors.surface(context),
+        borderRadius: TRadius.cardRadius,
+        boxShadow: TShadows.subtle,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(TSpacing.xs),
+            decoration: BoxDecoration(
+              color: TColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(TRadius.sm),
+            ),
+            child: Icon(Icons.route_rounded, color: TColors.primary, size: 20),
+          ),
+          SizedBox(height: TSpacing.sm),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  '$from → $to',
+                  style: TTypography.bodyMedium(
+                    context,
+                  ).copyWith(fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: TSpacing.xs),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: TSpacing.sm,
+              vertical: TSpacing.xs / 2,
+            ),
+            decoration: BoxDecoration(
+              color: TColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(TRadius.pill),
+            ),
+            child: Text(
+              distance,
+              style: TTypography.labelSmall(
+                context,
+              ).copyWith(color: TColors.primary, fontWeight: FontWeight.w600),
+            ),
+          ),
+          SizedBox(height: TSpacing.sm),
+          Row(
+            children: [
+              Icon(
+                Icons.access_time_rounded,
+                size: 12,
+                color: TColors.textSecondary(context),
+              ),
+              SizedBox(width: TSpacing.xs),
+              Text(date, style: TTypography.bodySmall(context)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Offres spéciales',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: Get.height * 0.22,
+        Text('Offres spéciales', style: TTypography.headingMedium(context)),
+        SizedBox(height: TSpacing.md),
+        AspectRatio(
+          aspectRatio: 16 / 9,
           child: PageView.builder(
             controller: controller.bannerController,
             onPageChanged: (index) => controller.currentBanner.value = index,
             itemCount: controller.banners.length,
+            physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               final banner = controller.banners[index];
               return Container(
-                margin: const EdgeInsets.only(right: 16),
+                margin: EdgeInsets.only(right: TSpacing.md),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          Get.isDarkMode
-                              ? Colors.black26
-                              : Colors.black.withOpacity(0.1),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  borderRadius: TRadius.cardRadius,
+                  boxShadow: TShadows.medium,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: TRadius.cardRadius,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -564,49 +452,48 @@ class HomeScreen extends GetView<HomeController> {
                               Colors.transparent,
                               Colors.black.withOpacity(0.7),
                             ],
+                            stops: const [0.6, 1.0],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(TSpacing.lg),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: TSpacing.md,
+                                vertical: TSpacing.xs,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(30),
+                                color: TColors.accent.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(
+                                  TRadius.pill,
+                                ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'PROMO',
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: TTypography.labelSmall(context).copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: TSpacing.md),
                             Text(
                               banner['title']!,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              style: TTypography.headingMedium(
+                                context,
+                              ).copyWith(color: Colors.white),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: TSpacing.xs),
                             Text(
                               banner['subtitle']!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white.withOpacity(0.9),
-                              ),
+                              style: TTypography.bodyMedium(
+                                context,
+                              ).copyWith(color: Colors.white.withOpacity(0.9)),
                             ),
                           ],
                         ),
@@ -618,25 +505,23 @@ class HomeScreen extends GetView<HomeController> {
             },
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: TSpacing.md),
         Center(
           child: Obx(
             () => Row(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(controller.banners.length, (index) {
                 return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: controller.currentBanner.value == index ? 24 : 8,
+                  duration: TAnimations.medium,
+                  width: controller.currentBanner.value == index ? 20 : 8,
                   height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  margin: EdgeInsets.symmetric(horizontal: TSpacing.xs / 2),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(TRadius.pill),
                     color:
                         controller.currentBanner.value == index
-                            ? AppColors.primaryColor
-                            : (Get.isDarkMode
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade300),
+                            ? TColors.primary
+                            : TColors.neutral300,
                   ),
                 );
               }),
@@ -647,105 +532,88 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildRecentTripCard(
-    String from,
-    String to,
-    String distance,
-    String date,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color:
-                Get.isDarkMode
-                    ? Colors.black12
-                    : Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(14),
+  Widget _buildUpcomingRidesSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'Vos prochains trajets',
+              style: TTypography.headingMedium(context),
             ),
-            child: Icon(
-              Icons.route_rounded,
-              color: AppColors.primaryColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '$from → $to',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        distance,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
+            const Spacer(),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: TSpacing.sm),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(TRadius.pill),
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_rounded,
-                      size: 14,
-                      color: AppColors.textColor.withOpacity(0.5),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      date,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textColor.withOpacity(0.5),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Voir tout',
+                    style: TTypography.labelMedium(
+                      context,
+                    ).copyWith(color: TColors.primary),
+                  ),
+                  SizedBox(width: TSpacing.xs),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 16,
+                    color: TColors.primary,
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+        SizedBox(height: TSpacing.md),
+        // For demo purposes, showing empty state since user may not have upcoming rides
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(TSpacing.lg),
+          decoration: BoxDecoration(
+            color: TColors.surface(context),
+            borderRadius: TRadius.cardRadius,
+            border: Border.all(color: TColors.neutral300, width: 1),
           ),
-        ],
-      ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(TSpacing.md),
+                decoration: BoxDecoration(
+                  color: TColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.directions_car_filled_outlined,
+                  color: TColors.primary,
+                  size: 32,
+                ),
+              ),
+              SizedBox(height: TSpacing.md),
+              Text(
+                'Aucun trajet à venir',
+                style: TTypography.headingSmall(context),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: TSpacing.sm),
+              Text(
+                'Réservez un trajet ou publiez votre propre itinéraire pour le voir apparaître ici.',
+                style: TTypography.bodyMedium(
+                  context,
+                ).copyWith(color: TColors.textSecondary(context)),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: TSpacing.lg),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
