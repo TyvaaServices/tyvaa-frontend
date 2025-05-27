@@ -10,21 +10,12 @@ class ProfileScreen extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-
-    // Colors
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : Color(0xFFF7F8FC);
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
+    // Define constant accent and danger colors that aren't in AppColors yet
     final accentColor = Color(0xFF8A6FFF);
     final dangerColor = Color(0xFFFF5252);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -33,7 +24,7 @@ class ProfileScreen extends GetView<ProfileController> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: AppColors.textColor,
           ),
         ),
         actions: [
@@ -42,7 +33,7 @@ class ProfileScreen extends GetView<ProfileController> {
             child: Text(
               'Enregistrer',
               style: TextStyle(
-                color: primaryColor,
+                color: AppColors.primaryColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -57,21 +48,15 @@ class ProfileScreen extends GetView<ProfileController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20),
-              _buildProfileHeader(
-                context,
-                isDark,
-                primaryColor,
-                accentColor,
-                surfaceColor,
-              ),
+              _buildProfileHeader(context, accentColor),
               SizedBox(height: 40),
-              _buildUserInfoSection(context, isDark, textColor, surfaceColor),
+              _buildUserInfoSection(context),
               SizedBox(height: 30),
-              _buildRatingsSection(context, isDark, textColor, surfaceColor),
+              _buildRatingsSection(context),
               SizedBox(height: 30),
-              // _buildPreferencesSection(context, isDark, textColor, surfaceColor, primaryColor),
+              // _buildPreferencesSection(context),
               SizedBox(height: 30),
-              _buildLogoutButton(context, isDark, dangerColor, surfaceColor),
+              _buildLogoutButton(context, dangerColor),
               SizedBox(height: 40),
             ],
           ),
@@ -80,13 +65,7 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildProfileHeader(
-    BuildContext context,
-    bool isDark,
-    Color primaryColor,
-    Color accentColor,
-    Color surfaceColor,
-  ) {
+  Widget _buildProfileHeader(BuildContext context, Color accentColor) {
     return Column(
       children: [
         Stack(
@@ -102,7 +81,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [primaryColor, accentColor],
+                    colors: [AppColors.primaryColor, accentColor],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -117,7 +96,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: surfaceColor,
+                      color: AppColors.surfaceColor,
                       image:
                           controller.profileImage.value != null
                               ? DecorationImage(
@@ -146,14 +125,14 @@ class ProfileScreen extends GetView<ProfileController> {
                 child: Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: AppColors.primaryColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
                         color:
-                            isDark
+                            AppColors.isDark
                                 ? Colors.black26
-                                : primaryColor.withOpacity(0.3),
+                                : AppColors.primaryColor.withOpacity(0.3),
                         blurRadius: 8,
                         offset: Offset(0, 3),
                       ),
@@ -175,7 +154,7 @@ class ProfileScreen extends GetView<ProfileController> {
         Obx(
           () =>
               controller.isEditingName.value
-                  ? _buildNameEditField(isDark, surfaceColor, primaryColor)
+                  ? _buildNameEditField()
                   : GestureDetector(
                     onTap: () => controller.isEditingName.value = true,
                     child: Row(
@@ -186,11 +165,15 @@ class ProfileScreen extends GetView<ProfileController> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
+                            color: AppColors.textColor,
                           ),
                         ),
                         SizedBox(width: 8),
-                        Icon(Icons.edit, size: 18, color: primaryColor),
+                        Icon(
+                          Icons.edit,
+                          size: 18,
+                          color: AppColors.primaryColor,
+                        ),
                       ],
                     ),
                   ),
@@ -199,19 +182,18 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildNameEditField(
-    bool isDark,
-    Color surfaceColor,
-    Color primaryColor,
-  ) {
+  Widget _buildNameEditField() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: surfaceColor,
+        color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+            color:
+                AppColors.isDark
+                    ? Colors.black12
+                    : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -229,7 +211,7 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           suffixIcon: IconButton(
-            icon: Icon(Icons.check, color: primaryColor),
+            icon: Icon(Icons.check, color: AppColors.primaryColor),
             onPressed: () {
               controller.user.value!.fullName = controller.nameController.text;
               controller.isEditingName.value = false;
@@ -240,12 +222,7 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildUserInfoSection(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-    Color surfaceColor,
-  ) {
+  Widget _buildUserInfoSection(BuildContext context) {
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,19 +232,21 @@ class ProfileScreen extends GetView<ProfileController> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: textColor,
+              color: AppColors.textColor,
             ),
           ),
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: surfaceColor,
+              color: AppColors.surfaceColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color:
-                      isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                      AppColors.isDark
+                          ? Colors.black12
+                          : Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
@@ -277,7 +256,6 @@ class ProfileScreen extends GetView<ProfileController> {
               children: [
                 _buildInfoItem(
                   context,
-                  isDark,
                   Icons.email_outlined,
                   'Email',
                   'cheikh@tyvaa.com',
@@ -286,7 +264,6 @@ class ProfileScreen extends GetView<ProfileController> {
                 Divider(height: 30),
                 _buildInfoItem(
                   context,
-                  isDark,
                   Icons.phone_outlined,
                   'Téléphone',
                   controller.user.value!.phoneNumber,
@@ -295,7 +272,6 @@ class ProfileScreen extends GetView<ProfileController> {
                 Divider(height: 30),
                 _buildInfoItem(
                   context,
-                  isDark,
                   Icons.calendar_today_outlined,
                   'Membre depuis',
                   Jiffy.parseFromDateTime(
@@ -313,13 +289,12 @@ class ProfileScreen extends GetView<ProfileController> {
 
   Widget _buildInfoItem(
     BuildContext context,
-    bool isDark,
     IconData icon,
     String label,
     String value,
     Color iconColor,
   ) {
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final textColor = AppColors.textColor;
 
     return Row(
       children: [
@@ -364,12 +339,7 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildRatingsSection(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-    Color surfaceColor,
-  ) {
+  Widget _buildRatingsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -378,18 +348,21 @@ class ProfileScreen extends GetView<ProfileController> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: AppColors.textColor,
           ),
         ),
         SizedBox(height: 16),
         Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: surfaceColor,
+            color: AppColors.surfaceColor,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                color:
+                    AppColors.isDark
+                        ? Colors.black12
+                        : Colors.black.withOpacity(0.05),
                 blurRadius: 10,
                 offset: Offset(0, 2),
               ),
@@ -400,18 +373,13 @@ class ProfileScreen extends GetView<ProfileController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildRatingScore(
-                    isDark,
-                    'Note globale',
-                    '4.8',
-                    Colors.amber,
-                  ),
-                  _buildRatingScore(isDark, 'Trajets', '32', Color(0xFF6C63FF)),
-                  _buildRatingScore(isDark, 'Avis', '28', Colors.green),
+                  _buildRatingScore('Note globale', '4.8', Colors.amber),
+                  _buildRatingScore('Trajets', '32', Color(0xFF6C63FF)),
+                  _buildRatingScore('Avis', '28', Colors.green),
                 ],
               ),
               SizedBox(height: 24),
-              _buildRatingBar(isDark),
+              _buildRatingBar(),
               SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -437,7 +405,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   ),
                   Icon(
                     Icons.arrow_forward_ios,
-                    color: textColor.withOpacity(0.3),
+                    color: AppColors.textColor.withOpacity(0.3),
                     size: 16,
                   ),
                 ],
@@ -449,13 +417,8 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildRatingScore(
-    bool isDark,
-    String label,
-    String value,
-    Color color,
-  ) {
-    final textColor = isDark ? Colors.white : Colors.black87;
+  Widget _buildRatingScore(String label, String value, Color color) {
+    final textColor = AppColors.textColor;
 
     return Column(
       children: [
@@ -486,11 +449,11 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildRatingBar(bool isDark) {
+  Widget _buildRatingBar() {
     return Container(
       height: 8,
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        color: AppColors.isDark ? Colors.grey.shade800 : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -512,22 +475,20 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildLogoutButton(
-    BuildContext context,
-    bool isDark,
-    Color dangerColor,
-    Color surfaceColor,
-  ) {
-    final textColor = isDark ? Colors.white : Colors.black87;
+  Widget _buildLogoutButton(BuildContext context, Color dangerColor) {
+    final textColor = AppColors.textColor;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: surfaceColor,
+        color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+            color:
+                AppColors.isDark
+                    ? Colors.black12
+                    : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -592,128 +553,4 @@ class ProfileScreen extends GetView<ProfileController> {
       ),
     );
   }
-
-  // Widget _buildPreferencesSection(
-  //     BuildContext context,
-  //     bool isDark,
-  //     Color textColor,
-  //     Color surfaceColor,
-  //     Color primaryColor,
-  //     ) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         'Préférences',
-  //         style: TextStyle(
-  //           fontSize: 18,
-  //           fontWeight: FontWeight.bold,
-  //           color: textColor,
-  //         ),
-  //       ),
-  //       SizedBox(height: 16),
-  //       Container(
-  //         padding: EdgeInsets.all(6),
-  //         decoration: BoxDecoration(
-  //           color: surfaceColor,
-  //           borderRadius: BorderRadius.circular(20),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-  //               blurRadius: 10,
-  //               offset: Offset(0, 2),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Column(
-  //           children: [
-  //             _buildPreferenceItem(
-  //               isDark,
-  //               Icons.dark_mode_outlined,
-  //               'Mode sombre',
-  //               true,
-  //               primaryColor,
-  //             ),
-  //             _buildPreferenceItem(
-  //               isDark,
-  //               Icons.notifications_outlined,
-  //               'Notifications',
-  //               true,
-  //               primaryColor,
-  //             ),
-  //             _buildPreferenceItem(
-  //               isDark,
-  //               Icons.language_outlined,
-  //               'Langue',
-  //               false,
-  //               primaryColor,
-  //               value: 'Français',
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildPreferenceItem(
-  //     bool isDark,
-  //     IconData icon,
-  //     String label,
-  //     bool isSwitch,
-  //     Color primaryColor, {
-  //       String? value,
-  //     }) {
-  //   final textColor = isDark ? Colors.white : Colors.black87;
-  //
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-  //     child: ListTile(
-  //       leading: Container(
-  //         padding: EdgeInsets.all(10),
-  //         decoration: BoxDecoration(
-  //           color: primaryColor.withOpacity(0.1),
-  //           borderRadius: BorderRadius.circular(12),
-  //         ),
-  //         child: Icon(
-  //           icon,
-  //           color: primaryColor,
-  //           size: 24,
-  //         ),
-  //       ),
-  //       title: Text(
-  //         label,
-  //         style: TextStyle(
-  //           fontSize: 16,
-  //           fontWeight: FontWeight.w500,
-  //           color: textColor,
-  //         ),
-  //       ),
-  //       trailing: isSwitch
-  //           ? Switch(
-  //         value: true,
-  //         activeColor: primaryColor,
-  //         onChanged: (val) {},
-  //       )
-  //           : Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Text(
-  //             value!,
-  //             style: TextStyle(
-  //               fontSize: 14,
-  //               color: textColor.withOpacity(0.7),
-  //             ),
-  //           ),
-  //           SizedBox(width: 4),
-  //           Icon(
-  //             Icons.arrow_forward_ios,
-  //             color: textColor.withOpacity(0.3),
-  //             size: 16,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }
