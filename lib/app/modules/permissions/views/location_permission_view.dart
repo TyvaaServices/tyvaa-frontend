@@ -9,17 +9,8 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor =
-        isDark ? Colors.white70 : const Color(0xFF9194A1);
-
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
           // Decorative circles
@@ -31,7 +22,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
               height: Get.width * .8,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.1),
+                color: AppColors.primaryColor.withOpacity(.1),
               ),
             ),
           ),
@@ -43,7 +34,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
               height: Get.width * .7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(.08),
+                color: AppColors.primaryColor.withOpacity(.08),
               ),
             ),
           ),
@@ -74,7 +65,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
-                              color: textColor,
+                              color: AppColors.textColor,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -84,7 +75,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 15,
-                              color: secondaryTextColor,
+                              color: AppColors.secondaryTextColor,
                               height: 1.4,
                             ),
                           ),
@@ -103,7 +94,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                           onPressed:
                               () => controller.requestLocationPermission(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
+                            backgroundColor: AppColors.primaryColor,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -124,7 +115,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                         child: Text(
                           'Plus tard',
                           style: TextStyle(
-                            color: secondaryTextColor,
+                            color: AppColors.secondaryTextColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
