@@ -11,28 +11,25 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : AppColors.background;
-    final textColor = isDark ? Colors.white : Color(0xFF333333);
-    final surfaceColor = isDark ? Color(0xFF1E1E2E) : Colors.white;
-
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: backgroundColor,
+        backgroundColor: AppColors.backgroundColor,
         title: Text(
           'notifications'.tr,
           style: TextStyle(
-            color: textColor,
+            color: AppColors.textColor,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: textColor, size: 22),
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: AppColors.textColor,
+            size: 22,
+          ),
           onPressed: () => Get.back(),
         ),
         actions: [
@@ -40,7 +37,7 @@ class NotificationsScreen extends StatelessWidget {
             () =>
                 controller.notifications.isNotEmpty
                     ? PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: textColor),
+                      icon: Icon(Icons.more_vert, color: AppColors.textColor),
                       onSelected: (value) {
                         if (value == 'markAllRead') {
                           controller.markAllAsRead();
@@ -122,7 +119,7 @@ class NotificationsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: textColor,
+                    color: AppColors.textColor,
                   ),
                 ),
                 SizedBox(height: 24),
@@ -167,7 +164,7 @@ class NotificationsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: textColor,
+                    color: AppColors.textColor,
                   ),
                 ),
                 SizedBox(height: 8),
@@ -175,7 +172,7 @@ class NotificationsScreen extends StatelessWidget {
                   'no_notifications_message'.tr,
                   style: TextStyle(
                     fontSize: 14,
-                    color: textColor.withOpacity(0.7),
+                    color: AppColors.textColor.withOpacity(0.7),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -234,9 +231,9 @@ class NotificationsScreen extends StatelessWidget {
                 },
                 child: _buildNotificationCard(
                   notification,
-                  surfaceColor,
-                  textColor,
-                  isDark,
+                  AppColors.surfaceColor,
+                  AppColors.textColor,
+                  AppColors.isDark,
                 ),
               );
             },
