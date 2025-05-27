@@ -18,20 +18,12 @@ class HomeScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Get.isDarkMode;
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE);
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       // floatingActionButton: _buildSpeedDial(isDark, primaryColor, surfaceColor),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed('/publier-trajet'),
-        backgroundColor: primaryColor,
+        backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -53,7 +45,7 @@ class HomeScreen extends GetView<HomeController> {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: primaryColor.withOpacity(0.05),
+                  color: AppColors.primaryColor.withOpacity(0.05),
                 ),
               ),
             ),
@@ -65,7 +57,7 @@ class HomeScreen extends GetView<HomeController> {
                 height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: primaryColor.withOpacity(0.05),
+                  color: AppColors.primaryColor.withOpacity(0.05),
                 ),
               ),
             ),
@@ -83,24 +75,14 @@ class HomeScreen extends GetView<HomeController> {
                         // Use a responsive padding at the top
                         SizedBox(height: Get.height * 0.02),
                         // AppBar content moved to body
-                        _buildInlineAppBar(
-                          isDark,
-                          primaryColor,
-                          textColor,
-                          surfaceColor,
-                        ),
+                        _buildInlineAppBar(),
                         // Use consistent spacing between sections
                         SizedBox(height: Get.height * 0.03),
-                        _buildWelcomeCard(isDark, primaryColor, context),
+                        _buildWelcomeCard(context),
                         SizedBox(height: Get.height * 0.03),
-                        _buildSearchBar(
-                          isDark,
-                          surfaceColor,
-                          textColor,
-                          context,
-                        ),
+                        _buildSearchBar(context),
                         SizedBox(height: Get.height * 0.03),
-                        _buildPromoSection(isDark, textColor),
+                        _buildPromoSection(),
                         // Add bottom padding for scrolling
                         SizedBox(height: Get.height * 0.03),
                       ],
@@ -115,7 +97,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildSpeedDial(bool isDark, Color primaryColor, Color surfaceColor) {
+  Widget _buildSpeedDial() {
     return SpeedDial(
       icon: Icons.add,
       activeIcon: Icons.close,
@@ -125,10 +107,10 @@ class HomeScreen extends GetView<HomeController> {
       elevation: 8.0,
       animationCurve: Curves.elasticInOut,
       animationDuration: const Duration(milliseconds: 300),
-      backgroundColor: primaryColor,
+      backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
-      activeBackgroundColor: surfaceColor,
-      activeForegroundColor: primaryColor,
+      activeBackgroundColor: AppColors.surfaceColor,
+      activeForegroundColor: AppColors.primaryColor,
       buttonSize: const Size(60, 60),
       childrenButtonSize: const Size(56, 56),
       overlayColor: Colors.black,
@@ -142,9 +124,9 @@ class HomeScreen extends GetView<HomeController> {
           label: 'Publier trajet',
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Colors.black,
+            color: Get.isDarkMode ? Colors.white : Colors.black,
           ),
-          labelBackgroundColor: surfaceColor,
+          labelBackgroundColor: AppColors.surfaceColor,
           onTap: () => Get.toNamed('/publier-trajet'),
         ),
         SpeedDialChild(
@@ -154,9 +136,9 @@ class HomeScreen extends GetView<HomeController> {
           label: 'Historique des trajets',
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Colors.black,
+            color: Get.isDarkMode ? Colors.white : Colors.black,
           ),
-          labelBackgroundColor: surfaceColor,
+          labelBackgroundColor: AppColors.surfaceColor,
           onTap: () {},
         ),
         SpeedDialChild(
@@ -166,21 +148,16 @@ class HomeScreen extends GetView<HomeController> {
           label: 'Centre d\'aide',
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Colors.black,
+            color: Get.isDarkMode ? Colors.white : Colors.black,
           ),
-          labelBackgroundColor: surfaceColor,
+          labelBackgroundColor: AppColors.surfaceColor,
           onTap: () => Get.toNamed(Routes.AIDE),
         ),
       ],
     );
   }
 
-  Widget _buildInlineAppBar(
-    bool isDark,
-    Color primaryColor,
-    Color textColor,
-    Color surfaceColor,
-  ) {
+  Widget _buildInlineAppBar() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -193,12 +170,12 @@ class HomeScreen extends GetView<HomeController> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: primaryColor.withOpacity(0.3),
+                  color: AppColors.primaryColor.withOpacity(0.3),
                   width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: primaryColor.withOpacity(0.1),
+                    color: AppColors.primaryColor.withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -235,7 +212,7 @@ class HomeScreen extends GetView<HomeController> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: textColor,
+                    color: AppColors.textColor,
                   ),
                   softWrap: true,
                   maxLines: 1,
@@ -249,7 +226,7 @@ class HomeScreen extends GetView<HomeController> {
                     Icon(
                       Icons.location_on,
                       size: 12,
-                      color: primaryColor.withOpacity(0.7),
+                      color: AppColors.primaryColor.withOpacity(0.7),
                     ),
                     const SizedBox(width: 4),
                     SizedBox(
@@ -258,7 +235,7 @@ class HomeScreen extends GetView<HomeController> {
                         controller.currentAddress.value,
                         style: TextStyle(
                           fontSize: 12,
-                          color: textColor.withOpacity(0.6),
+                          color: AppColors.textColor.withOpacity(0.6),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -272,12 +249,14 @@ class HomeScreen extends GetView<HomeController> {
           Spacer(),
           Container(
             decoration: BoxDecoration(
-              color: surfaceColor,
+              color: AppColors.surfaceColor,
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
                   color:
-                      isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                      Get.isDarkMode
+                          ? Colors.black12
+                          : Colors.black.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -292,7 +271,7 @@ class HomeScreen extends GetView<HomeController> {
                   IconButton(
                     icon: Icon(
                       Icons.notifications_outlined,
-                      color: textColor,
+                      color: AppColors.textColor,
                       size: Get.width * 0.055,
                     ),
                     onPressed: () => Get.toNamed('/notification'),
@@ -315,7 +294,10 @@ class HomeScreen extends GetView<HomeController> {
                         decoration: BoxDecoration(
                           color: Colors.redAccent,
                           shape: BoxShape.circle,
-                          border: Border.all(color: surfaceColor, width: 1.5),
+                          border: Border.all(
+                            color: AppColors.surfaceColor,
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ),
@@ -328,18 +310,17 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildWelcomeCard(
-    bool isDark,
-    Color primaryColor,
-    BuildContext context,
-  ) {
+  Widget _buildWelcomeCard(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black26 : primaryColor.withOpacity(0.2),
+            color:
+                Get.isDarkMode
+                    ? Colors.black26
+                    : AppColors.primaryColor.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -355,7 +336,7 @@ class HomeScreen extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [primaryColor, const Color(0xFF8A6FFF)],
+                  colors: [AppColors.primaryColor, const Color(0xFF8A6FFF)],
                 ),
               ),
             ),
@@ -445,14 +426,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  // Replace your existing _buildSearchBar function with this updated version
-  // Replace your existing _buildSearchBar function with this updated version
-  Widget _buildSearchBar(
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-    BuildContext context,
-  ) {
+  Widget _buildSearchBar(BuildContext context) {
     return Hero(
       key: const Key('search_bar'),
       transitionOnUserGestures: true,
@@ -479,20 +453,24 @@ class HomeScreen extends GetView<HomeController> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: surfaceColor,
+              color: AppColors.surfaceColor,
               borderRadius: BorderRadius.circular(18),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  isDark ? const Color(0xFF252543) : Colors.white,
-                  isDark ? const Color(0xFF1E1E2E) : const Color(0xFFF8F9FE),
+                  Get.isDarkMode ? const Color(0xFF252543) : Colors.white,
+                  Get.isDarkMode
+                      ? const Color(0xFF1E1E2E)
+                      : const Color(0xFFF8F9FE),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
                   color:
-                      isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
+                      Get.isDarkMode
+                          ? Colors.black12
+                          : Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -510,7 +488,7 @@ class HomeScreen extends GetView<HomeController> {
                   child: Text(
                     'Où souhaitez-vous aller ?',
                     style: TextStyle(
-                      color: textColor.withOpacity(0.6),
+                      color: AppColors.textColor.withOpacity(0.6),
                       fontSize: 15,
                     ),
                   ),
@@ -535,163 +513,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  // Widget _buildRecentTripSection(
-  //   bool isDark,
-  //   Color surfaceColor,
-  //   Color textColor,
-  // ) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             'Trajets récents',
-  //             style: TextStyle(
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //               color: textColor,
-  //             ),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {},
-  //             style: TextButton.styleFrom(
-  //               foregroundColor: Get.theme.primaryColor,
-  //               padding: EdgeInsets.zero,
-  //               visualDensity: VisualDensity.compact,
-  //             ),
-  //             child: const Text('Voir tout'),
-  //           ),
-  //         ],
-  //       ),
-  //       const SizedBox(height: 16),
-  //       _buildRecentTripCard(
-  //         isDark,
-  //         surfaceColor,
-  //         textColor,
-  //         'Dakar',
-  //         'Kaolack',
-  //         '130 km',
-  //         '13 Mai 2025',
-  //       ),
-  //       const SizedBox(height: 12),
-  //       _buildRecentTripCard(
-  //         isDark,
-  //         surfaceColor,
-  //         textColor,
-  //         'Dakar',
-  //         'Mbour',
-  //         '45 km',
-  //         '8 Mai 2025',
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  Widget _buildRecentTripCard(
-    bool isDark,
-    Color surfaceColor,
-    Color textColor,
-    String from,
-    String to,
-    String distance,
-    String date,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black12 : Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Get.theme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              Icons.route_rounded,
-              color: Get.theme.primaryColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '$from → $to',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Get.theme.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        distance,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Get.theme.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_rounded,
-                      size: 14,
-                      color: textColor.withOpacity(0.5),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      date,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: textColor.withOpacity(0.5),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPromoSection(bool isDark, Color textColor) {
+  Widget _buildPromoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -700,7 +522,7 @@ class HomeScreen extends GetView<HomeController> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: AppColors.textColor,
           ),
         ),
         const SizedBox(height: 16),
@@ -719,7 +541,7 @@ class HomeScreen extends GetView<HomeController> {
                   boxShadow: [
                     BoxShadow(
                       color:
-                          isDark
+                          Get.isDarkMode
                               ? Colors.black26
                               : Colors.black.withOpacity(0.1),
                       blurRadius: 15,
@@ -811,8 +633,8 @@ class HomeScreen extends GetView<HomeController> {
                     borderRadius: BorderRadius.circular(4),
                     color:
                         controller.currentBanner.value == index
-                            ? Get.theme.primaryColor
-                            : (isDark
+                            ? AppColors.primaryColor
+                            : (Get.isDarkMode
                                 ? Colors.grey.shade700
                                 : Colors.grey.shade300),
                   ),
@@ -822,6 +644,108 @@ class HomeScreen extends GetView<HomeController> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRecentTripCard(
+    String from,
+    String to,
+    String distance,
+    String date,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceColor,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color:
+                Get.isDarkMode
+                    ? Colors.black12
+                    : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              Icons.route_rounded,
+              color: AppColors.primaryColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '$from → $to',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        distance,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 14,
+                      color: AppColors.textColor.withOpacity(0.5),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      date,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textColor.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
