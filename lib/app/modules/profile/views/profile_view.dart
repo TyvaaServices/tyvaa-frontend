@@ -73,8 +73,8 @@ class ProfileScreen extends GetView<ProfileController> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  controller.gradientStartColor.value.withOpacity(0.01),
-                  TColors.background(context),
+                  controller.gradientStartColor.value.withOpacity(0.2),
+                  controller.gradientEndColor.value.withOpacity(0.2),
                 ],
               ),
             ),

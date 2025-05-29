@@ -94,6 +94,8 @@ class ProfileController extends GetxController {
   Future<void> extractColorsFromImage(File imageFile) async {
     isGradientLoading.value = true;
     try {
+      print('Starting color extraction from: ${imageFile.path}');
+
       // Generate palette from the image file
       final PaletteGenerator paletteGenerator =
           await PaletteGenerator.fromImageProvider(
@@ -102,7 +104,32 @@ class ProfileController extends GetxController {
             maximumColorCount: 20,
           );
 
-      updateGradientColors(paletteGenerator);
+      print('Palette generated. Available colors:');
+      print('Dominant: ${paletteGenerator.dominantColor?.color}');
+      print('Vibrant: ${paletteGenerator.vibrantColor?.color}');
+      print('DarkVibrant: ${paletteGenerator.darkVibrantColor?.color}');
+      print('LightVibrant: ${paletteGenerator.lightVibrantColor?.color}');
+      print('Muted: ${paletteGenerator.mutedColor?.color}');
+      print('DarkMuted: ${paletteGenerator.darkMutedColor?.color}');
+      print('LightMuted: ${paletteGenerator.lightMutedColor?.color}');
+
+      // Force use of dominant color for immediate visual feedback
+      final dominantColor = paletteGenerator.dominantColor?.color;
+      if (dominantColor != null) {
+        print('Using dominant color: $dominantColor');
+        // Create a complementary color for the gradient
+        final complementaryColor = _createComplementaryColor(dominantColor);
+
+        gradientStartColor.value = dominantColor;
+        gradientEndColor.value = complementaryColor;
+        print(
+          'Set gradient colors to: ${gradientStartColor.value} and ${gradientEndColor.value}',
+        );
+      } else {
+        print('No dominant color found, falling back to defaults');
+        gradientStartColor.value = Colors.purple;
+        gradientEndColor.value = Colors.blue;
+      }
     } catch (e) {
       print('Error extracting colors: $e');
       // Fallback to default colors
@@ -111,6 +138,25 @@ class ProfileController extends GetxController {
     } finally {
       isGradientLoading.value = false;
     }
+  }
+
+  // Create a complementary color that works well with the source color
+  Color _createComplementaryColor(Color color) {
+    // Method 1: Adjust the hue by 180 degrees (complementary on color wheel)
+    final HSLColor hsl = HSLColor.fromColor(color);
+    final HSLColor complementary = hsl.withHue((hsl.hue + 180) % 360);
+
+    // Method 2: Just darken or lighten the color
+    final HSLColor adjusted = hsl.withLightness(
+      hsl.lightness > 0.5 ? hsl.lightness - 0.3 : hsl.lightness + 0.3,
+    );
+
+    print('Original HSL: $hsl');
+    print('Complementary HSL: $complementary');
+    print('Adjusted HSL: $adjusted');
+
+    // Use the adjusted version as it often produces more pleasing results
+    return adjusted.toColor();
   }
 
   void updateGradientColors(PaletteGenerator palette) {
