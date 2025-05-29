@@ -20,6 +20,7 @@ abstract class Routes {
   static const QUICK_RIDE = _Paths.QUICK_RIDE;
   static const RIDE_SEARCH = _Paths.RIDE_SEARCH;
   static const RIDE_DETAILS = _Paths.RIDE_DETAILS;
+  static const DRIVER_VERIFICATION = _Paths.DRIVER_VERIFICATION;
 }
 
 abstract class _Paths {
@@ -43,4 +44,5 @@ abstract class _Paths {
   static const QUICK_RIDE = '/quick-ride';
   static const RIDE_SEARCH = '/ride-search';
   static const RIDE_DETAILS = '/ride-details';
+  static const DRIVER_VERIFICATION = '/driver-verification';
 }
