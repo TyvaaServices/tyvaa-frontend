@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../domain/entities/user.dart';
@@ -21,6 +22,11 @@ class ProfileController extends GetxController {
   final ImagePicker _picker = ImagePicker();
   final storage = const FlutterSecureStorage();
 
+  // Colors for profile image gradient
+  final Rx<Color> gradientStartColor = Rx<Color>(Colors.purple);
+  final Rx<Color> gradientEndColor = Rx<Color>(Colors.blue);
+  final isGradientLoading = false.obs;
+
   @override
   Future<void> onInit() async {
     var logger = Logger();
@@ -31,11 +37,31 @@ class ProfileController extends GetxController {
       user.value = box.get('currentUser')!;
       nameController.text = user.value!.fullName ?? '';
       logger.d(user.value);
+
+      // If there's an existing profile image, try to load it and extract colors
+      await loadProfileImageAndExtractColors();
     } else {
       logger.d('No user found in Hive');
     }
 
     super.onInit();
+  }
+
+  Future<void> loadProfileImageAndExtractColors() async {
+    try {
+      final AssetImage defaultImage = AssetImage(
+        'assets/images/default_profile.png',
+      );
+      final PaletteGenerator palette = await PaletteGenerator.fromImageProvider(
+        defaultImage,
+        size: Size(100, 100), // Reduced size for faster processing
+        maximumColorCount: 20,
+      );
+
+      updateGradientColors(palette);
+    } catch (e) {
+      print('Error loading profile image colors: $e');
+    }
   }
 
   void pickImage() async {
@@ -50,13 +76,94 @@ class ProfileController extends GetxController {
     }
 
     if (status.isGranted) {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800, // Reduce image size for faster processing
+        maxHeight: 800,
+      );
       if (image != null) {
         profileImage.value = File(image.path);
+        // Extract colors from the new image
+        await extractColorsFromImage(File(image.path));
       }
     } else {
       Get.snackbar('Permission refusée', 'Autorisez l\'accès aux photos');
     }
+  }
+
+  Future<void> extractColorsFromImage(File imageFile) async {
+    isGradientLoading.value = true;
+    try {
+      // Generate palette from the image file
+      final PaletteGenerator paletteGenerator =
+          await PaletteGenerator.fromImageProvider(
+            FileImage(imageFile),
+            size: Size(200, 200), // Reduced size for faster processing
+            maximumColorCount: 20,
+          );
+
+      updateGradientColors(paletteGenerator);
+    } catch (e) {
+      print('Error extracting colors: $e');
+      // Fallback to default colors
+      gradientStartColor.value = Colors.purple;
+      gradientEndColor.value = Colors.blue;
+    } finally {
+      isGradientLoading.value = false;
+    }
+  }
+
+  void updateGradientColors(PaletteGenerator palette) {
+    // Debug the available colors
+    print('Dominant color: ${palette.dominantColor?.color}');
+    print('Vibrant color: ${palette.vibrantColor?.color}');
+    print('Light vibrant color: ${palette.lightVibrantColor?.color}');
+    print('Dark vibrant color: ${palette.darkVibrantColor?.color}');
+
+    // Get vibrant colors if available
+    final vibrantColor = palette.vibrantColor?.color;
+    final darkVibrantColor = palette.darkVibrantColor?.color;
+    final lightVibrantColor = palette.lightVibrantColor?.color;
+    final dominantColor = palette.dominantColor?.color;
+
+    // Set gradient colors based on extracted palette, with fallbacks
+    if (lightVibrantColor != null && darkVibrantColor != null) {
+      gradientStartColor.value = lightVibrantColor;
+      gradientEndColor.value = darkVibrantColor;
+      print('Using light+dark vibrant: $lightVibrantColor, $darkVibrantColor');
+    } else if (vibrantColor != null && darkVibrantColor != null) {
+      gradientStartColor.value = vibrantColor;
+      gradientEndColor.value = darkVibrantColor;
+      print('Using vibrant+dark: $vibrantColor, $darkVibrantColor');
+    } else if (lightVibrantColor != null && vibrantColor != null) {
+      gradientStartColor.value = lightVibrantColor;
+      gradientEndColor.value = vibrantColor;
+      print('Using light+vibrant: $lightVibrantColor, $vibrantColor');
+    } else if (dominantColor != null) {
+      // Create a gradient from the dominant color and a darker/lighter variant
+      gradientStartColor.value = dominantColor;
+      gradientEndColor.value = _adjustColor(dominantColor, -30);
+      print(
+        'Using dominant colors: $dominantColor, ${_adjustColor(dominantColor, -30)}',
+      );
+    } else if (vibrantColor != null) {
+      gradientStartColor.value = vibrantColor;
+      gradientEndColor.value = _adjustColor(vibrantColor, -30);
+      print('Using vibrant color: $vibrantColor');
+    } else {
+      // Fallback
+      gradientStartColor.value = Colors.indigo;
+      gradientEndColor.value = Colors.purple;
+      print('Using fallback colors');
+    }
+  }
+
+  // Helper method to adjust color brightness/darkness
+  Color _adjustColor(Color color, int amount) {
+    int r = (color.red + amount).clamp(0, 255);
+    int g = (color.green + amount).clamp(0, 255);
+    int b = (color.blue + amount).clamp(0, 255);
+    return Color.fromARGB(color.alpha, r, g, b);
   }
 
   void saveChanges() async {
