@@ -227,5 +227,11 @@ class HomeController extends GetxController {
     }
   }
 
-  void changeTab(int index) => selectedIndex.value = index;
+  // Improved tab selection logic to prevent selecting the same tab
+  void changeTab(int index) {
+    // Only change tab if it's different from the current one
+    if (selectedIndex.value != index) {
+      selectedIndex.value = index;
+    }
+  }
 }
