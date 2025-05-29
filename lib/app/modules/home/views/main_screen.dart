@@ -33,94 +33,91 @@ class MainScreen extends GetView<HomeController> {
         bottomNavigationBar: Material(
           elevation: 8,
           color: TColors.background(context),
-          child: SafeArea(
-            top: false,
-            child: SizedBox(
-              height: Get.height * 0.09,
-              child: StylishBottomBar(
-                option: BubbleBarOptions(
-                  barStyle: BubbleBarStyle.horizontal,
-                  bubbleFillStyle: BubbleFillStyle.fill,
-                  opacity: 1,
-                ),
-                items: [
-                  BottomBarItem(
-                    icon: Icon(
-                      Icons.home_outlined,
-                      color: TColors.textPrimary(context),
-                    ),
-                    title: Text(
-                      'Accueil',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Get.width * 0.03,
-                        fontWeight: FontWeight.w500,
-                        height: 1.0,
-                      ),
-                    ),
-                    backgroundColor: TColors.primary,
-                    selectedColor: Colors.white,
-                    selectedIcon: Icon(Icons.home, color: Colors.white),
-                  ),
-                  BottomBarItem(
-                    icon: Icon(
-                      Icons.history_outlined,
-                      color: TColors.textPrimary(context),
-                    ),
-                    title: Text(
-                      'Historique',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Get.width * 0.03,
-                        fontWeight: FontWeight.w500,
-                        height: 1.0,
-                      ),
-                    ),
-                    backgroundColor: TColors.primary,
-                    selectedColor: Colors.white,
-                    selectedIcon: Icon(Icons.history, color: Colors.white),
-                  ),
-                  BottomBarItem(
-                    icon: Icon(
-                      Icons.chat_outlined,
-                      color: TColors.textPrimary(context),
-                    ),
-                    title: Text(
-                      'Assistant',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Get.width * 0.03,
-                        fontWeight: FontWeight.w500,
-                        height: 1.0,
-                      ),
-                    ),
-                    backgroundColor: TColors.primary,
-                    selectedColor: Colors.white,
-                    selectedIcon: Icon(Icons.chat, color: Colors.white),
-                  ),
-                  BottomBarItem(
-                    icon: Icon(
-                      Icons.person_outline,
-                      color: TColors.textPrimary(context),
-                    ),
-                    title: Text(
-                      'Profil',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Get.width * 0.03,
-                        fontWeight: FontWeight.w500,
-                        height: 1.0,
-                      ),
-                    ),
-                    backgroundColor: TColors.primary,
-                    selectedColor: Colors.white,
-                    selectedIcon: Icon(Icons.person, color: Colors.white),
-                  ),
-                ],
-                currentIndex: controller.selectedIndex.value,
-                onTap: controller.changeTab,
-                backgroundColor: TColors.background(context),
+          child: SizedBox(
+            height: Get.height * 0.09,
+            child: StylishBottomBar(
+              option: BubbleBarOptions(
+                barStyle: BubbleBarStyle.horizontal,
+                bubbleFillStyle: BubbleFillStyle.fill,
+                opacity: 1,
               ),
+              items: [
+                BottomBarItem(
+                  icon: Icon(
+                    Icons.home_outlined,
+                    color: TColors.textPrimary(context),
+                  ),
+                  title: Text(
+                    'Accueil',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Get.width * 0.03,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  backgroundColor: TColors.primary,
+                  selectedColor: Colors.white,
+                  selectedIcon: Icon(Icons.home, color: Colors.white),
+                ),
+                BottomBarItem(
+                  icon: Icon(
+                    Icons.history_outlined,
+                    color: TColors.textPrimary(context),
+                  ),
+                  title: Text(
+                    'Historique',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Get.width * 0.03,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  backgroundColor: TColors.primary,
+                  selectedColor: Colors.white,
+                  selectedIcon: Icon(Icons.history, color: Colors.white),
+                ),
+                BottomBarItem(
+                  icon: Icon(
+                    Icons.chat_outlined,
+                    color: TColors.textPrimary(context),
+                  ),
+                  title: Text(
+                    'Assistant',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Get.width * 0.03,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  backgroundColor: TColors.primary,
+                  selectedColor: Colors.white,
+                  selectedIcon: Icon(Icons.chat, color: Colors.white),
+                ),
+                BottomBarItem(
+                  icon: Icon(
+                    Icons.person_outline,
+                    color: TColors.textPrimary(context),
+                  ),
+                  title: Text(
+                    'Profil',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Get.width * 0.03,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  backgroundColor: TColors.primary,
+                  selectedColor: Colors.white,
+                  selectedIcon: Icon(Icons.person, color: Colors.white),
+                ),
+              ],
+              currentIndex: controller.selectedIndex.value,
+              onTap: controller.changeTab,
+              backgroundColor: TColors.background(context),
             ),
           ),
         ),
