@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../themes/design_system.dart';
+import '../../home/views/aide_view.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
@@ -12,174 +13,301 @@ class ProfileScreen extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColors.background(context),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Mon Profil',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: TColors.textPrimary(context),
+      body: CustomScrollView(
+        physics: BouncingScrollPhysics(),
+        slivers: [
+          _buildSliverAppBar(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(TSpacing.lg),
+              child: Column(
+                children: [
+                  _buildStatsCards(context),
+                  SizedBox(height: TSpacing.xl),
+                  _buildPersonalInfoCard(context),
+                  SizedBox(height: TSpacing.lg),
+                  _buildQuickActions(context),
+                  SizedBox(height: TSpacing.xl),
+                ],
+              ),
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 320,
+      floating: false,
+      pinned: true,
+      backgroundColor: TColors.background(context),
+      elevation: 0,
+      actions: [
+        Container(
+          margin: EdgeInsets.only(right: 16, top: 8),
+          child: TextButton(
             onPressed: controller.saveChanges,
+            style: TextButton.styleFrom(
+              backgroundColor: TColors.primary.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             child: Text(
-              'Enregistrer',
+              'Sauvegarder',
               style: TextStyle(
                 color: TColors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: TSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: TSpacing.lg),
-              _buildProfileHeader(context),
-              SizedBox(height: TSpacing.xl),
-              _buildUserInfoSection(context),
-              SizedBox(height: TSpacing.lg),
-              _buildRatingsSection(context),
-              SizedBox(height: TSpacing.lg),
-              // _buildPreferencesSection(context),
-              SizedBox(height: TSpacing.lg),
-              _buildLogoutButton(context),
-              SizedBox(height: TSpacing.xl),
-            ],
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background: Obx(
+          () => Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  controller.gradientStartColor.value.withOpacity(0.01),
+                  TColors.background(context),
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 60),
+                  _buildProfileAvatar(context),
+                  SizedBox(height: TSpacing.lg),
+                  _buildUserName(context),
+                  SizedBox(height: TSpacing.sm),
+                  _buildMemberSince(context),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context) {
-    return Column(
+  Widget _buildProfileAvatar(BuildContext context) {
+    return Stack(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            // Profile picture
-            Obx(
-              () => Container(
-                height: 120,
-                width: 120,
+        Obx(
+          () => Container(
+            height: 120,
+            width: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  controller.gradientStartColor.value,
+                  controller.gradientEndColor.value,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: controller.gradientEndColor.value.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(4.0),
+              child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [TColors.primary, TColors.accent],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TColors.accent.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(3.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: TColors.surface(context),
-                      image:
-                          controller.profileImage.value != null
-                              ? DecorationImage(
-                                image: FileImage(
-                                  controller.profileImage.value!,
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                              : DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/default_profile.png',
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: controller.pickImage,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: TColors.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black26
-                                : TColors.primary.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.camera_alt_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: TSpacing.lg),
-
-        // User name
-        Obx(
-          () =>
-              controller.isEditingName.value
-                  ? _buildNameEditField(context)
-                  : GestureDetector(
-                    onTap: () => controller.isEditingName.value = true,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          controller.user.value!.fullName!,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: TColors.textPrimary(context),
+                  color: TColors.surface(context),
+                  image:
+                      controller.profileImage.value != null
+                          ? DecorationImage(
+                            image: FileImage(controller.profileImage.value!),
+                            fit: BoxFit.cover,
+                          )
+                          : DecorationImage(
+                            image: AssetImage(
+                              'assets/images/default_profile.png',
+                            ),
+                            fit: BoxFit.cover,
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.edit, size: 18, color: TColors.primary),
-                      ],
-                    ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 5,
+          right: 5,
+          child: GestureDetector(
+            onTap: controller.pickImage,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: controller.gradientStartColor.value,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: controller.gradientStartColor.value.withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: Offset(0, 3),
                   ),
+                ],
+              ),
+              child: Icon(
+                Icons.camera_alt_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildNameEditField(BuildContext context) {
+  Widget _buildUserName(BuildContext context) {
+    return Obx(
+      () =>
+          controller.isEditingName.value
+              ? Container(
+                width: 200,
+                child: TextField(
+                  controller: controller.nameController,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: TColors.textPrimary(context),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Votre nom',
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: TColors.primary),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: TColors.primary, width: 2),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.check, color: TColors.primary),
+                      onPressed: () {
+                        controller.user.value?.fullName =
+                            controller.nameController.text;
+                        controller.isEditingName.value = false;
+                      },
+                    ),
+                  ),
+                ),
+              )
+              : GestureDetector(
+                onTap: () => controller.isEditingName.value = true,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.transparent,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        controller.user.value?.fullName ?? "avatar-1",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: TColors.textPrimary(context),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: TColors.primary.withOpacity(0.7),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+    );
+  }
+
+  Widget _buildMemberSince(BuildContext context) {
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: TColors.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          'Membre depuis ${Jiffy.parseFromDateTime(controller.user.value?.createdAt ?? DateTime.now()).format(pattern: 'MMMM yyyy')}',
+          style: TextStyle(
+            fontSize: 14,
+            color: TColors.primary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsCards(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            context,
+            'Note',
+            '4.8',
+            Icons.star_rounded,
+            Colors.amber,
+          ),
+        ),
+        SizedBox(width: TSpacing.md),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            'Trajets',
+            '32',
+            Icons.directions_car_rounded,
+            Color(0xFF6C63FF),
+          ),
+        ),
+        SizedBox(width: TSpacing.md),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            'Avis',
+            '28',
+            Icons.rate_review_rounded,
+            Colors.green,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
-      width: double.infinity,
+      padding: EdgeInsets.all(TSpacing.lg),
       decoration: BoxDecoration(
         color: TColors.surface(context),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color:
@@ -191,87 +319,31 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
         ],
       ),
-      child: TextField(
-        controller: controller.nameController,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: 'Votre nom',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.check, color: TColors.primary),
-            onPressed: () {
-              controller.user.value!.fullName = controller.nameController.text;
-              controller.isEditingName.value = false;
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUserInfoSection(BuildContext context) {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          SizedBox(height: TSpacing.sm),
           Text(
-            'Informations personnelles',
+            value,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: TColors.textPrimary(context),
             ),
           ),
-          SizedBox(height: TSpacing.md),
-          Container(
-            padding: EdgeInsets.all(TSpacing.lg),
-            decoration: BoxDecoration(
-              color: TColors.surface(context),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black12
-                          : Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildInfoItem(
-                  context,
-                  Icons.email_outlined,
-                  'Email',
-                  'cheikh@tyvaa.com',
-                  Colors.blue,
-                ),
-                Divider(height: 30),
-                _buildInfoItem(
-                  context,
-                  Icons.phone_outlined,
-                  'Téléphone',
-                  controller.user.value!.phoneNumber,
-                  Colors.green,
-                ),
-                Divider(height: 30),
-                _buildInfoItem(
-                  context,
-                  Icons.calendar_today_outlined,
-                  'Membre depuis',
-                  Jiffy.parseFromDateTime(
-                    controller.user.value!.createdAt,
-                  ).format(pattern: 'MMMM yyyy'),
-                  Colors.amber,
-                ),
-              ],
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: TColors.textPrimary(context).withOpacity(0.6),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -279,26 +351,75 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildInfoItem(
+  Widget _buildPersonalInfoCard(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(TSpacing.xl),
+      decoration: BoxDecoration(
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black12
+                    : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Informations personnelles',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: TColors.textPrimary(context),
+            ),
+          ),
+          SizedBox(height: TSpacing.xl),
+          _buildInfoRow(
+            context,
+            Icons.email_rounded,
+            'Email',
+            'cheikh@tyvaa.com',
+            Colors.blue,
+          ),
+          SizedBox(height: TSpacing.lg),
+          Obx(
+            () => _buildInfoRow(
+              context,
+              Icons.phone_rounded,
+              'Téléphone',
+              controller.user.value?.phoneNumber ?? "+221 77 123 45 67",
+              Colors.green,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(
     BuildContext context,
     IconData icon,
     String label,
     String value,
     Color iconColor,
   ) {
-    final textColor = TColors.textPrimary(context);
-
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(icon, color: iconColor, size: 24),
+          child: Icon(icon, color: iconColor, size: 20),
         ),
-        SizedBox(width: 16),
+        SizedBox(width: TSpacing.lg),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +428,8 @@ class ProfileScreen extends GetView<ProfileController> {
                 label,
                 style: TextStyle(
                   fontSize: 14,
-                  color: textColor.withOpacity(0.7),
+                  color: TColors.textPrimary(context).withOpacity(0.6),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               SizedBox(height: 4),
@@ -315,252 +437,162 @@ class ProfileScreen extends GetView<ProfileController> {
                 value,
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                  color: TColors.textPrimary(context),
                 ),
               ),
             ],
           ),
         ),
-        Icon(
-          Icons.arrow_forward_ios,
-          color: textColor.withOpacity(0.3),
-          size: 16,
-        ),
       ],
     );
   }
 
-  Widget _buildRatingsSection(BuildContext context) {
+  Widget _buildQuickActions(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Mes évaluations',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: TColors.textPrimary(context),
-          ),
+        _buildActionButton(
+          context,
+          'Voir tous mes avis',
+          Icons.rate_review_rounded,
+          TColors.primary,
+          () {
+            // Navigate to reviews
+          },
         ),
         SizedBox(height: TSpacing.md),
-        Container(
-          padding: EdgeInsets.all(TSpacing.lg),
-          decoration: BoxDecoration(
-            color: TColors.surface(context),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black12
-                        : Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildRatingScore(
-                    'Note globale',
-                    '4.8',
-                    Colors.amber,
-                    context,
-                  ),
-                  _buildRatingScore(
-                    'Trajets',
-                    '32',
-                    Color(0xFF6C63FF),
-                    context,
-                  ),
-                  _buildRatingScore('Avis', '28', Colors.green, context),
-                ],
-              ),
-              SizedBox(height: TSpacing.xl),
-              _buildRatingBar(context),
-              SizedBox(height: TSpacing.md),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(
-                          'assets/images/default_profile.png',
-                        ),
-                        radius: 16,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Voir tous les avis',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF6C63FF),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: TColors.textPrimary(context).withOpacity(0.3),
-                    size: 16,
-                  ),
-                ],
-              ),
-            ],
-          ),
+        _buildActionButton(
+          context,
+          'Aide et Support',
+          Icons.help_outline_rounded,
+          Colors.orange,
+          () => Get.to(() => const AideScreen()),
+        ),
+        SizedBox(height: TSpacing.md),
+        _buildActionButton(
+          context,
+          'Déconnexion',
+          Icons.logout_rounded,
+          TColors.error,
+          () => _showLogoutDialog(context),
+          isDestructive: true,
         ),
       ],
     );
   }
 
-  Widget _buildRatingScore(
-    String label,
-    String value,
-    Color color,
+  Widget _buildActionButton(
     BuildContext context,
-  ) {
-    final textColor = TColors.textPrimary(context);
-
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: textColor.withOpacity(0.7)),
-        ),
-        SizedBox(height: 6),
-        Container(
-          height: 60,
-          width: 60,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color.withOpacity(0.1),
-          ),
-          child: Center(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRatingBar(BuildContext context) {
-    return Container(
-      height: 8,
-      decoration: BoxDecoration(
-        color:
-            Theme.of(context).brightness == Brightness.dark
-                ? Colors.grey.shade800
-                : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 90,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF6C63FF), Color(0xFF8A6FFF)],
-                ),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ),
-          Expanded(flex: 10, child: Container()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    final textColor = TColors.textPrimary(context);
-
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap, {
+    bool isDestructive = false,
+  }) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: TColors.surface(context),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color:
-                Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black12
-                    : Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border:
+            isDestructive ? Border.all(color: color.withOpacity(0.2)) : null,
+        boxShadow:
+            isDestructive
+                ? null
+                : [
+                  BoxShadow(
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black12
+                            : Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            // Afficher dialogue de confirmation
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Déconnexion'),
-                  content: Text('Êtes-vous sûr de vouloir vous déconnecter?'),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Annuler'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        // Ici, ajoutez la logique de déconnexion
-                        controller.logout();
-                      },
-                      child: Text(
-                        'Déconnexion',
-                        style: TextStyle(color: TColors.error),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: TSpacing.lg,
+              vertical: TSpacing.lg,
+            ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.logout_rounded, color: TColors.error, size: 24),
-                SizedBox(width: 12),
-                Text(
-                  'Déconnexion',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: TColors.error,
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                SizedBox(width: TSpacing.lg),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isDestructive ? color : TColors.textPrimary(context),
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: TColors.textPrimary(context).withOpacity(0.3),
+                  size: 16,
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Déconnexion',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Text('Êtes-vous sûr de vouloir vous déconnecter?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Annuler',
+                style: TextStyle(color: TColors.textPrimary(context)),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                controller.logout();
+              },
+              child: Text(
+                'Déconnexion',
+                style: TextStyle(
+                  color: TColors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
