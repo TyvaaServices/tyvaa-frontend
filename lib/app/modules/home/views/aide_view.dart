@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 
 class AideScreen extends StatelessWidget {
   const AideScreen({super.key});
@@ -12,13 +12,11 @@ class AideScreen extends StatelessWidget {
     final isDark = brightness == Brightness.dark;
 
     // Dynamic colors based on theme
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : AppColors.background;
-    final cardColor = isDark ? AppColors.cardDark : Colors.white;
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final dividerColor = isDark ? Colors.grey[800] : Colors.grey[300];
-    final iconColor = isDark ? AppColors.primaryDark : AppColors.primary;
+    final backgroundColor = TColors.background(context);
+    final cardColor = TColors.surface(context);
+    final textColor = TColors.textPrimary(context);
+    final dividerColor = TColors.neutral300;
+    final iconColor = TColors.primary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -48,7 +46,7 @@ class AideScreen extends StatelessWidget {
                       height: 80,
                       width: 80,
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: TColors.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
@@ -437,14 +435,10 @@ class HelpDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : AppColors.background;
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final cardColor = isDark ? AppColors.cardDark : Colors.white;
+    final backgroundColor = TColors.background(context);
+    final textColor = TColors.textPrimary(context);
+    final cardColor = TColors.surface(context);
+    final accentColor = TColors.primary;
 
     // This is a placeholder - content would be loaded dynamically based on the topic
     final Map<String, List<Map<String, dynamic>>> helpContent = {
@@ -514,12 +508,12 @@ class HelpDetailScreen extends StatelessWidget {
                   width: 120,
                   margin: const EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: accentColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     _getIconForTopic(topic),
-                    color: AppColors.primary,
+                    color: accentColor,
                     size: 60,
                   ),
                 ),
@@ -555,7 +549,7 @@ class HelpDetailScreen extends StatelessWidget {
                         _buildFeedbackButton(
                           icon: Icons.thumb_up_outlined,
                           label: 'Oui',
-                          color: AppColors.primary,
+                          color: accentColor,
                           onTap: () {},
                         ),
                         const SizedBox(width: 16),
@@ -679,14 +673,9 @@ class LegalDocumentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : AppColors.background;
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final cardColor = isDark ? AppColors.cardDark : Colors.white;
+    final backgroundColor = TColors.background(context);
+    final textColor = TColors.textPrimary(context);
+    final cardColor = TColors.surface(context);
 
     // This is placeholder content - in a real app, this would be loaded from a backend
     String content = '''
