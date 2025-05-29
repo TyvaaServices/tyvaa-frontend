@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
 import 'package:passenger_tyvaa/app/socket/SocketService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   final bannerController = PageController(viewportFraction: 0.9);
@@ -17,6 +18,13 @@ class HomeController extends GetxController {
   late StreamSubscription<Position> _positionStream;
   RxBool isDriver = true.obs;
   final permissionChecked = false.obs;
+
+  // First-time user tracking
+  RxBool isFirstTimeUser = true.obs;
+  RxBool showOnboarding = false.obs;
+
+  // Upcoming rides list
+  final upcomingRides = <Map<String, dynamic>>[].obs;
 
   late ConfettiController confettiController;
   final banners = [
@@ -39,6 +47,9 @@ class HomeController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    // Check first-time user status
+    await _checkFirstTimeUser();
+
     // Check permission status without requesting permission
     await _checkPermissionStatus();
 
@@ -50,6 +61,7 @@ class HomeController extends GetxController {
     Future.delayed(Duration(milliseconds: 500), () {
       confettiController.play();
     });
+
     bannerController.addListener(() {
       final page = bannerController.page?.round() ?? 0;
       currentBanner.value = page;
@@ -64,6 +76,35 @@ class HomeController extends GetxController {
         );
       }
     });
+  }
+
+  // Check if this is the user's first time
+  Future<void> _checkFirstTimeUser() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      isFirstTimeUser.value = !(prefs.getBool('seen_home_onboarding') ?? false);
+
+      // If first time user, navigate to dedicated onboarding view instead of showing overlay
+      if (isFirstTimeUser.value) {
+        // Small delay to ensure app is fully loaded before navigation
+        Future.delayed(Duration(milliseconds: 300), () {
+          Get.toNamed('/onboarding');
+        });
+      }
+    } catch (e) {
+      print('Error checking first time user: $e');
+    }
+  }
+
+  // Mark user as having seen the onboarding
+  Future<void> dismissOnboarding() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('seen_home_onboarding', true);
+      showOnboarding.value = false;
+    } catch (e) {
+      print('Error saving onboarding status: $e');
+    }
   }
 
   // New method to check permission without requesting it

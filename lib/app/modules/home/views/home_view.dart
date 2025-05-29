@@ -5,6 +5,7 @@ import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dar
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import '../../../routes/app_pages.dart';
 import '../../search/views/search_page.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -64,35 +65,60 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
+        // Profile image with improved tap indication
         Hero(
           tag: 'profile_image',
-          child: GestureDetector(
-            onTap: () => controller.changeTab(3),
-            child: Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(TRadius.md),
-                border: Border.all(
-                  color: TColors.primary.withOpacity(0.2),
-                  width: 2,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => controller.changeTab(3),
+              borderRadius: BorderRadius.circular(TRadius.md),
+              child: Ink(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(TRadius.md),
+                  border: Border.all(color: TColors.primary, width: 2),
+                  boxShadow: TShadows.subtle,
                 ),
-                boxShadow: TShadows.subtle,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(TRadius.md - 2),
-                child:
-                    profileController.profileImage.value != null
-                        ? Image(
-                          image: FileImage(
-                            profileController.profileImage.value!,
-                          ),
-                          fit: BoxFit.cover,
-                        )
-                        : Image.asset(
-                          'assets/images/default_profile.png',
-                          fit: BoxFit.cover,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(TRadius.md - 2),
+                      child: Container(
+                        height: 48,
+                        width: 48,
+                        child:
+                            profileController.profileImage.value != null
+                                ? Image(
+                                  image: FileImage(
+                                    profileController.profileImage.value!,
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                                : Image.asset(
+                                  'assets/images/default_profile.png',
+                                  fit: BoxFit.cover,
+                                ),
+                      ),
+                    ),
+                    // Small icon indicator for tappable profile
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: TColors.primary,
+                          shape: BoxShape.circle,
                         ),
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -141,140 +167,211 @@ class HomeScreen extends GetView<HomeController> {
     return Obx(() {
       final hasNotifications = notificationController.notifications.isNotEmpty;
 
-      return Container(
-        decoration: BoxDecoration(
-          color: TColors.surface(context),
-          borderRadius: BorderRadius.circular(TRadius.md),
-          boxShadow: TShadows.subtle,
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => Get.toNamed('/notification'),
-                borderRadius: BorderRadius.circular(TRadius.md),
-                child: Padding(
+      return Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(TRadius.md),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: TColors.surface(context),
+            borderRadius: BorderRadius.circular(TRadius.md),
+            boxShadow: TShadows.subtle,
+            border: Border.all(
+              color:
+                  hasNotifications
+                      ? TColors.error.withOpacity(0.5)
+                      : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: InkWell(
+            onTap: () => Get.toNamed('/notification'),
+            borderRadius: BorderRadius.circular(TRadius.md),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Padding(
                   padding: EdgeInsets.all(TSpacing.md),
                   child: Icon(
                     Icons.notifications_outlined,
-                    color: TColors.textPrimary(context),
+                    color:
+                        hasNotifications
+                            ? TColors.error
+                            : TColors.textPrimary(context),
                     size: 24,
                   ),
                 ),
-              ),
-            ),
-            if (hasNotifications)
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: TColors.error,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: TColors.surface(context),
-                      width: 2,
+                if (hasNotifications)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: TColors.error,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: TColors.surface(context),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: TColors.error.withOpacity(0.5),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       );
     });
   }
 
   Widget _buildWelcomeCard(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: TRadius.cardRadius,
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [TColors.primary, TColors.primaryLight],
+    return Material(
+      color: Colors.transparent,
+      borderRadius: TRadius.cardRadius,
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: TRadius.cardRadius,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [TColors.primary, TColors.primaryLight],
+          ),
+          boxShadow: TShadows.medium,
         ),
-        boxShadow: TShadows.medium,
-      ),
-      child: Stack(
-        children: [
-          // Visual elements
-          Positioned(
-            right: -30,
-            top: -20,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
+        child: InkWell(
+          onTap: () => Get.toNamed('/publier-trajet'),
+          borderRadius: TRadius.cardRadius,
+          splashColor: Colors.white.withOpacity(0.1),
+          highlightColor: Colors.white.withOpacity(0.1),
+          child: Stack(
+            children: [
+              // Visual elements
+              Positioned(
+                right: -30,
+                top: -20,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            left: -20,
-            bottom: -30,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
+              Positioned(
+                left: -20,
+                bottom: -30,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ),
+                ),
               ),
-            ),
-          ),
 
-          // Content
-          Padding(
-            padding: EdgeInsets.all(TSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              // Content
+              Padding(
+                padding: EdgeInsets.all(TSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(TSpacing.sm),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(TRadius.sm),
-                      ),
-                      child: const Icon(
-                        Icons.directions_car_filled_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(TSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(TRadius.sm),
+                              ),
+                              child: const Icon(
+                                Icons.directions_car_filled_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            SizedBox(width: TSpacing.sm),
+                            Text(
+                              'Tyvaa',
+                              style: TTypography.headingMedium(
+                                context,
+                              ).copyWith(
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(TSpacing.xs),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: TSpacing.sm),
+                    SizedBox(height: TSpacing.md),
                     Text(
-                      'Tyvaa',
-                      style: TTypography.headingMedium(
+                      'Voyagez ensemble,\néconomisez ensemble',
+                      style: TTypography.displaySmall(
                         context,
-                      ).copyWith(color: Colors.white, letterSpacing: 0.5),
+                      ).copyWith(color: Colors.white, height: 1.2),
+                    ),
+                    SizedBox(height: TSpacing.sm),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Trouvez des trajets partagés ou proposez les vôtres',
+                            style: TTypography.bodyMedium(
+                              context,
+                            ).copyWith(color: Colors.white.withOpacity(0.9)),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: TSpacing.md),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: TSpacing.md,
+                            vertical: TSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(TRadius.pill),
+                          ),
+                          child: Text(
+                            'Publier',
+                            style: TTypography.labelMedium(context).copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(height: TSpacing.md),
-                Text(
-                  'Voyagez ensemble,\néconomisez ensemble',
-                  style: TTypography.displaySmall(
-                    context,
-                  ).copyWith(color: Colors.white, height: 1.2),
-                ),
-                SizedBox(height: TSpacing.sm),
-                Text(
-                  'Trouvez des trajets partagés ou proposez les vôtres',
-                  style: TTypography.bodyMedium(
-                    context,
-                  ).copyWith(color: Colors.white.withOpacity(0.9)),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -285,81 +382,105 @@ class HomeScreen extends GetView<HomeController> {
         horizontal: TSpacing.xs,
         vertical: TSpacing.sm,
       ),
-      //     () => showMaterialModalBottomSheet(
-      //   context: context,
-      //   backgroundColor: Colors.transparent,
-      //   builder: (context) => LocationSearchModal(),
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: TRadius.modalRadius,
-      //   ),
-      //   duration: const Duration(milliseconds: 200),
-      //   enableDrag: true,
-      // ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          onTap: () => Get.toNamed('/ride-search'),
-          borderRadius: BorderRadius.circular(TRadius.lg),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: TSpacing.md,
-              vertical: TSpacing.md,
-            ),
-            decoration: BoxDecoration(
-              color: TColors.surface(context),
-              borderRadius: BorderRadius.circular(TRadius.lg),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(TSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: TColors.primary.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.search_rounded,
-                    color: TColors.primary,
-                    size: 22,
-                  ),
-                ),
-                SizedBox(width: TSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+        borderRadius: BorderRadius.circular(TRadius.lg),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: TColors.surface(context),
+            borderRadius: BorderRadius.circular(TRadius.lg),
+            boxShadow: [
+              BoxShadow(
+                color: TColors.primary.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 0,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: () => Get.toNamed(Routes.RIDE_SEARCH),
+            borderRadius: BorderRadius.circular(TRadius.lg),
+            child: Padding(
+              padding: EdgeInsets.all(TSpacing.lg),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        'Où souhaitez-vous aller ?',
-                        style: TTypography.bodyLarge(context).copyWith(
-                          color: TColors.textPrimary(context),
-                          fontWeight: FontWeight.w600,
+                      Container(
+                        padding: EdgeInsets.all(TSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: TColors.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.search_rounded,
+                          color: TColors.primary,
+                          size: 22,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Recherchez votre destination',
-                        style: TTypography.bodySmall(
-                          context,
-                        ).copyWith(color: TColors.textSecondary(context)),
+                      SizedBox(width: TSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Rechercher un trajet',
+                              style: TTypography.bodyLarge(context).copyWith(
+                                color: TColors.textPrimary(context),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Départ, destination, date...',
+                              style: TTypography.bodySmall(
+                                context,
+                              ).copyWith(color: TColors.textSecondary(context)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(TSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: TColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: EdgeInsets.all(TSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: TColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(TRadius.sm),
+                  SizedBox(height: TSpacing.md),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: TSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: TColors.primary.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(TRadius.md),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.touch_app, color: TColors.primary, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'Appuyez pour chercher un trajet',
+                          style: TTypography.labelMedium(context).copyWith(
+                            color: TColors.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Icon(
-                    Icons.pin_drop_outlined,
-                    color: TColors.primary,
-                    size: 20,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -463,12 +584,12 @@ class HomeScreen extends GetView<HomeController> {
               mainAxisSize: MainAxisSize.min,
               children: List.generate(controller.banners.length, (index) {
                 return AnimatedContainer(
-                  duration: TAnimations.medium,
-                  width: controller.currentBanner.value == index ? 20 : 8,
-                  height: 8,
-                  margin: EdgeInsets.symmetric(horizontal: TSpacing.xs / 2),
+                  duration: const Duration(milliseconds: 300),
+                  margin: EdgeInsets.symmetric(horizontal: TSpacing.xs),
+                  width: controller.currentBanner.value == index ? 12 : 8,
+                  height: controller.currentBanner.value == index ? 12 : 8,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(TRadius.pill),
+                    shape: BoxShape.circle,
                     color:
                         controller.currentBanner.value == index
                             ? TColors.primary
@@ -487,82 +608,32 @@ class HomeScreen extends GetView<HomeController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'Vos prochains trajets',
-              style: TTypography.headingMedium(context),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: TSpacing.sm),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(TRadius.pill),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'Voir tout',
-                    style: TTypography.labelMedium(
-                      context,
-                    ).copyWith(color: TColors.primary),
-                  ),
-                  SizedBox(width: TSpacing.xs),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16,
-                    color: TColors.primary,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        Text('Prochains trajets', style: TTypography.headingMedium(context)),
         SizedBox(height: TSpacing.md),
-        // For demo purposes, showing empty state since user may not have upcoming rides
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(TSpacing.lg),
-          decoration: BoxDecoration(
-            color: TColors.surface(context),
-            borderRadius: TRadius.cardRadius,
-            border: Border.all(color: TColors.neutral300, width: 1),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(TSpacing.md),
-                decoration: BoxDecoration(
-                  color: TColors.primary.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.directions_car_filled_outlined,
-                  color: TColors.primary,
-                  size: 32,
-                ),
-              ),
-              SizedBox(height: TSpacing.md),
-              Text(
-                'Aucun trajet à venir',
-                style: TTypography.headingSmall(context),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: TSpacing.sm),
-              Text(
-                'Réservez un trajet ou publiez votre propre itinéraire pour le voir apparaître ici.',
-                style: TTypography.bodyMedium(
-                  context,
-                ).copyWith(color: TColors.textSecondary(context)),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: TSpacing.lg),
-            ],
-          ),
+        Obx(
+          () =>
+              controller.upcomingRides.isEmpty
+                  ? Center(
+                    child: Text(
+                      'Aucun trajet prévu pour le moment',
+                      style: TTypography.bodyMedium(context),
+                    ),
+                  )
+                  : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.upcomingRides.length,
+                    itemBuilder: (context, index) {
+                      final ride = controller.upcomingRides[index];
+                      return ListTile(
+                        title: Text(ride['title']),
+                        subtitle: Text(ride['date']),
+                        trailing: Icon(Icons.arrow_forward_ios),
+                        onTap:
+                            () => Get.toNamed('/ride-details', arguments: ride),
+                      );
+                    },
+                  ),
         ),
       ],
     );

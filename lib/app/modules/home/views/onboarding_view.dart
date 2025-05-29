@@ -153,15 +153,15 @@ class OnboardingScreen extends StatelessWidget {
   }
 
   final List<String> _titles = [
-    'Bienvenue sur Tyvaa',
-    'Chauffeurs vérifiés',
-    'Support Interactive',
+    'Covoiturage intelligent',
+    'Économisez en voyageant',
+    'Contribuez à un avenir durable',
   ];
 
   final List<String> _subtitles = [
-    'Découvrez une nouvelle façon de vous déplacer au Sénégal, avec sécurité et confort.',
-    'Tous nos chauffeurs sont soigneusement sélectionnés et certifiés pour votre sécurité.',
-    'Votre assistante virtuelle est là pour vous aider 24/7 pour toute question sur l\'application.',
+    'Trouvez des trajets en temps réel et connectez-vous avec des conducteurs fiables pour vos déplacements au Sénégal.',
+    'Partagez les frais de transport et réduisez vos dépenses quotidiennes tout en voyageant confortablement.',
+    'Chaque trajet partagé réduit les émissions de CO2. Rejoignez notre communauté et agissez pour l\'environnement.',
   ];
 }
 
