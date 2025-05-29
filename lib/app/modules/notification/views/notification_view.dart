@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 import '../controllers/notification_controller.dart';
 
@@ -12,14 +12,14 @@ class NotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: TColors.background(context),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: TColors.background(context),
         title: Text(
           'notifications'.tr,
           style: TextStyle(
-            color: AppColors.textColor,
+            color: TColors.textPrimary(context),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -27,7 +27,7 @@ class NotificationsScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_rounded,
-            color: AppColors.textColor,
+            color: TColors.textPrimary(context),
             size: 22,
           ),
           onPressed: () => Get.back(),
@@ -37,7 +37,10 @@ class NotificationsScreen extends StatelessWidget {
             () =>
                 controller.notifications.isNotEmpty
                     ? PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: AppColors.textColor),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: TColors.textPrimary(context),
+                      ),
                       onSelected: (value) {
                         if (value == 'markAllRead') {
                           controller.markAllAsRead();
@@ -119,7 +122,7 @@ class NotificationsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textColor,
+                    color: TColors.textPrimary(context),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -164,7 +167,7 @@ class NotificationsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textColor,
+                    color: TColors.textPrimary(context),
                   ),
                 ),
                 SizedBox(height: 8),
@@ -172,7 +175,7 @@ class NotificationsScreen extends StatelessWidget {
                   'no_notifications_message'.tr,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textColor.withOpacity(0.7),
+                    color: TColors.textPrimary(context).withOpacity(0.7),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -231,9 +234,9 @@ class NotificationsScreen extends StatelessWidget {
                 },
                 child: _buildNotificationCard(
                   notification,
-                  AppColors.surfaceColor,
-                  AppColors.textColor,
-                  AppColors.isDark,
+                  TColors.surface(context),
+                  TColors.textPrimary(context),
+                  Theme.of(context).brightness == Brightness.dark,
                 ),
               );
             },
