@@ -18,6 +18,8 @@ abstract class Routes {
   static const LONG_RIDE_LIST = _Paths.LONG_RIDE_LIST;
   static const LOCATION_PERMISSION = _Paths.LOCATION_PERMISSION;
   static const QUICK_RIDE = _Paths.QUICK_RIDE;
+  static const RIDE_SEARCH = _Paths.RIDE_SEARCH;
+  static const RIDE_DETAILS = _Paths.RIDE_DETAILS;
 }
 
 abstract class _Paths {
@@ -39,4 +41,6 @@ abstract class _Paths {
   static const LONG_RIDE_LIST = '/long_ride_list';
   static const LOCATION_PERMISSION = '/location-permission';
   static const QUICK_RIDE = '/quick-ride';
+  static const RIDE_SEARCH = '/ride-search';
+  static const RIDE_DETAILS = '/ride-details';
 }

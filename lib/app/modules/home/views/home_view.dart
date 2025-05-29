@@ -285,21 +285,20 @@ class HomeScreen extends GetView<HomeController> {
         horizontal: TSpacing.xs,
         vertical: TSpacing.sm,
       ),
-
+      //     () => showMaterialModalBottomSheet(
+      //   context: context,
+      //   backgroundColor: Colors.transparent,
+      //   builder: (context) => LocationSearchModal(),
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: TRadius.modalRadius,
+      //   ),
+      //   duration: const Duration(milliseconds: 200),
+      //   enableDrag: true,
+      // ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap:
-              () => showMaterialModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                builder: (context) => LocationSearchModal(),
-                shape: RoundedRectangleBorder(
-                  borderRadius: TRadius.modalRadius,
-                ),
-                duration: const Duration(milliseconds: 200),
-                enableDrag: true,
-              ),
+          onTap: () => Get.toNamed('/ride-search'),
           borderRadius: BorderRadius.circular(TRadius.lg),
           child: Container(
             padding: EdgeInsets.symmetric(

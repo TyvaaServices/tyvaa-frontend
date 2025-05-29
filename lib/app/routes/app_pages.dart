@@ -12,6 +12,9 @@ import 'package:passenger_tyvaa/app/modules/notification/views/notification_view
 import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
 import 'package:passenger_tyvaa/app/modules/publish_ride/views/publish_ride_view.dart';
+import 'package:passenger_tyvaa/app/modules/ride_search/bindings/ride_search_binding.dart';
+import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_search_view.dart';
+import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_details_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -108,6 +111,20 @@ class AppPages {
       binding: LocationPermissionBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.RIDE_SEARCH,
+      page: () => RideSearchView(),
+      binding: RideSearchBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: _Paths.RIDE_DETAILS,
+      page: () => RideDetailsView(),
+      binding: RideSearchBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 500),
     ),
   ];
 }
