@@ -30,53 +30,99 @@ class MainScreen extends GetView<HomeController> {
           },
           child: pages[controller.selectedIndex.value],
         ),
-        bottomNavigationBar: StylishBottomBar(
-          option: BubbleBarOptions(barStyle: BubbleBarStyle.horizontal),
-          currentIndex: controller.selectedIndex.value,
-          onTap: controller.changeTab,
-          backgroundColor: TColors.background(context),
-          items: [
-            BottomBarItem(
-              icon: Icon(
-                Icons.home_outlined,
-                color: TColors.textPrimary(context),
+        bottomNavigationBar: Material(
+          elevation: 8,
+          color: TColors.background(context),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: Get.height * 0.09,
+              child: StylishBottomBar(
+                option: BubbleBarOptions(
+                  barStyle: BubbleBarStyle.horizontal,
+                  bubbleFillStyle: BubbleFillStyle.fill,
+                  opacity: 1,
+                ),
+                items: [
+                  BottomBarItem(
+                    icon: Icon(
+                      Icons.home_outlined,
+                      color: TColors.textPrimary(context),
+                    ),
+                    title: Text(
+                      'Accueil',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Get.width * 0.03,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                    backgroundColor: TColors.primary,
+                    selectedColor: Colors.white,
+                    selectedIcon: Icon(Icons.home, color: Colors.white),
+                  ),
+                  BottomBarItem(
+                    icon: Icon(
+                      Icons.history_outlined,
+                      color: TColors.textPrimary(context),
+                    ),
+                    title: Text(
+                      'Historique',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Get.width * 0.03,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                    backgroundColor: TColors.primary,
+                    selectedColor: Colors.white,
+                    selectedIcon: Icon(Icons.history, color: Colors.white),
+                  ),
+                  BottomBarItem(
+                    icon: Icon(
+                      Icons.chat_outlined,
+                      color: TColors.textPrimary(context),
+                    ),
+                    title: Text(
+                      'Assistant',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Get.width * 0.03,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                    backgroundColor: TColors.primary,
+                    selectedColor: Colors.white,
+                    selectedIcon: Icon(Icons.chat, color: Colors.white),
+                  ),
+                  BottomBarItem(
+                    icon: Icon(
+                      Icons.person_outline,
+                      color: TColors.textPrimary(context),
+                    ),
+                    title: Text(
+                      'Profil',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Get.width * 0.03,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                    backgroundColor: TColors.primary,
+                    selectedColor: Colors.white,
+                    selectedIcon: Icon(Icons.person, color: Colors.white),
+                  ),
+                ],
+                currentIndex: controller.selectedIndex.value,
+                onTap: controller.changeTab,
+                backgroundColor: TColors.background(context),
               ),
-              title: Text('Accueil', style: TextStyle(color: Colors.white)),
-              backgroundColor: TColors.primary,
-              selectedColor: Colors.white,
-              selectedIcon: Icon(Icons.home, color: Colors.white),
             ),
-            BottomBarItem(
-              icon: Icon(
-                Icons.history_outlined,
-                color: TColors.textPrimary(context),
-              ),
-              title: Text('Historique', style: TextStyle(color: Colors.white)),
-              backgroundColor: TColors.primary,
-              selectedColor: Colors.white,
-              selectedIcon: Icon(Icons.history, color: Colors.white),
-            ),
-            BottomBarItem(
-              icon: Icon(
-                Icons.chat_outlined,
-                color: TColors.textPrimary(context),
-              ),
-              title: Text('Assistant', style: TextStyle(color: Colors.white)),
-              backgroundColor: TColors.primary,
-              selectedColor: Colors.white,
-              selectedIcon: Icon(Icons.chat, color: Colors.white),
-            ),
-            BottomBarItem(
-              icon: Icon(
-                Icons.person_outline,
-                color: TColors.textPrimary(context),
-              ),
-              title: Text('Profil', style: TextStyle(color: Colors.white)),
-              backgroundColor: TColors.primary,
-              selectedColor: Colors.white,
-              selectedIcon: Icon(Icons.person, color: Colors.white),
-            ),
-          ],
+          ),
         ),
       );
     });
@@ -93,17 +139,14 @@ class HistoriqueScreen extends GetView<HomeController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Clean, minimal header design
             Container(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Simple header with title and actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Clean title
                       Text(
                         'Historique',
                         style: TextStyle(
@@ -112,8 +155,6 @@ class HistoriqueScreen extends GetView<HomeController> {
                           color: TColors.textPrimary(context),
                         ),
                       ),
-
-                      // Simple action buttons
                       Row(
                         children: [
                           IconButton(
@@ -139,10 +180,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Clean search bar
                   Container(
                     height: 44,
                     decoration: BoxDecoration(
@@ -171,8 +209,6 @@ class HistoriqueScreen extends GetView<HomeController> {
                 ],
               ),
             ),
-
-            // Simple filter tabs
             Container(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
               child: Row(
@@ -183,18 +219,14 @@ class HistoriqueScreen extends GetView<HomeController> {
                 ],
               ),
             ),
-
-            // Replaced the ugly black divider with a subtle spacer
             const SizedBox(height: 4),
-
-            // History list with existing iOS-style cards
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 10,
                 ),
-                itemCount: 20, // Replace with actual count
+                itemCount: 20,
                 itemBuilder: (context, index) {
                   return _buildHistoryCard(index);
                 },
@@ -307,7 +339,6 @@ class HistoriqueScreen extends GetView<HomeController> {
 
   Widget _buildHistoryCard(int index) {
     final context = Get.context!;
-    // Alternate status for demo purposes
     final statuses = ['Terminé', 'Annulé', 'Terminé', 'Terminé', 'Annulé'];
     final status = statuses[index % statuses.length];
     final statusColor = status == 'Terminé' ? TColors.success : TColors.error;
@@ -392,7 +423,6 @@ class HistoriqueScreen extends GetView<HomeController> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Header with date and status
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -434,14 +464,10 @@ class HistoriqueScreen extends GetView<HomeController> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 14),
-
-                  // Trip details
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Route visualization
                       Column(
                         children: [
                           Container(
@@ -469,8 +495,6 @@ class HistoriqueScreen extends GetView<HomeController> {
                         ],
                       ),
                       const SizedBox(width: 12),
-
-                      // Origin and destination
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -501,10 +525,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 14),
-
-                  // Footer with price and details button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -585,7 +606,6 @@ class HistoriqueScreen extends GetView<HomeController> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-
                   _buildActionSheetButton('Tous les trajets', true, context),
                   _buildActionSheetButton('Cette semaine', false, context),
                   _buildActionSheetButton('Ce mois', false, context),
@@ -601,7 +621,6 @@ class HistoriqueScreen extends GetView<HomeController> {
                     false,
                     context,
                   ),
-
                   const SizedBox(height: 10),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
