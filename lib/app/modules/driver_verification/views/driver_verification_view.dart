@@ -370,14 +370,7 @@ class DriverVerificationView extends GetView<DriverVerificationController> {
                               ),
                     ),
                   ),
-                  if (controller.carImage.value == null &&
-                      (controller.hasAttemptedNextWithInvalidCarBrand.value ||
-                          controller
-                              .hasAttemptedNextWithInvalidCarModel
-                              .value ||
-                          controller
-                              .hasAttemptedNextWithInvalidLicensePlate
-                              .value))
+                  if (controller.carImage.value == null)
                     Padding(
                       padding: const EdgeInsets.only(top: TSpacing.md),
                       child: Container(

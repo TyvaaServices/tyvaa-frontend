@@ -164,8 +164,8 @@ class PublishRideController extends GetxController {
       // Get.back();
     });
     // Get.to(VerificationRequiredScreen());
-    Get.toNamed(Routes.DRIVER_VERIFICATION);
-    // Get.to(RidePublishedSuccessScreen());
+    // Get.toNamed(Routes.DRIVER_VERIFICATION);
+    Get.to(RidePublishedSuccessScreen());
   }
 
   String getStepTitle() {

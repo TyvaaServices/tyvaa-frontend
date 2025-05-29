@@ -144,32 +144,32 @@ class DriverVerificationController extends GetxController {
       isValid = false;
     }
 
-    if (isValid) {
-      nextStep();
-    }
+    // if (isValid) {
+    nextStep();
+    // }
   }
 
   void validateAndProceedFromCarStep() {
     bool isValid = true;
 
     if (carBrandController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidCarBrand.value = true;
+      // hasAttemptedNextWithInvalidCarBrand.value = true;
       isValid = false;
     }
 
     if (carModelController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidCarModel.value = true;
+      // hasAttemptedNextWithInvalidCarModel.value = true;
       isValid = false;
     }
 
     if (licensePlateController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidLicensePlate.value = true;
+      // hasAttemptedNextWithInvalidLicensePlate.value = true;
       isValid = false;
     }
 
-    if (isValid) {
-      nextStep();
-    }
+    // if (isValid) {
+    nextStep();
+    // }
   }
 
   void validateAndProceedFromIdStep() {
@@ -181,13 +181,13 @@ class DriverVerificationController extends GetxController {
     }
 
     if (idNumberController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidIdNumber.value = true;
+      // hasAttemptedNextWithInvalidIdNumber.value = true;
       isValid = false;
     }
-
-    if (isValid) {
-      nextStep();
-    }
+    isValid = true;
+    // if (isValid) {
+    nextStep();
+    // }
   }
 
   Future<void> pickDriverLicense() async {
