@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 import '../../../widgets/primary_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -15,18 +15,10 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
-    TextStyle titleStyle =
-        brightness == Brightness.dark ? AppTextStyles.h2Dark : AppTextStyles.h2;
-    TextStyle subtitleStyle =
-        brightness == Brightness.dark
-            ? AppTextStyles.bodySecondaryDark
-            : AppTextStyles.bodySecondary;
-    Color backgroundColor =
-        brightness == Brightness.dark
-            ? AppColors.darkBackground
-            : AppColors.background;
-    Color buttonTextColor =
-        brightness == Brightness.dark ? Colors.white : AppColors.textOnPrimary;
+    TextStyle titleStyle = TTypography.headingLarge(context);
+    TextStyle subtitleStyle = TTypography.bodyMedium(context);
+    Color backgroundColor = TColors.background(context);
+    Color buttonTextColor = Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -77,7 +69,7 @@ class OnboardingScreen extends StatelessWidget {
                           child: Text(
                             'Passer',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: TColors.primary,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -103,8 +95,8 @@ class OnboardingScreen extends StatelessWidget {
                     effect: WormEffect(
                       dotHeight: 8,
                       dotWidth: 8,
-                      activeDotColor: AppColors.primary,
-                      dotColor: AppColors.primary.withOpacity(0.4),
+                      activeDotColor: TColors.primary,
+                      dotColor: TColors.primary.withOpacity(0.4),
                     ),
                     onDotClicked:
                         (i) => _controller.animateToPage(
