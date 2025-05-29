@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 
 class PublierTrajetOnboarding extends StatefulWidget {
   final VoidCallback? onComplete;
@@ -63,16 +63,12 @@ class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDarkMode = brightness == Brightness.dark;
-
-    // Theme-specific colors
-    final backgroundColor =
-        isDarkMode ? AppColors.darkBackground : AppColors.background;
-    final cardColor = isDarkMode ? Color(0xFF2A2A2D) : Colors.white;
-    final textColor = isDarkMode ? Colors.white : AppColors.textPrimary;
-    final subtitleColor = isDarkMode ? Colors.white70 : AppColors.textSecondary;
-    final accentColor = AppColors.primary;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = TColors.background(context);
+    final cardColor = TColors.surface(context);
+    final textColor = TColors.textPrimary(context);
+    final subtitleColor = TColors.textSecondary(context);
+    final accentColor = TColors.primary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -108,7 +104,10 @@ class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isDarkMode ? Color(0xFF343438) : Colors.white,
+                          color:
+                              isDarkMode
+                                  ? TColors.surface(context)
+                                  : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -121,7 +120,9 @@ class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
                         child: Icon(
                           Icons.arrow_back_ios_rounded,
                           color:
-                              isDarkMode ? Colors.white : AppColors.textPrimary,
+                              isDarkMode
+                                  ? Colors.white
+                                  : TColors.textPrimary(context),
                           size: 18,
                         ),
                       ),
@@ -147,7 +148,7 @@ class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
                                   decoration: BoxDecoration(
                                     color:
                                         isDarkMode
-                                            ? Color(0xFF343438)
+                                            ? TColors.surface(context)
                                             : Colors.white,
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
@@ -595,12 +596,12 @@ class _PublierTrajetOnboardingState extends State<PublierTrajetOnboarding>
       height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primary.withBlue(220)],
+          colors: [TColors.primary, TColors.primary.withBlue(220)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: TColors.primary.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -704,7 +705,6 @@ class BackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Create gradient paint
     final paint =
         Paint()
           ..shader = LinearGradient(
@@ -712,7 +712,7 @@ class BackgroundPainter extends CustomPainter {
             end: Alignment.bottomCenter,
             colors: [
               isDarkMode ? Color(0xFF222226) : Colors.white,
-              isDarkMode ? AppColors.darkBackground : AppColors.background,
+              isDarkMode ? TColors.darkBackground : TColors.neutral100,
             ],
           ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
