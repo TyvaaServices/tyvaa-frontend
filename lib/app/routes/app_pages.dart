@@ -3,6 +3,7 @@ import 'package:passenger_tyvaa/app/modules/auth/views/otp_view.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/welcome_view.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/bindings/chatbot_binding.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/views/chooseChat_view.dart';
+import 'package:passenger_tyvaa/app/modules/driver_verification/views/driver_verification_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart';
@@ -18,6 +19,7 @@ import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_details_view.
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
+import '../modules/driver_verification/bindings/driver_verification_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
 
@@ -123,6 +125,13 @@ class AppPages {
       name: _Paths.RIDE_DETAILS,
       page: () => RideDetailsView(),
       binding: RideSearchBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: _Paths.DRIVER_VERIFICATION,
+      page: () => DriverVerificationView(),
+      binding: DriverVerificationBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 500),
     ),
