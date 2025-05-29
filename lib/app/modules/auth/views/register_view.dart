@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 import '../controllers/register_controller.dart';
 
@@ -13,13 +13,11 @@ class RegisterScreen extends GetView<RegisterController> {
   Widget build(BuildContext context) {
     final controller = Get.put(RegisterController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final backgroundColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-    final secondaryTextColor =
-        isDark ? Colors.white70 : const Color(0xFF9194A1);
+    final primaryColor = isDark ? TColors.primaryDark : TColors.primary;
+    final backgroundColor = TColors.background(context);
+    final cardColor = TColors.surface(context);
+    final textColor = TColors.textPrimary(context);
+    final secondaryTextColor = TColors.textSecondary(context);
 
     return Scaffold(
       backgroundColor: backgroundColor,
