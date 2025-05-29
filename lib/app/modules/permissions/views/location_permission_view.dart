@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/controllers/location_permission_controller.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 
 class LocationPermissionScreen extends GetView<LocationPermissionController> {
   const LocationPermissionScreen({super.key});
@@ -10,7 +11,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: TColors.background(context),
       body: Stack(
         children: [
           // Decorative circles
@@ -22,7 +23,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
               height: Get.width * .8,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primaryColor.withOpacity(.1),
+                color: TColors.primary.withOpacity(.1),
               ),
             ),
           ),
@@ -34,7 +35,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
               height: Get.width * .7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primaryColor.withOpacity(.08),
+                color: TColors.primary.withOpacity(.08),
               ),
             ),
           ),
@@ -65,7 +66,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textColor,
+                              color: TColors.textPrimary(context),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -75,7 +76,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 15,
-                              color: AppColors.secondaryTextColor,
+                              color: TColors.textSecondary(context),
                               height: 1.4,
                             ),
                           ),
@@ -94,11 +95,11 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                           onPressed:
                               () => controller.requestLocationPermission(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
+                            backgroundColor: TColors.primary,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(TRadius.lg),
                             ),
                           ),
                           child: const Text(
@@ -115,7 +116,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                         child: Text(
                           'Plus tard',
                           style: TextStyle(
-                            color: AppColors.secondaryTextColor,
+                            color: TColors.textSecondary(context),
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
