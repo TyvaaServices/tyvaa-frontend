@@ -4,7 +4,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:passenger_tyvaa/app/modules/profile/views/profile_view.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 import '../../chatbot/views/chooseChat_view.dart';
 import '../controllers/home_controller.dart';
 import 'home_view.dart';
@@ -34,33 +34,45 @@ class MainScreen extends GetView<HomeController> {
           option: BubbleBarOptions(barStyle: BubbleBarStyle.horizontal),
           currentIndex: controller.selectedIndex.value,
           onTap: controller.changeTab,
-          backgroundColor: AppColors.backgroundColor,
+          backgroundColor: TColors.background(context),
           items: [
             BottomBarItem(
-              icon: Icon(Icons.home_outlined, color: AppColors.textColor),
+              icon: Icon(
+                Icons.home_outlined,
+                color: TColors.textPrimary(context),
+              ),
               title: Text('Accueil', style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primaryColor,
+              backgroundColor: TColors.primary,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.home, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.history_outlined, color: AppColors.textColor),
+              icon: Icon(
+                Icons.history_outlined,
+                color: TColors.textPrimary(context),
+              ),
               title: Text('Historique', style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primaryColor,
+              backgroundColor: TColors.primary,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.history, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.chat_outlined, color: AppColors.textColor),
+              icon: Icon(
+                Icons.chat_outlined,
+                color: TColors.textPrimary(context),
+              ),
               title: Text('Assistant', style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primaryColor,
+              backgroundColor: TColors.primary,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.chat, color: Colors.white),
             ),
             BottomBarItem(
-              icon: Icon(Icons.person_outline, color: AppColors.textColor),
+              icon: Icon(
+                Icons.person_outline,
+                color: TColors.textPrimary(context),
+              ),
               title: Text('Profil', style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primaryColor,
+              backgroundColor: TColors.primary,
               selectedColor: Colors.white,
               selectedIcon: Icon(Icons.person, color: Colors.white),
             ),
@@ -77,7 +89,7 @@ class HistoriqueScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: TColors.background(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -97,7 +109,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textColor,
+                          color: TColors.textPrimary(context),
                         ),
                       ),
 
@@ -107,7 +119,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           IconButton(
                             icon: Icon(
                               Icons.search_rounded,
-                              color: AppColors.textColor,
+                              color: TColors.textPrimary(context),
                             ),
                             onPressed: () {},
                             padding: EdgeInsets.zero,
@@ -117,7 +129,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                           IconButton(
                             icon: Icon(
                               Icons.filter_list_rounded,
-                              color: AppColors.textColor,
+                              color: TColors.textPrimary(context),
                             ),
                             onPressed: () => _showFilterActionSheet(context),
                             padding: EdgeInsets.zero,
@@ -141,12 +153,12 @@ class HistoriqueScreen extends GetView<HomeController> {
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.search_rounded,
-                          color: AppColors.secondaryTextColor,
+                          color: TColors.textSecondary(context),
                           size: 20,
                         ),
                         hintText: 'Rechercher un trajet...',
                         hintStyle: TextStyle(
-                          color: AppColors.secondaryTextColor,
+                          color: TColors.textSecondary(context),
                           fontSize: 15,
                         ),
                         border: InputBorder.none,
@@ -193,7 +205,7 @@ class HistoriqueScreen extends GetView<HomeController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showFilterActionSheet(context),
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: TColors.primary,
         child: const Icon(Icons.filter_list, color: Colors.white),
       ),
     );
@@ -209,8 +221,8 @@ class HistoriqueScreen extends GetView<HomeController> {
             style: TextStyle(
               color:
                   isSelected
-                      ? AppColors.primaryColor
-                      : AppColors.secondaryTextColor,
+                      ? TColors.primary
+                      : TColors.textSecondary(Get.context!),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               fontSize: 14,
             ),
@@ -219,7 +231,7 @@ class HistoriqueScreen extends GetView<HomeController> {
           Container(
             height: 2,
             width: text.length * 5.0,
-            color: isSelected ? AppColors.primaryColor : Colors.transparent,
+            color: isSelected ? TColors.primary : Colors.transparent,
           ),
         ],
       ),
@@ -228,28 +240,36 @@ class HistoriqueScreen extends GetView<HomeController> {
 
   Widget _buildFilterChip(String label, bool isSelected) {
     return Container(
-      margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+      margin: const EdgeInsets.only(
+        right: TSpacing.sm,
+        top: TSpacing.sm,
+        bottom: TSpacing.sm,
+      ),
       child: FilterChip(
-        label: Text(label),
+        label: Text(label, style: TTypography.bodyMedium(Get.context!)),
         selected: isSelected,
         onSelected: (_) {},
-        backgroundColor: AppColors.surfaceColor,
-        selectedColor: AppColors.primaryColor.withOpacity(0.15),
-        checkmarkColor: AppColors.primaryColor,
+        backgroundColor: TColors.surface(Get.context!),
+        selectedColor: TColors.primary.withOpacity(0.15),
+        checkmarkColor: TColors.primary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.primaryColor : AppColors.textColor,
+          color:
+              isSelected ? TColors.primary : TColors.textPrimary(Get.context!),
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           fontSize: 13,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: TRadius.chipRadius,
           side: BorderSide(
-            color: isSelected ? AppColors.primaryColor : AppColors.dividerColor,
+            color: isSelected ? TColors.primary : TColors.neutral300,
             width: 1,
           ),
         ),
         elevation: isSelected ? 1 : 0,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: TSpacing.md,
+          vertical: 0,
+        ),
       ),
     );
   }
@@ -263,17 +283,19 @@ class HistoriqueScreen extends GetView<HomeController> {
           decoration: BoxDecoration(
             color:
                 isSelected
-                    ? (AppColors.isDark ? Colors.black : Colors.white)
+                    ? (Theme.of(Get.context!).brightness == Brightness.dark
+                        ? TColors.darkBackground
+                        : TColors.surface(Get.context!))
                     : Colors.transparent,
-            borderRadius: BorderRadius.circular(7),
+            borderRadius: BorderRadius.circular(TRadius.sm),
           ),
           child: Text(
             text,
             style: TextStyle(
               color:
                   isSelected
-                      ? AppColors.primaryColor
-                      : AppColors.secondaryTextColor,
+                      ? TColors.primary
+                      : TColors.textSecondary(Get.context!),
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -284,16 +306,16 @@ class HistoriqueScreen extends GetView<HomeController> {
   }
 
   Widget _buildHistoryCard(int index) {
+    final context = Get.context!;
     // Alternate status for demo purposes
     final statuses = ['Terminé', 'Annulé', 'Terminé', 'Terminé', 'Annulé'];
     final status = statuses[index % statuses.length];
-    final statusColor =
-        status == 'Terminé' ? AppColors.success : AppColors.error;
+    final statusColor = status == 'Terminé' ? TColors.success : TColors.error;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
+        color: TColors.surface(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -309,7 +331,7 @@ class HistoriqueScreen extends GetView<HomeController> {
           key: Key('history_$index'),
           direction: DismissDirection.endToStart,
           background: Container(
-            color: AppColors.error,
+            color: TColors.error,
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 20),
             child: Column(
@@ -344,7 +366,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text(
                           'Supprimer',
-                          style: TextStyle(color: AppColors.error),
+                          style: TextStyle(color: TColors.error),
                         ),
                       ),
                     ],
@@ -358,8 +380,8 @@ class HistoriqueScreen extends GetView<HomeController> {
               snackPosition: SnackPosition.TOP,
               margin: const EdgeInsets.all(16),
               borderRadius: 10,
-              backgroundColor: AppColors.surfaceColor,
-              colorText: AppColors.textColor,
+              backgroundColor: TColors.surface(context),
+              colorText: TColors.textPrimary(context),
               duration: const Duration(seconds: 2),
             );
           },
@@ -379,13 +401,13 @@ class HistoriqueScreen extends GetView<HomeController> {
                           Icon(
                             Icons.calendar_today_rounded,
                             size: 14,
-                            color: AppColors.secondaryTextColor,
+                            color: TColors.textSecondary(context),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             '${15 - (index % 15)} Mai 2025',
                             style: TextStyle(
-                              color: AppColors.secondaryTextColor,
+                              color: TColors.textSecondary(context),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -426,10 +448,10 @@ class HistoriqueScreen extends GetView<HomeController> {
                             width: 12,
                             height: 12,
                             decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withOpacity(0.2),
+                              color: TColors.primary.withOpacity(0.2),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors.primaryColor,
+                                color: TColors.primary,
                                 width: 2,
                               ),
                             ),
@@ -437,11 +459,11 @@ class HistoriqueScreen extends GetView<HomeController> {
                           Container(
                             width: 2,
                             height: 30,
-                            color: AppColors.primaryColor.withOpacity(0.3),
+                            color: TColors.primary.withOpacity(0.3),
                           ),
                           Icon(
                             Icons.location_on,
-                            color: AppColors.primaryColor,
+                            color: TColors.primary,
                             size: 16,
                           ),
                         ],
@@ -458,7 +480,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textColor,
+                                color: TColors.textPrimary(context),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -469,7 +491,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textColor,
+                                color: TColors.textPrimary(context),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -490,9 +512,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                         children: [
                           CircleAvatar(
                             radius: 14,
-                            backgroundColor: AppColors.primaryColor.withOpacity(
-                              0.1,
-                            ),
+                            backgroundColor: TColors.primary.withOpacity(0.1),
                             backgroundImage: AssetImage(
                               'assets/images/default_profile.png',
                             ),
@@ -502,7 +522,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                             'Amadou D.',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textColor,
+                              color: TColors.textPrimary(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -513,7 +533,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryColor,
+                          color: TColors.primary,
                         ),
                       ),
                     ],
@@ -535,9 +555,9 @@ class HistoriqueScreen extends GetView<HomeController> {
           (context) => Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.surfaceColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+              color: TColors.surface(context),
+              borderRadius: BorderRadius.vertical(
+                top: TRadius.modalRadius.topRight,
               ),
             ),
             child: SafeArea(
@@ -550,8 +570,8 @@ class HistoriqueScreen extends GetView<HomeController> {
                     width: 40,
                     margin: EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: AppColors.secondaryTextColor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2.5),
+                      color: TColors.textSecondary(context).withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(TSpacing.xs),
                     ),
                     alignment: Alignment.center,
                   ),
@@ -560,19 +580,27 @@ class HistoriqueScreen extends GetView<HomeController> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
+                      color: TColors.textPrimary(context),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
 
-                  _buildActionSheetButton('Tous les trajets', true),
-                  _buildActionSheetButton('Cette semaine', false),
-                  _buildActionSheetButton('Ce mois', false),
-                  _buildActionSheetButton('Trajets terminés', false),
-                  _buildActionSheetButton('Trajets annulés', false),
-                  _buildActionSheetButton('En tant que passager', false),
-                  _buildActionSheetButton('En tant que conducteur', false),
+                  _buildActionSheetButton('Tous les trajets', true, context),
+                  _buildActionSheetButton('Cette semaine', false, context),
+                  _buildActionSheetButton('Ce mois', false, context),
+                  _buildActionSheetButton('Trajets terminés', false, context),
+                  _buildActionSheetButton('Trajets annulés', false, context),
+                  _buildActionSheetButton(
+                    'En tant que passager',
+                    false,
+                    context,
+                  ),
+                  _buildActionSheetButton(
+                    'En tant que conducteur',
+                    false,
+                    context,
+                  ),
 
                   const SizedBox(height: 10),
                   TextButton(
@@ -580,7 +608,7 @@ class HistoriqueScreen extends GetView<HomeController> {
                     child: Text(
                       'Annuler',
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: TColors.primary,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -593,7 +621,11 @@ class HistoriqueScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildActionSheetButton(String text, bool isSelected) {
+  Widget _buildActionSheetButton(
+    String text,
+    bool isSelected,
+    BuildContext context,
+  ) {
     return TextButton(
       onPressed: () => Navigator.of(Get.context!).pop(),
       style: TextButton.styleFrom(
@@ -606,11 +638,11 @@ class HistoriqueScreen extends GetView<HomeController> {
             text,
             style: TextStyle(
               fontSize: 17,
-              color: AppColors.textColor,
+              color: TColors.textPrimary(context),
               fontWeight: FontWeight.normal,
             ),
           ),
-          if (isSelected) Icon(Icons.check, color: AppColors.primaryColor),
+          if (isSelected) Icon(Icons.check, color: TColors.primary),
         ],
       ),
     );
