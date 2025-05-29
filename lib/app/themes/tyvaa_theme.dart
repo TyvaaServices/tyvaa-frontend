@@ -1,6 +1,9 @@
+// filepath: /home/traorecheikh/StudioProjects/passenger_tyvaa/lib/app/themes/tyvaa_theme.dart
+// @deprecated This theme system is deprecated. Please use design_system.dart and TColors instead.
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// @deprecated Use TColors from design_system.dart instead
 class AppColors {
   // Brand Colors
   static const Color primary = Color(0xFF6A0DAD); // Strong purple
