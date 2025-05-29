@@ -418,14 +418,32 @@ class DateStep extends StatelessWidget {
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
-      locale: const Locale('fr', 'FR'),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: TColors.primary,
-              onPrimary: Colors.white,
-              onSurface: TColors.neutral900,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: TColors.primary,
+              brightness: Theme.of(context).brightness,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: TColors.surface(context),
+              headerBackgroundColor: TColors.primary,
+              headerForegroundColor: Colors.white,
+              dayForegroundColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return Colors.white;
+                }
+                return TColors.textPrimary(context);
+              }),
+              dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return TColors.primary;
+                }
+                return Colors.transparent;
+              }),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
           ),
           child: child!,
