@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/modules/publish_ride/views/succes_publish_view.dart';
 
 enum PublishStepType { departure, arrival, time, date, summary }
 
 class PublishRideController extends GetxController {
-  // Current step in the publishing process
   final Rx<PublishStepType> currentStep = PublishStepType.departure.obs;
 
-  // PageController for step transitions
   late PageController pageController;
 
-  // Animation controller for page transitions
   late AnimationController animationController;
 
-  // Values for the form
   final Rx<String?> departurePoint = Rx<String?>(null);
   final Rx<String?> arrivalPoint = Rx<String?>(null);
   final Rx<TimeOfDay?> departureTime = Rx<TimeOfDay?>(null);
 
-  // For date selection
   final Rx<DateTime?> specificDate = Rx<DateTime?>(null);
 
-  // For recurring schedule
   final RxBool isRecurring = false.obs;
   final RxList<bool> selectedDays = List.generate(7, (_) => false).obs;
   final RxList<String> weekdayLabels =
       ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].obs;
 
-  // Predefined Dakar landmarks
   final List<String> dakarLandmarks = [
     'HLM',
     'UCAD',
@@ -61,12 +55,10 @@ class PublishRideController extends GetxController {
     super.onClose();
   }
 
-  // Register the animation controller from the view
   void setAnimationController(AnimationController controller) {
     animationController = controller;
   }
 
-  // Move to the next step
   void nextStep() {
     if (currentStep.value == PublishStepType.departure &&
         departurePoint.value == null) {
@@ -133,7 +125,6 @@ class PublishRideController extends GetxController {
       }
     }
 
-    // Move to the next step
     final nextIndex = PublishStepType.values.indexOf(currentStep.value) + 1;
     if (nextIndex < PublishStepType.values.length) {
       currentStep.value = PublishStepType.values[nextIndex];
@@ -143,13 +134,11 @@ class PublishRideController extends GetxController {
         curve: Curves.easeInOut,
       );
 
-      // Reset and forward animation for the new page
       animationController.reset();
       animationController.forward();
     }
   }
 
-  // Move to the previous step
   void previousStep() {
     final prevIndex = PublishStepType.values.indexOf(currentStep.value) - 1;
     if (prevIndex >= 0) {
@@ -160,33 +149,18 @@ class PublishRideController extends GetxController {
         curve: Curves.easeInOut,
       );
 
-      // Reset and forward animation for the new page
       animationController.reset();
       animationController.forward();
     } else {
-      // If we're at the first step, go back to the previous screen
       Get.back();
     }
   }
 
-  // Submit the ride
   void publishRide() {
-    // Here we would connect to a service to publish the ride
-    // For now, we'll just show a success message and navigate back
-    Get.snackbar(
-      'Trajet Publié',
-      'Votre trajet a été publié avec succès!',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green[100],
-      colorText: Colors.green[800],
-      margin: EdgeInsets.all(16),
-      duration: Duration(seconds: 3),
-    );
-
-    // Wait for the snackbar to be visible before navigating
     Future.delayed(Duration(seconds: 3), () {
       Get.back();
     });
+    Get.to(RidePublishedSuccessScreen());
   }
 
   String getStepTitle() {
