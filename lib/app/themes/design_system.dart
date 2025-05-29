@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 /// This file defines the core design elements that should be used throughout the app
 /// to ensure consistency and professional quality.
 
-// COLOR SYSTEM
 class TColors {
-  // Primary Colors
   static const Color primary = Color(0xFF6A0DAD);
   static const Color primaryLight = Color(0xFF9356D0);
   static const Color primaryDark = Color(0xFF4A0080);
 
-  // Neutral Colors
   static const Color neutral100 = Color(0xFFF8F9FE);
   static const Color neutral200 = Color(0xFFEEEFF4);
   static const Color neutral300 = Color(0xFFDFE1E9);
@@ -29,12 +26,10 @@ class TColors {
   static const Color error = Color(0xFFE53935);
   static const Color info = Color(0xFF2196F3);
 
-  // Dark Theme Colors
   static const Color darkBackground = Color(0xFF121214);
   static const Color darkSurface = Color(0xFF1E1E24);
   static const Color darkCard = Color(0xFF2A2A32);
 
-  // Get dynamic colors based on theme
   static Color background(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
           ? darkBackground
@@ -54,9 +49,7 @@ class TColors {
       Theme.of(context).brightness == Brightness.dark ? neutral400 : neutral600;
 }
 
-// SPACING SYSTEM
 class TSpacing {
-  // Base spacing unit: 4
   static const double xs = 4.0;
   static const double sm = 8.0;
   static const double md = 16.0;
@@ -65,13 +58,11 @@ class TSpacing {
   static const double xxl = 48.0;
   static const double xxxl = 64.0;
 
-  // Specific spacing values
   static const double cardPadding = 16.0;
   static const double sectionSpacing = 24.0;
   static const double buttonPadding = 16.0;
 }
 
-// BORDER RADIUS SYSTEM
 class TRadius {
   static const double xs = 4.0;
   static const double sm = 8.0;
@@ -80,7 +71,6 @@ class TRadius {
   static const double xl = 24.0;
   static const double pill = 100.0;
 
-  // Component-specific radius
   static BorderRadius get buttonRadius => BorderRadius.circular(lg);
   static BorderRadius get cardRadius => BorderRadius.circular(lg);
   static BorderRadius get inputRadius => BorderRadius.circular(md);
@@ -89,7 +79,6 @@ class TRadius {
       const BorderRadius.vertical(top: Radius.circular(xl));
 }
 
-// TYPOGRAPHY SYSTEM
 class TTypography {
   // Display styles
   static TextStyle displayLarge(BuildContext context) => TextStyle(
@@ -180,7 +169,6 @@ class TTypography {
   );
 }
 
-// SHADOW SYSTEM
 class TShadows {
   static List<BoxShadow> get subtle => [
     BoxShadow(
@@ -207,9 +195,83 @@ class TShadows {
   ];
 }
 
-// ANIMATION DURATIONS
 class TAnimations {
   static const Duration short = Duration(milliseconds: 150);
   static const Duration medium = Duration(milliseconds: 300);
   static const Duration long = Duration(milliseconds: 500);
 }
+
+class TTextStyles {
+  static TextStyle button(BuildContext context) =>
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white);
+
+  static TextStyle get buttonStatic =>
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white);
+
+  static TextStyle body(BuildContext context) => TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: TColors.textPrimary(context),
+  );
+
+  static TextStyle bodySecondary(BuildContext context) => TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: TColors.textSecondary(context),
+  );
+
+  static TextStyle caption(BuildContext context) => TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: TColors.textSecondary(context),
+  );
+}
+
+final ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primaryColor: TColors.primary,
+  scaffoldBackgroundColor: TColors.neutral100,
+  cardColor: Colors.white,
+  dividerColor: TColors.neutral300,
+  appBarTheme: AppBarTheme(
+    backgroundColor: TColors.neutral100,
+    elevation: 0,
+    iconTheme: IconThemeData(color: TColors.neutral900),
+    titleTextStyle: TextStyle(
+      color: TColors.neutral900,
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  colorScheme: ColorScheme.light(
+    primary: TColors.primary,
+    secondary: TColors.accent,
+    error: TColors.error,
+  ),
+);
+
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: TColors.primary,
+  scaffoldBackgroundColor: TColors.darkBackground,
+  cardColor: TColors.darkCard,
+  dividerColor: TColors.neutral700,
+  appBarTheme: AppBarTheme(
+    backgroundColor: TColors.darkBackground,
+    elevation: 0,
+    iconTheme: IconThemeData(color: Colors.white),
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  colorScheme: ColorScheme.dark(
+    primary: TColors.primary,
+    secondary: TColors.accent,
+    error: TColors.error,
+  ),
+);
