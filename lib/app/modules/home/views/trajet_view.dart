@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 
 class DriverHomeView extends GetView<DriverController> {
   const DriverHomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Get.isDarkMode;
-    final backgroundColor =
-        isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE);
-    final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final primaryColor = isDark ? AppColors.primaryDark : AppColors.primary;
-    final surfaceColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = TColors.background(context);
+    final textColor = TColors.textPrimary(context);
+    final primaryColor = TColors.primary;
+    final surfaceColor = TColors.surface(context);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -65,7 +63,7 @@ class DriverHomeView extends GetView<DriverController> {
     Color textColor,
     Color surfaceColor,
   ) {
-    // Similar to original but with driver-specific elements
+    final backgroundColor = TColors.background(Get.context!);
     return SliverAppBar(
       surfaceTintColor: Colors.transparent,
       pinned: true,
@@ -93,8 +91,7 @@ class DriverHomeView extends GetView<DriverController> {
           ),
         ],
       ),
-      backgroundColor:
-          isDark ? AppColors.darkBackground : const Color(0xFFF8F9FE),
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -125,7 +122,7 @@ class DriverHomeView extends GetView<DriverController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [primaryColor, const Color(0xFF8A6FFF)],
+                  colors: [primaryColor, TColors.accent],
                 ),
               ),
             ),
@@ -187,6 +184,7 @@ class DriverHomeView extends GetView<DriverController> {
     Color surfaceColor,
     Color textColor,
   ) {
+    final primaryColor = TColors.primary;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -205,12 +203,12 @@ class DriverHomeView extends GetView<DriverController> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Get.theme.primaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               Icons.online_prediction_rounded,
-              color: Get.theme.primaryColor,
+              color: primaryColor,
               size: 24,
             ),
           ),
@@ -242,8 +240,8 @@ class DriverHomeView extends GetView<DriverController> {
             () => Switch(
               value: controller.isDriverOnline.value,
               onChanged: (value) => controller.toggleDriverOnline(),
-              activeColor: Get.theme.primaryColor,
-              activeTrackColor: Get.theme.primaryColor.withOpacity(0.3),
+              activeColor: primaryColor,
+              activeTrackColor: primaryColor.withOpacity(0.3),
             ),
           ),
         ],
@@ -259,6 +257,7 @@ class DriverHomeView extends GetView<DriverController> {
     String title,
     String value,
   ) {
+    final primaryColor = TColors.primary;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -278,10 +277,10 @@ class DriverHomeView extends GetView<DriverController> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Get.theme.primaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Get.theme.primaryColor, size: 18),
+            child: Icon(icon, color: primaryColor, size: 18),
           ),
           const SizedBox(height: 12),
           Text(
@@ -308,6 +307,7 @@ class DriverHomeView extends GetView<DriverController> {
     Color surfaceColor,
     Color textColor,
   ) {
+    final primaryColor = TColors.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -325,7 +325,7 @@ class DriverHomeView extends GetView<DriverController> {
             TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
-                foregroundColor: Get.theme.primaryColor,
+                foregroundColor: primaryColor,
                 padding: EdgeInsets.zero,
                 visualDensity: VisualDensity.compact,
               ),
@@ -369,6 +369,7 @@ class DriverHomeView extends GetView<DriverController> {
     String time,
     String passengers,
   ) {
+    final primaryColor = TColors.primary;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -391,12 +392,12 @@ class DriverHomeView extends GetView<DriverController> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Get.theme.primaryColor.withOpacity(0.1),
+                  color: primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   Icons.directions_car_filled_rounded,
-                  color: Get.theme.primaryColor,
+                  color: primaryColor,
                   size: 24,
                 ),
               ),
@@ -440,7 +441,7 @@ class DriverHomeView extends GetView<DriverController> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Get.theme.primaryColor.withOpacity(0.1),
+                  color: primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Row(
@@ -448,7 +449,7 @@ class DriverHomeView extends GetView<DriverController> {
                     Icon(
                       Icons.people_alt_rounded,
                       size: 14,
-                      color: Get.theme.primaryColor,
+                      color: primaryColor,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -456,7 +457,7 @@ class DriverHomeView extends GetView<DriverController> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Get.theme.primaryColor,
+                        color: primaryColor,
                       ),
                     ),
                   ],
@@ -496,7 +497,7 @@ class DriverController extends GetxController {
         'En ligne',
         'Vous êtes maintenant disponible pour recevoir des demandes de trajet',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.primary,
+        backgroundColor: TColors.primary,
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
         borderRadius: 16,

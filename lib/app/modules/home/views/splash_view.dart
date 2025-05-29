@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 import '../controllers/splash_controller.dart';
 
@@ -12,8 +12,8 @@ class SplashScreen extends GetView<SplashController> {
     return Scaffold(
       backgroundColor:
           Get.theme.brightness == Brightness.dark
-              ? AppColors.darkBackground
-              : AppColors.background,
+              ? TColors.darkBackground
+              : TColors.neutral100,
       body: Center(
         child: Obx(
           () => AnimatedOpacity(
@@ -29,11 +29,11 @@ class SplashScreen extends GetView<SplashController> {
                   height: 120,
                   width: 120,
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: TColors.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4),
+                        color: TColors.primary.withOpacity(0.4),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -70,7 +70,7 @@ class SplashScreen extends GetView<SplashController> {
                     ),
                     child: Text(
                       "TYVAA",
-                      style: TextStyle(color: AppColors.primary),
+                      style: TextStyle(color: TColors.primary),
                     ),
                   ),
                 ),
