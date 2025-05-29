@@ -47,6 +47,7 @@ dependencies:
   jiffy: ^6.4.3
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
+  palette_generator: ^0.3.3+7
   # Replacing Google Maps with OSM
   flutter_map: ^8.1.1  # OpenStreetMap library
   latlong2: ^0.9.1     # Latitude/Longitude support
