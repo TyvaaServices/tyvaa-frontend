@@ -11,6 +11,7 @@ import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_b
 import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
+import 'package:passenger_tyvaa/app/modules/publish_ride/views/publish_ride_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -97,6 +98,13 @@ class AppPages {
     GetPage(
       name: _Paths.LOCATION_PERMISSION,
       page: () => LocationPermissionScreen(),
+      binding: LocationPermissionBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 800),
+    ),
+    GetPage(
+      name: _Paths.PUBLISH_TRAJET,
+      page: () => PublishRideScreen(),
       binding: LocationPermissionBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
