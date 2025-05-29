@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../themes/tyvaa_theme.dart';
+import '../themes/design_system.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -24,7 +24,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? AppColors.primary,
+          backgroundColor: color ?? TColors.primary,
           // High-contrast CTA
           foregroundColor: Colors.white,
           elevation: 10,
@@ -35,7 +35,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: AppTextStyles.button.copyWith(
+          style: TTextStyles.buttonStatic.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

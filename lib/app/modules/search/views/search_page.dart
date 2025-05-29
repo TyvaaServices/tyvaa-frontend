@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/domain/entities/location_info.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 import '../controllers/search_controller.dart';
 
 class LocationSearchModal extends GetView<SearchViewController> {
@@ -33,17 +33,8 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 child: Container(
                   height: constraints.maxHeight,
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundColor,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(28),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 20,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
+                    color: TColors.background(context),
+                    borderRadius: TRadius.modalRadius,
                   ),
                   child: Column(
                     children: [
@@ -56,13 +47,13 @@ class LocationSearchModal extends GetView<SearchViewController> {
                               controller: scrollController,
                               physics: const BouncingScrollPhysics(),
                               children: [
-                                _buildHeader(),
-                                _buildSearchFields(),
+                                _buildHeader(context),
+                                _buildSearchFields(context),
                                 const SizedBox(height: 24),
 
                                 controller.isSearching.value
-                                    ? _buildSearchResults()
-                                    : _buildRecentDestinations(),
+                                    ? _buildSearchResults(context)
+                                    : _buildRecentDestinations(context),
 
                                 const SizedBox(height: 20),
                               ],
@@ -90,7 +81,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
           width: 40,
           height: 5,
           decoration: BoxDecoration(
-            color: AppColors.dragHandleColor,
+            color: TColors.neutral400,
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -98,7 +89,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
@@ -108,7 +99,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: AppColors.textColor,
+              color: TColors.textPrimary(context),
             ),
           ),
           const Spacer(),
@@ -117,12 +108,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.textColor.withOpacity(0.1),
+                color: TColors.textPrimary(context).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.close_rounded,
-                color: AppColors.textColor.withOpacity(0.8),
+                color: TColors.textPrimary(context).withOpacity(0.8),
                 size: 20,
               ),
             ),
@@ -132,20 +123,13 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildSearchFields() {
+  Widget _buildSearchFields(BuildContext context) {
     return Hero(
       tag: 'search_bar',
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surfaceColor,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowColor,
-              blurRadius: 20,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          color: TColors.surface(context),
+          borderRadius: BorderRadius.circular(TRadius.xl),
         ),
         child: Material(
           color: Colors.transparent,
@@ -160,7 +144,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildLocationIcon(
-                        color: Colors.blue,
+                        color: TColors.primary,
                         icon: Icons.my_location_rounded,
                       ),
                       Expanded(
@@ -205,14 +189,16 @@ class LocationSearchModal extends GetView<SearchViewController> {
                               controller: textEditingController,
                               focusNode: focusNode,
                               style: TextStyle(
-                                color: AppColors.textColor,
+                                color: TColors.textPrimary(context),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Votre position actuelle',
                                 hintStyle: TextStyle(
-                                  color: AppColors.textColor.withOpacity(0.5),
+                                  color: TColors.textPrimary(
+                                    context,
+                                  ).withOpacity(0.5),
                                   fontSize: 16,
                                 ),
                                 border: InputBorder.none,
@@ -235,12 +221,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           padding: const EdgeInsets.all(10),
                           margin: const EdgeInsets.only(right: 10),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.15),
+                            color: TColors.primary.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             Icons.swap_vert_rounded,
-                            color: AppColors.primaryColor,
+                            color: TColors.primary,
                             size: 22,
                           ),
                         ),
@@ -252,7 +238,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 // Divider
                 Padding(
                   padding: const EdgeInsets.only(left: 60),
-                  child: Divider(height: 1, color: AppColors.dividerColor),
+                  child: Divider(height: 1, color: TColors.neutral300),
                 ),
 
                 IntrinsicHeight(
@@ -278,8 +264,8 @@ class LocationSearchModal extends GetView<SearchViewController> {
                     ) {
                       return Material(
                         elevation: 8,
-                        color: AppColors.surfaceColor,
-                        borderRadius: BorderRadius.circular(12),
+                        color: TColors.surface(context),
+                        borderRadius: BorderRadius.circular(TRadius.lg),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: ListView.separated(
@@ -289,7 +275,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                             separatorBuilder:
                                 (_, __) => Divider(
                                   height: 1,
-                                  color: AppColors.dividerColor,
+                                  color: TColors.neutral300,
                                 ),
                             itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
@@ -318,7 +304,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                     children: [
                                       Icon(
                                         Icons.location_on_outlined,
-                                        color: AppColors.primaryColor,
+                                        color: TColors.primary,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 12),
@@ -336,7 +322,9 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColors.textColor,
+                                                color: TColors.textPrimary(
+                                                  context,
+                                                ),
                                               ),
                                               softWrap: true,
                                               overflow: TextOverflow.clip,
@@ -350,8 +338,9 @@ class LocationSearchModal extends GetView<SearchViewController> {
                                               option['display_name'] ?? '',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: AppColors.textColor
-                                                    .withOpacity(0.6),
+                                                color: TColors.textPrimary(
+                                                  context,
+                                                ).withOpacity(0.6),
                                               ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -378,7 +367,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                       return Row(
                         children: [
                           _buildLocationIcon(
-                            color: AppColors.primaryColor,
+                            color: TColors.primary,
                             icon: Icons.place_rounded,
                           ),
                           Expanded(
@@ -386,14 +375,16 @@ class LocationSearchModal extends GetView<SearchViewController> {
                               controller: textEditingController,
                               focusNode: focusNode,
                               style: TextStyle(
-                                color: AppColors.textColor,
+                                color: TColors.textPrimary(context),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Où souhaitez-vous aller ?',
                                 hintStyle: TextStyle(
-                                  color: AppColors.textColor.withOpacity(0.5),
+                                  color: TColors.textPrimary(
+                                    context,
+                                  ).withOpacity(0.5),
                                   fontSize: 16,
                                 ),
                                 border: InputBorder.none,
@@ -421,12 +412,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
                   //                         padding: const EdgeInsets.all(8),
                   //                         margin: const EdgeInsets.only(right: 10),
                   //                         decoration: BoxDecoration(
-                  //                           color: AppColors.clearButtonColor,
+                  //                           color: TColors.clearButtonColor,
                   //                           shape: BoxShape.circle,
                   //                         ),
                   //                         child: Icon(
                   //                           Icons.close_rounded,
-                  //                           color: AppColors.textColor.withOpacity(0.5),
+                  //                           color: TColors.textPrimary(context).withOpacity(0.5),
                   //                           size: 18,
                   //                         ),
                   //                       ),
@@ -440,12 +431,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
                   //                         padding: const EdgeInsets.all(8),
                   //                         margin: const EdgeInsets.only(right: 10),
                   //                         decoration: BoxDecoration(
-                  //                           color: AppColors.primaryColor.withOpacity(0.15),
+                  //                           color: TColors.primary.withOpacity(0.15),
                   //                           borderRadius: BorderRadius.circular(12),
                   //                         ),
                   //                         child: Icon(
                   //                           Icons.map_rounded,
-                  //                           color: AppColors.primaryColor,
+                  //                           color: TColors.primary,
                   //                           size: 20,
                   //                         ),
                   //                       ),
@@ -483,7 +474,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 children: [
                   Icon(
                     Icons.place_outlined,
-                    color: AppColors.textColor.withOpacity(0.6),
+                    color: TColors.textPrimary(context).withOpacity(0.6),
                     size: 20,
                   ),
                   const SizedBox(width: 16),
@@ -494,14 +485,14 @@ class LocationSearchModal extends GetView<SearchViewController> {
                         option['display_name']?.split(',').first ??
                             'Unknown location',
                         style: TextStyle(
-                          color: AppColors.textColor,
+                          color: TColors.textPrimary(context),
                           fontSize: 16,
                         ),
                       ),
                       Text(
                         option['display_name'] ?? '',
                         style: TextStyle(
-                          color: AppColors.textColor.withOpacity(0.6),
+                          color: TColors.textPrimary(context).withOpacity(0.6),
                           fontSize: 14,
                         ),
                         maxLines: 2,
@@ -535,11 +526,11 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     return Obx(
       () =>
           controller.searchResults.isEmpty
-              ? _buildNoResultsFound()
+              ? _buildNoResultsFound(context)
               : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -550,7 +541,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                         Icon(
                           Icons.search_rounded,
                           size: 16,
-                          color: AppColors.textColor.withOpacity(0.6),
+                          color: TColors.textPrimary(context).withOpacity(0.6),
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -558,7 +549,9 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textColor.withOpacity(0.6),
+                            color: TColors.textPrimary(
+                              context,
+                            ).withOpacity(0.6),
                           ),
                         ),
                       ],
@@ -576,6 +569,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                     );
 
                     return _buildDestinationItem(
+                      context,
                       location.title,
                       location.subtitle,
                       location.icon,
@@ -586,7 +580,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildNoResultsFound() {
+  Widget _buildNoResultsFound(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -595,7 +589,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
           Icon(
             Icons.search_off_rounded,
             size: 60,
-            color: AppColors.textColor.withOpacity(0.3),
+            color: TColors.textPrimary(context).withOpacity(0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -603,7 +597,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.textColor.withOpacity(0.7),
+              color: TColors.textPrimary(context).withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 8),
@@ -612,7 +606,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textColor.withOpacity(0.5),
+              color: TColors.textPrimary(context).withOpacity(0.5),
             ),
           ),
         ],
@@ -620,7 +614,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildRecentDestinations() {
+  Widget _buildRecentDestinations(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -631,7 +625,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
               Icon(
                 Icons.history_rounded,
                 size: 16,
-                color: AppColors.textColor.withOpacity(0.6),
+                color: TColors.textPrimary(context).withOpacity(0.6),
               ),
               const SizedBox(width: 8),
               Text(
@@ -639,7 +633,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textColor.withOpacity(0.6),
+                  color: TColors.textPrimary(context).withOpacity(0.6),
                 ),
               ),
               const Spacer(),
@@ -660,7 +654,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                   "Effacer",
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.primaryColor,
+                    color: TColors.primary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -670,6 +664,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
         ),
         ...controller.recentLocations.map((location) {
           return _buildDestinationItem(
+            context,
             location.title,
             location.subtitle,
             location.icon,
@@ -679,7 +674,12 @@ class LocationSearchModal extends GetView<SearchViewController> {
     );
   }
 
-  Widget _buildDestinationItem(String title, String subtitle, IconData icon) {
+  Widget _buildDestinationItem(
+    BuildContext context,
+    String title,
+    String subtitle,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -692,7 +692,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
           borderRadius: BorderRadius.circular(14),
           child: Ink(
             decoration: BoxDecoration(
-              color: AppColors.destinationItemColor,
+              color: TColors.surface(context),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Padding(
@@ -702,10 +702,10 @@ class LocationSearchModal extends GetView<SearchViewController> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.iconBackgroundColor,
+                      color: TColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: AppColors.iconColor, size: 20),
+                    child: Icon(icon, color: TColors.primary, size: 20),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -718,7 +718,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.textColor,
+                            color: TColors.textPrimary(context),
                           ),
                         ),
                       ),
@@ -729,7 +729,9 @@ class LocationSearchModal extends GetView<SearchViewController> {
                           subtitle,
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.textColor.withOpacity(0.6),
+                            color: TColors.textPrimary(
+                              context,
+                            ).withOpacity(0.6),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -740,7 +742,7 @@ class LocationSearchModal extends GetView<SearchViewController> {
 
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: AppColors.textColor.withOpacity(0.3),
+                    color: TColors.textPrimary(context).withOpacity(0.3),
                     size: 14,
                   ),
                 ],

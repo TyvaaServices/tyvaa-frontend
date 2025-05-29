@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
-import '../../../themes/tyvaa_theme.dart';
+import '../../../themes/design_system.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
@@ -10,12 +10,8 @@ class ProfileScreen extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    // Define constant accent and danger colors that aren't in AppColors yet
-    final accentColor = Color(0xFF8A6FFF);
-    final dangerColor = Color(0xFFFF5252);
-
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: TColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -24,7 +20,7 @@ class ProfileScreen extends GetView<ProfileController> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
+            color: TColors.textPrimary(context),
           ),
         ),
         actions: [
@@ -33,7 +29,7 @@ class ProfileScreen extends GetView<ProfileController> {
             child: Text(
               'Enregistrer',
               style: TextStyle(
-                color: AppColors.primaryColor,
+                color: TColors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -43,21 +39,21 @@ class ProfileScreen extends GetView<ProfileController> {
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: TSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-              _buildProfileHeader(context, accentColor),
-              SizedBox(height: 40),
+              SizedBox(height: TSpacing.lg),
+              _buildProfileHeader(context),
+              SizedBox(height: TSpacing.xl),
               _buildUserInfoSection(context),
-              SizedBox(height: 30),
+              SizedBox(height: TSpacing.lg),
               _buildRatingsSection(context),
-              SizedBox(height: 30),
+              SizedBox(height: TSpacing.lg),
               // _buildPreferencesSection(context),
-              SizedBox(height: 30),
-              _buildLogoutButton(context, dangerColor),
-              SizedBox(height: 40),
+              SizedBox(height: TSpacing.lg),
+              _buildLogoutButton(context),
+              SizedBox(height: TSpacing.xl),
             ],
           ),
         ),
@@ -65,7 +61,7 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, Color accentColor) {
+  Widget _buildProfileHeader(BuildContext context) {
     return Column(
       children: [
         Stack(
@@ -81,11 +77,11 @@ class ProfileScreen extends GetView<ProfileController> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppColors.primaryColor, accentColor],
+                    colors: [TColors.primary, TColors.accent],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: accentColor.withOpacity(0.3),
+                      color: TColors.accent.withOpacity(0.3),
                       blurRadius: 20,
                       offset: Offset(0, 10),
                     ),
@@ -96,7 +92,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.surfaceColor,
+                      color: TColors.surface(context),
                       image:
                           controller.profileImage.value != null
                               ? DecorationImage(
@@ -125,14 +121,14 @@ class ProfileScreen extends GetView<ProfileController> {
                 child: Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
+                    color: TColors.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
                         color:
-                            AppColors.isDark
+                            Theme.of(context).brightness == Brightness.dark
                                 ? Colors.black26
-                                : AppColors.primaryColor.withOpacity(0.3),
+                                : TColors.primary.withOpacity(0.3),
                         blurRadius: 8,
                         offset: Offset(0, 3),
                       ),
@@ -148,13 +144,13 @@ class ProfileScreen extends GetView<ProfileController> {
             ),
           ],
         ),
-        SizedBox(height: 20),
+        SizedBox(height: TSpacing.lg),
 
         // User name
         Obx(
           () =>
               controller.isEditingName.value
-                  ? _buildNameEditField()
+                  ? _buildNameEditField(context)
                   : GestureDetector(
                     onTap: () => controller.isEditingName.value = true,
                     child: Row(
@@ -165,15 +161,11 @@ class ProfileScreen extends GetView<ProfileController> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textColor,
+                            color: TColors.textPrimary(context),
                           ),
                         ),
                         SizedBox(width: 8),
-                        Icon(
-                          Icons.edit,
-                          size: 18,
-                          color: AppColors.primaryColor,
-                        ),
+                        Icon(Icons.edit, size: 18, color: TColors.primary),
                       ],
                     ),
                   ),
@@ -182,16 +174,16 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildNameEditField() {
+  Widget _buildNameEditField(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
+        color: TColors.surface(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color:
-                AppColors.isDark
+                Theme.of(context).brightness == Brightness.dark
                     ? Colors.black12
                     : Colors.black.withOpacity(0.05),
             blurRadius: 10,
@@ -211,7 +203,7 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           suffixIcon: IconButton(
-            icon: Icon(Icons.check, color: AppColors.primaryColor),
+            icon: Icon(Icons.check, color: TColors.primary),
             onPressed: () {
               controller.user.value!.fullName = controller.nameController.text;
               controller.isEditingName.value = false;
@@ -232,19 +224,19 @@ class ProfileScreen extends GetView<ProfileController> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.textColor,
+              color: TColors.textPrimary(context),
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: TSpacing.md),
           Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(TSpacing.lg),
             decoration: BoxDecoration(
-              color: AppColors.surfaceColor,
+              color: TColors.surface(context),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color:
-                      AppColors.isDark
+                      Theme.of(context).brightness == Brightness.dark
                           ? Colors.black12
                           : Colors.black.withOpacity(0.05),
                   blurRadius: 10,
@@ -294,7 +286,7 @@ class ProfileScreen extends GetView<ProfileController> {
     String value,
     Color iconColor,
   ) {
-    final textColor = AppColors.textColor;
+    final textColor = TColors.textPrimary(context);
 
     return Row(
       children: [
@@ -348,19 +340,19 @@ class ProfileScreen extends GetView<ProfileController> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
+            color: TColors.textPrimary(context),
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: TSpacing.md),
         Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(TSpacing.lg),
           decoration: BoxDecoration(
-            color: AppColors.surfaceColor,
+            color: TColors.surface(context),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color:
-                    AppColors.isDark
+                    Theme.of(context).brightness == Brightness.dark
                         ? Colors.black12
                         : Colors.black.withOpacity(0.05),
                 blurRadius: 10,
@@ -373,14 +365,24 @@ class ProfileScreen extends GetView<ProfileController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildRatingScore('Note globale', '4.8', Colors.amber),
-                  _buildRatingScore('Trajets', '32', Color(0xFF6C63FF)),
-                  _buildRatingScore('Avis', '28', Colors.green),
+                  _buildRatingScore(
+                    'Note globale',
+                    '4.8',
+                    Colors.amber,
+                    context,
+                  ),
+                  _buildRatingScore(
+                    'Trajets',
+                    '32',
+                    Color(0xFF6C63FF),
+                    context,
+                  ),
+                  _buildRatingScore('Avis', '28', Colors.green, context),
                 ],
               ),
-              SizedBox(height: 24),
-              _buildRatingBar(),
-              SizedBox(height: 16),
+              SizedBox(height: TSpacing.xl),
+              _buildRatingBar(context),
+              SizedBox(height: TSpacing.md),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -405,7 +407,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   ),
                   Icon(
                     Icons.arrow_forward_ios,
-                    color: AppColors.textColor.withOpacity(0.3),
+                    color: TColors.textPrimary(context).withOpacity(0.3),
                     size: 16,
                   ),
                 ],
@@ -417,8 +419,13 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildRatingScore(String label, String value, Color color) {
-    final textColor = AppColors.textColor;
+  Widget _buildRatingScore(
+    String label,
+    String value,
+    Color color,
+    BuildContext context,
+  ) {
+    final textColor = TColors.textPrimary(context);
 
     return Column(
       children: [
@@ -449,11 +456,14 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildRatingBar() {
+  Widget _buildRatingBar(BuildContext context) {
     return Container(
       height: 8,
       decoration: BoxDecoration(
-        color: AppColors.isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        color:
+            Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey.shade800
+                : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -475,18 +485,18 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context, Color dangerColor) {
-    final textColor = AppColors.textColor;
+  Widget _buildLogoutButton(BuildContext context) {
+    final textColor = TColors.textPrimary(context);
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
+        color: TColors.surface(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color:
-                AppColors.isDark
+                Theme.of(context).brightness == Brightness.dark
                     ? Colors.black12
                     : Colors.black.withOpacity(0.05),
             blurRadius: 10,
@@ -523,7 +533,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       },
                       child: Text(
                         'Déconnexion',
-                        style: TextStyle(color: dangerColor),
+                        style: TextStyle(color: TColors.error),
                       ),
                     ),
                   ],
@@ -536,14 +546,14 @@ class ProfileScreen extends GetView<ProfileController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.logout_rounded, color: dangerColor, size: 24),
+                Icon(Icons.logout_rounded, color: TColors.error, size: 24),
                 SizedBox(width: 12),
                 Text(
                   'Déconnexion',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: dangerColor,
+                    color: TColors.error,
                   ),
                 ),
               ],
