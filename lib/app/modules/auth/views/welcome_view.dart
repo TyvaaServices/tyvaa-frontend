@@ -2,7 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -36,7 +36,7 @@ class _WelcomeViewState extends State<WelcomeView> {
     final name = (Get.arguments?['name'] ?? '').toString();
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: TColors.background(context),
       body: Stack(
         children: [
           // Decorative background
@@ -48,7 +48,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               height: Get.width * .85,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primaryColor.withOpacity(.12),
+                color: TColors.primary.withOpacity(.12),
               ),
             ),
           ),
@@ -60,7 +60,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               height: Get.width * .7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primaryColor.withOpacity(.08),
+                color: TColors.primary.withOpacity(.08),
               ),
             ),
           ),
@@ -76,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               maxBlastForce: 25,
               minBlastForce: 10,
               colors: [
-                AppColors.primaryColor,
+                TColors.primary,
                 Colors.amber,
                 Colors.greenAccent,
                 Colors.blueAccent,
@@ -91,7 +91,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: AppColors.cardColor,
+                    color: TColors.surface(context),
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
@@ -116,7 +116,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textColor,
+                          color: TColors.textPrimary(context),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -125,7 +125,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         "Votre inscription a été réussie.\nNous sommes ravis de vous compter parmi nous.",
                         style: TextStyle(
                           fontSize: 17,
-                          color: AppColors.secondaryTextColor,
+                          color: TColors.textSecondary(context),
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -139,7 +139,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                             Get.offAllNamed('/main');
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
+                            backgroundColor: TColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
