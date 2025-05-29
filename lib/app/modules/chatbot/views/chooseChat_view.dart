@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/chatbot/controllers/chatbot_controller.dart';
+import 'package:passenger_tyvaa/app/themes/design_system.dart';
 import 'package:passenger_tyvaa/app/widgets/chatbot/chat_bot_card.dart';
 import 'package:passenger_tyvaa/app/widgets/typing_indicator.dart';
 
@@ -56,24 +57,16 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
               children: [
                 SizedBox(height: 40),
                 // Animated header
-                ShaderMask(
-                  shaderCallback: (bounds) {
-                    return LinearGradient(
-                      colors: [accentBlue, accentRed],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds);
-                  },
-                  child: Text(
-                    "Rencontrez votre compagnon de voyage",
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      height: 1.2,
-                    ),
+                Text(
+                  "Rencontrez votre compagnon de voyage",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    color: TColors.primary,
+                    height: 1.2,
                   ),
                 ),
+
                 SizedBox(height: 16),
                 Text(
                   "Choisissez l'assistant qui vous accompagnera dans votre parcours",
@@ -128,8 +121,8 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
           imagePath: 'assets/chatbot_pic/oulyx_avatar.png',
           isSelected: controller.selectedChatbot.value == 'Oulyx',
           onPressed: () => controller.selectedChatbot.value = 'Oulyx',
-          primaryColor: accentBlue,
-          secondaryColor: accentBlue.withOpacity(0.1),
+          primaryColor: TColors.primary,
+          secondaryColor: TColors.primary.withOpacity(0.1),
           cardColor: cardColor,
           textColor: textColor,
         ),
@@ -158,12 +151,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
     Color textColor,
   ) {
     final bool hasSelection = controller.selectedChatbot.value.isNotEmpty;
-    final Color buttonColor =
-        controller.selectedChatbot.value == 'Oulyx'
-            ? Color(0xFF3370FF)
-            : controller.selectedChatbot.value == 'Chyx'
-            ? Color(0xFFFF4757)
-            : Colors.grey;
+    final Color buttonColor = TColors.primary;
 
     return Container(
       padding: EdgeInsets.all(24),
@@ -268,7 +256,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
   ) {
     final botColor =
         controller.selectedChatbot.value == 'Oulyx'
-            ? Color(0xFF3370FF)
+            ? TColors.primary
             : Color(0xFFFF4757);
 
     final backgroundColor = isDark ? Color(0xFF121212) : Color(0xFFF8F9FD);
@@ -312,7 +300,10 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
                     message: message.text,
                     isUserMessage: message.isUserMessage,
                     timestamp: message.timestamp,
-                    botColor: botColor,
+                    botColor:
+                        controller.selectedChatbot.value == 'Oulyx'
+                            ? TColors.primary
+                            : Color(0xFFFF4757),
                     isDark: isDark,
                     isFirst:
                         index == 0 ||
@@ -329,7 +320,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
               );
             }),
           ),
-          _buildMessageInput(controller, isDark, botColor),
+          _buildMessageInput(controller, isDark, botColor, context),
         ],
       ),
     );
@@ -471,7 +462,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
               padding: EdgeInsets.all(2),
               child: CircleAvatar(
                 backgroundImage: AssetImage(
-                  botColor == Color(0xFF3370FF)
+                  botColor == TColors.primary
                       ? 'assets/chatbot_pic/oulyx_avatar.png'
                       : 'assets/chatbot_pic/chyx_avatar.png',
                 ),
@@ -489,7 +480,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
                     isUserMessage
                         ? botColor
                         : isDark
-                        ? Color(0xFF2A2A2A)
+                        ? TColors.primary
                         : botColor.withOpacity(0.08),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(isUserMessage || !isFirst ? 18 : 4),
@@ -572,9 +563,10 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
     ChatbotController controller,
     bool isDark,
     Color botColor,
+    BuildContext context,
   ) {
-    final backgroundColor = isDark ? Color(0xFF1A1A1A) : Colors.white;
-    final textColor = isDark ? Colors.white : Color(0xFF2D3142);
+    final backgroundColor = isDark ? TColors.primary : Colors.white;
+    final textColor = isDark ? Colors.white : TColors.primary;
 
     return Container(
       padding: EdgeInsets.all(16),
@@ -590,15 +582,6 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
       ),
       child: Row(
         children: [
-          // Optional icons
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: textColor.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.mic, color: textColor.withOpacity(0.7), size: 20),
-          ),
           SizedBox(width: 12),
           // Text field
           Expanded(
@@ -611,10 +594,7 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
                 controller: controller.messageController,
                 decoration: InputDecoration(
                   hintText: 'Tapez votre message...',
-                  hintStyle: TextStyle(
-                    color: textColor.withOpacity(0.5),
-                    fontSize: 15,
-                  ),
+                  hintStyle: TTextStyles.bodySecondary(context),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16,
@@ -640,19 +620,8 @@ class ChooseChatbotScreen extends GetView<ChatbotController> {
                 child: Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [botColor, botColor.withOpacity(0.8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: TColors.primary,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: botColor.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Icon(Icons.send, color: Colors.white, size: 20),
                 ),
