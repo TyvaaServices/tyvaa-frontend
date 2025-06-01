@@ -220,7 +220,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        controller.user.value?.fullName ?? "avatar-1",
+                        controller.user.value.fullName ?? "avatar-1",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -397,8 +397,100 @@ class ProfileScreen extends GetView<ProfileController> {
               Colors.green,
             ),
           ),
+
+          SizedBox(height: TSpacing.lg),
+          Obx(
+            () => _buildRoleRow(
+              context,
+              Icons.person_rounded,
+              'Statut',
+              controller.user.value.isDriver == true
+                  ? 'Conducteur'
+                  : 'Passager',
+              controller.user.value.isVerified == true,
+              Colors.purple,
+            ),
+          ),
+          SizedBox(height: TSpacing.lg),
+          Obx(
+            () => _buildInfoRow(
+              context,
+              Icons.cake,
+              'Date de naissance',
+              Jiffy.parseFromDateTime(
+                controller.user.value.dateOfBirth!,
+              ).format(pattern: 'dd MMMM yyyy'),
+              Colors.orange,
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRoleRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    bool isVerified,
+    Color iconColor,
+  ) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        SizedBox(width: TSpacing.lg),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: TColors.textPrimary(context).withOpacity(0.6),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: TColors.textPrimary(context),
+                    ),
+                  ),
+                  if (isVerified) ...[
+                    SizedBox(width: 8),
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: TColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.verified_rounded,
+                        color: TColors.primary,
+                        size: 16,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

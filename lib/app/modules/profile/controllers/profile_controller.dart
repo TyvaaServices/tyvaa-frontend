@@ -13,7 +13,7 @@ import '../../../../domain/entities/user.dart';
 import '../../../services/synchronization_service.dart';
 
 class ProfileController extends GetxController {
-  Rx<User?> user = Rx<User?>(null);
+  Rx<User> user = Rx<User>(User());
   final userName = 'Cheikh Tidiane'.obs;
   final phoneNumber = ''.obs;
   final TextEditingController nameController = TextEditingController();
