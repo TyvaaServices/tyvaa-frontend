@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/auth/controllers/login_controller.dart';
 
+import '../../../../generated/assets.dart';
 import '../controllers/otp_controller.dart';
 
 class OtpVerificationScreen extends GetView<OtpVerificationController> {
@@ -62,8 +63,8 @@ class OtpVerificationScreen extends GetView<OtpVerificationController> {
                   child: Center(
                     child: Image.asset(
                       isDark
-                          ? 'assets/otp_illustration.png'
-                          : 'assets/otp_illustration.png',
+                          ? Assets.assetsOtpIllustration
+                          : Assets.assetsOtpIllustration,
                       width: size.width * 0.6,
                       fit: BoxFit.contain,
                     ),

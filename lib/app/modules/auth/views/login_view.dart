@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/modules/auth/views/register_view.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
+import '../../../../generated/assets.dart';
 import '../controllers/login_controller.dart';
 
 class LoginScreen extends GetView<LoginController> {
@@ -66,7 +67,7 @@ class LoginScreen extends GetView<LoginController> {
                         AspectRatio(
                           aspectRatio: 1 / 1,
                           child: Image.asset(
-                            'assets/login_illustration.png',
+                            Assets.assetsLoginIllustration,
                             fit: BoxFit.contain,
                             height:
                                 Get.bottomBarHeight > 0
@@ -156,7 +157,7 @@ class LoginScreen extends GetView<LoginController> {
                                                   borderRadius:
                                                       BorderRadius.circular(4),
                                                   child: Image.asset(
-                                                    'assets/flags/sn.png',
+                                                    Assets.flagsSn,
                                                     width: 24,
                                                     height: 18,
                                                     fit: BoxFit.cover,
@@ -395,7 +396,7 @@ class LoginScreen extends GetView<LoginController> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Lottie.asset(
-                                'assets/animations/loading.json',
+                                Assets.animationsLoading,
                                 width: 120,
                                 height: 120,
                               ),
