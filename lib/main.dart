@@ -27,6 +27,7 @@ void main() async {
 
   final storage = FlutterSecureStorage();
   final token = await storage.read(key: "auth_token");
+  print("un token ici :" + token!);
   // await storage.deleteAll();
   Jiffy.setLocale('fr');
   runApp(
@@ -39,7 +40,7 @@ void main() async {
         // TODO: Replace with Get.deviceLocale in production
         fallbackLocale: Locale('en'),
         //tu intervertis ici rek si tu veux sauter le login
-        initialRoute: token != null ? AppPages.INITIAL : Routes.LOGIN,
+        initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,

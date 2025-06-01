@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +36,10 @@ class NotificationService extends GetxService {
     // Get FCM token
     String? token = await _firebaseMessaging.getToken();
     print('FCM Token: $token');
+    if (token != null) {
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'fcm_token', value: token);
+    }
 
     // Save FCM token to your backend using ApiClient
     _saveFCMTokenToBackend(token);
