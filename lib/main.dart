@@ -11,8 +11,8 @@ import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 // Import deprecated theme for backward compatibility until migration is complete
 // @deprecated - Will be removed in future versions
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart'
-    hide lightTheme, darkTheme;
+// import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart'
+//     hide lightTheme, darkTheme;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -39,7 +39,7 @@ void main() async {
         // TODO: Replace with Get.deviceLocale in production
         fallbackLocale: Locale('en'),
         //tu intervertis ici rek si tu veux sauter le login
-        initialRoute: token == null ? AppPages.INITIAL : Routes.LOGIN,
+        initialRoute: token != null ? AppPages.INITIAL : Routes.LOGIN,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,
