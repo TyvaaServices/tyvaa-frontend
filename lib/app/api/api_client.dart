@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/app/modules/auth/controllers/login_controller.dart';
+import 'package:passenger_tyvaa/app/modules/auth/controllers/register_controller.dart';
+import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
@@ -78,52 +81,69 @@ class ApiClient {
   }
 
   // Updated: Return null if register fails, otherwise the full response
-  Future<Map<String, dynamic>?> registerUser(
-    String fullName,
-    String phoneNumber, {
-    bool isDriver = false,
-  }) async {
-    if (!_connectivityController.hasInternet.value) {
-      logger.w('No internet connection. Unable to register user.');
-      return null;
-    }
+  // Future<Map<String, dynamic>?> registerUser(
+  //   String fullName,
+  //   String phoneNumber, {
+  //   bool isDriver = false,
+  // }) async {
+  //   if (!_connectivityController.hasInternet.value) {
+  //     logger.w('No internet connection. Unable to register user.');
+  //     return null;
+  //   }
+  //
+  //   try {
+  //     final response = await dio.post(
+  //       '/users/register',
+  //       data: {
+  //         'fullName': fullName,
+  //         'phoneNumber': phoneNumber,
+  //         'isDriver': isDriver,
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 201) {
+  //       final data = response.data;
+  //       logger.d('User registered successfully');
+  //       return {
+  //         'user': data['user'],
+  //         'otp': data['otp'],
+  //         'token': data['token'],
+  //       };
+  //     } else {
+  //       logger.e('Failed to register user: ${response.statusCode}');
+  //       return null;
+  //     }
+  //   } on DioException catch (e) {
+  //     logger.e('Error registering user: ${e.message}');
+  //     return null;
+  //   }
+  // }
 
-    try {
-      final response = await dio.post(
-        '/users/register',
-        data: {
-          'fullName': fullName,
-          'phoneNumber': phoneNumber,
-          'isDriver': isDriver,
-        },
-      );
-
-      if (response.statusCode == 201) {
-        final data = response.data;
-        logger.d('User registered successfully');
-        return {
-          'user': data['user'],
-          'otp': data['otp'],
-          'token': data['token'],
-        };
-      } else {
-        logger.e('Failed to register user: ${response.statusCode}');
-        return null;
-      }
-    } on DioException catch (e) {
-      logger.e('Error registering user: ${e.message}');
-      return null;
-    }
-  }
-
-  Future<bool> updateUserProfile(User user) async {
+  Future<bool> updateUserProfile(
+    User user,
+    ProfileController controller,
+  ) async {
     if (!_connectivityController.hasInternet.value) {
       logger.w('No internet connection. User update queued for later sync.');
       return false;
     }
 
     try {
-      final response = await dio.put('/users/${user.id}', data: user.toJson());
+      FormData formData = FormData.fromMap({
+        ...user.toJson(),
+        if (controller.profileImage.value != null)
+          'profile_image': await MultipartFile.fromFile(
+            controller.profileImage.value!.path,
+            filename: controller.profileImage.value!.path.split('/').last,
+          ),
+      });
+
+      final response = await dio.put(
+        '/users/${user.id}',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
       logger.d('User profile updated successfully on server');
       return response.statusCode == 200;
     } on DioException catch (e) {
@@ -132,10 +152,10 @@ class ApiClient {
     }
   }
 
-  Future<Map<String, dynamic>?> loginUser(String phoneNumber) async {
+  Future<bool> loginUser(String phoneNumber, LoginController controller) async {
     if (!_connectivityController.hasInternet.value) {
       logger.w('No internet connection. Unable to login.');
-      return null;
+      return false;
     }
 
     try {
@@ -146,19 +166,34 @@ class ApiClient {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        controller.otp = data['otp'];
+        controller.token = data['token'];
+        controller.user = User.fromJson(response.data['user']);
         logger.d('User login successful');
-        return {
-          'user': data['user'],
-          'otp': data['otp'],
-          'token': data['token'],
-        };
+        return true;
       } else {
         logger.e('Failed to login user: ${response.statusCode}');
-        return null;
+        return false;
       }
     } on DioException catch (e) {
       logger.e('Error logging in user: ${e.message}');
-      return null;
+      return false;
+    }
+  }
+
+  Future<bool> registerUser(User user, RegisterController controller) async {
+    try {
+      final response = await dio.post('/users/register', data: user.toJson());
+      if (response.statusCode == 201) {
+        controller.otp = response.data['otp'];
+        controller.token = response.data['token'];
+        controller.user = User.fromJson(response.data['user']);
+        return true;
+      } else {
+        return false;
+      }
+    } on DioException catch (e) {
+      return false;
     }
   }
 }
