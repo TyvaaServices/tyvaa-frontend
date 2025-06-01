@@ -129,7 +129,7 @@ class HomeScreen extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Salut, ${profileController.nameController.text} 👋',
+                'Salut, ${profileController.user.value!.fullName} 👋',
                 style: TTypography.headingSmall(context),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
