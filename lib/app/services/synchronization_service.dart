@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 
 import '../../domain/entities/user.dart';
 import '../api/api_client.dart';
@@ -90,8 +91,11 @@ class SynchronizationService extends GetxService {
         logger.d('No current user in Hive, nothing to sync');
         return;
       }
-
-      final success = await apiClient.updateUserProfile(currentUser);
+      final ProfileController profileController = Get.find<ProfileController>();
+      final success = await apiClient.updateUserProfile(
+        currentUser,
+        profileController,
+      );
 
       if (success) {
         _hasPendingChanges.value = false;
