@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/controllers/location_permission_controller.dart';
 import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+import '../../../../generated/assets.dart';
 import '../../../themes/design_system.dart';
 
 class LocationPermissionScreen extends GetView<LocationPermissionController> {
@@ -56,7 +57,7 @@ class LocationPermissionScreen extends GetView<LocationPermissionController> {
                             width: Get.width * 0.6,
                             height: Get.width * 0.6,
                             child: Lottie.asset(
-                              'assets/animations/location_permission.json',
+                              Assets.animationsLocationPermission,
                               fit: BoxFit.contain,
                             ),
                           ),

@@ -14,6 +14,8 @@ class Assets {
   static const String assetsPromo1 = 'assets/promo1.png';
   static const String assetsPromo2 = 'assets/promo2.png';
   static const String assetsPromo3 = 'assets/promo3.png';
+  static const String assetsRegisterIllustration =
+      'assets/register_illustration.png';
   static const String chatbotPicChyxAvatar =
       'assets/chatbot_pic/chyx_avatar.png';
   static const String chatbotPicOulyxAvatar =
@@ -33,4 +35,6 @@ class Assets {
       'assets/images/publier_trajet_3.png';
   static const String imagesPublierTrajet4 =
       'assets/images/publier_trajet_4.png';
+  static const String passengerTyvaaAssetsRegisterIllustration =
+      'assets/register_illustration.png';
 }
