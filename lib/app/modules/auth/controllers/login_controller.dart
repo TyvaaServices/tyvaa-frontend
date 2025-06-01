@@ -17,6 +17,7 @@ class LoginController extends GetxController
     mask: '+221 ## ### ## ##',
     filter: {"#": RegExp(r'\d')},
   );
+  User user = User();
 
   late AnimationController animationController;
   late Animation<double> fadeInAnimation;
@@ -35,6 +36,8 @@ class LoginController extends GetxController
   final _userRepository = UserRepository();
   final _connectivityController = Get.find<ConnectivityController>();
   final _logger = Logger();
+  String otp = '';
+  String token = '';
 
   @override
   void onInit() {
@@ -111,9 +114,9 @@ class LoginController extends GetxController
       }
 
       // Online login flow
-      final response = await _apiClient.loginUser(unmasked.value);
+      final response = await _apiClient.loginUser(unmasked.value, this);
 
-      if (response == null) {
+      if (!response) {
         isLoading.value = false;
         Get.snackbar(
           'Erreur',
@@ -124,14 +127,12 @@ class LoginController extends GetxController
         return;
       }
 
-      // Save user to local storage using repository
-      final user = User.fromJson(response['user']);
       await _userRepository.saveUser(user);
       _logger.d('User saved to local storage after login: ${user.fullName}');
 
       isLoading.value = false;
       // Navigate to OTP verification
-      Get.toNamed('/otp', arguments: [response['otp'], response['token']]);
+      Get.toNamed('/otp', arguments: [otp, token]);
     } catch (e) {
       HapticFeedback.heavyImpact();
       _logger.e('Login error: $e');
