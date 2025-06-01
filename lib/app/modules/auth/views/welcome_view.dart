@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
+import '../../../../generated/assets.dart';
+
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
 
@@ -105,7 +107,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Lottie.asset(
-                        'assets/animations/succes.json',
+                        Assets.animationsSucces,
                         width: 140,
                         height: 140,
                         repeat: false,
