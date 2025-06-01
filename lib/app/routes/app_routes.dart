@@ -21,6 +21,7 @@ abstract class Routes {
   static const RIDE_SEARCH = _Paths.RIDE_SEARCH;
   static const RIDE_DETAILS = _Paths.RIDE_DETAILS;
   static const DRIVER_VERIFICATION = _Paths.DRIVER_VERIFICATION;
+  static const WELCOMEVIEW = _Paths.WELCOMEVIEW;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const RIDE_SEARCH = '/ride-search';
   static const RIDE_DETAILS = '/ride-details';
   static const DRIVER_VERIFICATION = '/driver-verification';
+  static const WELCOMEVIEW = '/welcome';
 }
