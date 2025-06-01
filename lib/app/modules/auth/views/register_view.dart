@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:passenger_tyvaa/generated/assets.dart';
 
 import '../controllers/register_controller.dart';
 
@@ -157,7 +158,7 @@ class RegisterScreen extends GetView<RegisterController> {
               AspectRatio(
                 aspectRatio: 1 / 1,
                 child: Image.asset(
-                  'assets/login_illustration.png',
+                  Assets.assetsRegisterIllustration,
                   fit: BoxFit.contain,
                   height:
                       Get.bottomBarHeight > 0 ? height * 0.2 : height * 0.35,
@@ -239,7 +240,7 @@ class RegisterScreen extends GetView<RegisterController> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(4),
                                       child: Image.asset(
-                                        'assets/flags/sn.png',
+                                        Assets.flagsSn,
                                         width: 24,
                                         height: 18,
                                         fit: BoxFit.cover,
@@ -879,7 +880,7 @@ class RegisterScreen extends GetView<RegisterController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Lottie.asset(
-                          'assets/animations/loading.json',
+                          Assets.animationsLoading,
                           width: 120,
                           height: 120,
                         ),
