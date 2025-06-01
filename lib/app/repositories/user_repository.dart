@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
@@ -5,10 +6,15 @@ import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
+import '../modules/profile/controllers/profile_controller.dart';
+import '../services/synchronization_service.dart';
+
 class UserRepository {
   final _logger = Logger();
   final _userBox = Hive.box<User>('users');
   final ApiClient _apiClient = Get.find<ApiClient>();
+
+  final synchronize = Get.find<SynchronizationService>();
   final ConnectivityController _connectivity =
       Get.find<ConnectivityController>();
 
@@ -32,7 +38,11 @@ class UserRepository {
   /// Saves user to local storage after receiving from remote
   Future<bool> saveUser(User user) async {
     try {
+      final FlutterSecureStorage storage = const FlutterSecureStorage();
+      final String? fcmToken = await storage.read(key: 'fcm_token');
+      user.fcmToken = fcmToken;
       await _userBox.put('currentUser', user);
+      synchronize.markUserChanged();
       _logger.d('User saved to local storage: ${user.fullName}');
       return true;
     } catch (e) {
@@ -69,7 +79,11 @@ class UserRepository {
     }
 
     try {
-      final result = await _apiClient.updateUserProfile(user);
+      final ProfileController profileController = Get.find<ProfileController>();
+      final result = await _apiClient.updateUserProfile(
+        user,
+        profileController,
+      );
       return result;
     } catch (e) {
       _logger.e('Error synchronizing user data: $e');
