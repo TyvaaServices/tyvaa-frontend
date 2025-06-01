@@ -41,6 +41,15 @@ class User extends HiveObject {
   double? longitude;
 
   @HiveField(12)
+  final DateTime dateOfBirth;
+
+  @HiveField(13)
+  final String sexe;
+
+  @HiveField(14)
+  final String? email;
+
+  @HiveField(15)
   final DateTime createdAt;
 
   User({
@@ -51,6 +60,9 @@ class User extends HiveObject {
     required this.isVerified,
     required this.isBlocked,
     required this.createdAt,
+    required this.dateOfBirth,
+    required this.sexe,
+    this.email,
     this.fullName,
     this.fcmToken,
     this.driverLicense,
@@ -71,6 +83,9 @@ class User extends HiveObject {
       fcmToken: json['fcmToken'],
       driverLicense: json['driverLicense'],
       carImage: json['carImage'],
+      dateOfBirth: DateTime.parse(json['dateOfBirth']),
+      sexe: json['sexe'],
+      email: json['email'],
       latitude:
           json['latitude'] != null
               ? (json['latitude'] as num).toDouble()
@@ -93,6 +108,9 @@ class User extends HiveObject {
       'isBlocked': isBlocked,
       'nomComplet': fullName,
       'fcmToken': fcmToken,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'sexe': sexe,
+      'email': email,
       'driverLicense': driverLicense,
       'carImage': carImage,
       'latitude': latitude,

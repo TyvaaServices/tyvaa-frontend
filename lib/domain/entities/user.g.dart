@@ -23,7 +23,10 @@ class UserAdapter extends TypeAdapter<User> {
       isDriver: fields[3] as bool,
       isVerified: fields[4] as bool,
       isBlocked: fields[5] as bool,
-      createdAt: fields[12] as DateTime,
+      createdAt: fields[15] as DateTime,
+      dateOfBirth: fields[12] as DateTime,
+      sexe: fields[13] as String,
+      email: fields[14] as String?,
       fullName: fields[6] as String?,
       fcmToken: fields[7] as String?,
       driverLicense: fields[8] as String?,
@@ -36,7 +39,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,6 +65,12 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(11)
       ..write(obj.longitude)
       ..writeByte(12)
+      ..write(obj.dateOfBirth)
+      ..writeByte(13)
+      ..write(obj.sexe)
+      ..writeByte(14)
+      ..write(obj.email)
+      ..writeByte(15)
       ..write(obj.createdAt);
   }
 
