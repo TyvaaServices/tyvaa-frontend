@@ -5,22 +5,22 @@ part 'user.g.dart';
 @HiveType(typeId: 0)
 class User extends HiveObject {
   @HiveField(0)
-  final int id;
+  int? id;
 
   @HiveField(1)
-  final String phoneNumber;
+  String? phoneNumber;
 
   @HiveField(2)
-  bool isOnline;
+  bool? isOnline;
 
   @HiveField(3)
-  bool isDriver;
+  bool? isDriver;
 
   @HiveField(4)
-  bool isVerified;
+  bool? isVerified;
 
   @HiveField(5)
-  bool isBlocked;
+  bool? isBlocked;
 
   @HiveField(6)
   String? fullName;
@@ -41,27 +41,27 @@ class User extends HiveObject {
   double? longitude;
 
   @HiveField(12)
-  final DateTime dateOfBirth;
+  DateTime? dateOfBirth;
 
   @HiveField(13)
-  final String sexe;
+  String? sexe;
 
   @HiveField(14)
-  final String? email;
+  String? email;
 
   @HiveField(15)
-  final DateTime createdAt;
+  DateTime? createdAt;
 
   User({
-    required this.id,
-    required this.phoneNumber,
-    required this.isOnline,
-    required this.isDriver,
-    required this.isVerified,
-    required this.isBlocked,
-    required this.createdAt,
-    required this.dateOfBirth,
-    required this.sexe,
+    this.id,
+    this.phoneNumber,
+    this.isOnline,
+    this.isDriver,
+    this.isVerified,
+    this.isBlocked,
+    this.createdAt,
+    this.dateOfBirth,
+    this.sexe,
     this.email,
     this.fullName,
     this.fcmToken,
@@ -102,20 +102,21 @@ class User extends HiveObject {
     return {
       'id': id,
       'phoneNumber': phoneNumber,
+      "fullName": fullName,
       'isOnline': isOnline,
       'isDriver': isDriver,
       'isVerified': isVerified,
       'isBlocked': isBlocked,
       'nomComplet': fullName,
       'fcmToken': fcmToken,
-      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'dateOfBirth': dateOfBirth?.toIso8601String(),
       'sexe': sexe,
       'email': email,
       'driverLicense': driverLicense,
       'carImage': carImage,
       'latitude': latitude,
       'longitude': longitude,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 }
