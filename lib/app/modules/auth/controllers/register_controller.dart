@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
+import '../../../../domain/entities/user.dart';
+import '../../../repositories/user_repository.dart';
 import '../../../themes/design_system.dart';
 
 class RegisterController extends GetxController
@@ -10,6 +13,11 @@ class RegisterController extends GetxController
   late PageController pageController;
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
+  final UserRepository _userRepository = UserRepository();
+  final apiClient = ApiClient();
+  String otp = '';
+  String token = '';
+  late User user;
 
   final formKeys = [
     GlobalKey<FormState>(),
@@ -35,7 +43,7 @@ class RegisterController extends GetxController
   final currentStep = 0.obs;
   final isLoading = false.obs;
   final selectedDate = Rxn<DateTime>();
-  final selectedGender = ''.obs;
+  final selectedSexe = ''.obs;
 
   final isPhoneValid = false.obs;
   final hasPhoneInput = false.obs;
@@ -45,6 +53,7 @@ class RegisterController extends GetxController
   @override
   void onInit() {
     super.onInit();
+    user = User();
     pageController = PageController();
     animationController = AnimationController(
       duration: TAnimations.medium,
@@ -65,12 +74,14 @@ class RegisterController extends GetxController
     final phone = phoneMask.unmaskText(phoneController.text);
     hasPhoneInput.value = phone.isNotEmpty;
     isPhoneValid.value = phone.length >= 9;
+    user.phoneNumber = phone;
   }
 
   void _validateNames() {
     isNameValid.value =
         firstNameController.text.trim().length >= 2 &&
         lastNameController.text.trim().length >= 2;
+    user.fullName = '${firstNameController.text} ${lastNameController.text}';
   }
 
   void _validateDetails() {
@@ -78,7 +89,7 @@ class RegisterController extends GetxController
     isDetailsValid.value =
         (email.isEmpty || GetUtils.isEmail(email)) &&
         selectedDate.value != null &&
-        selectedGender.value.isNotEmpty;
+        selectedSexe.value.isNotEmpty;
   }
 
   void nextStep() {
@@ -142,13 +153,15 @@ class RegisterController extends GetxController
 
     if (date != null) {
       selectedDate.value = date;
+      user.dateOfBirth = selectedDate.value!;
       _validateDetails();
     }
   }
 
-  void selectGender(String gender) {
-    selectedGender.value = gender;
+  void selectSexe(String gender) {
+    selectedSexe.value = gender;
     _validateDetails();
+    user.sexe = selectedSexe.value;
   }
 
   Future<void> _handleRegistration() async {
@@ -157,8 +170,13 @@ class RegisterController extends GetxController
     isLoading.value = true;
 
     await Future.delayed(const Duration(seconds: 2));
+    final isDone = await apiClient.registerUser(user, this);
 
     isLoading.value = false;
+    if (!isDone) return;
+    await _userRepository.saveUser(user);
+    print("full username ${user.fullName}");
+
     Get.snackbar(
       'Succès',
       'Compte créé avec succès!',
@@ -168,7 +186,7 @@ class RegisterController extends GetxController
     );
 
     await Future.delayed(const Duration(seconds: 2));
-    Get.offAllNamed(Routes.WELCOMEVIEW);
+    Get.offAllNamed(Routes.OTP, arguments: [otp, token]);
   }
 
   @override

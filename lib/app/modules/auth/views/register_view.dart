@@ -610,19 +610,19 @@ class RegisterScreen extends GetView<RegisterController> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => controller.selectGender('Homme'),
+                            onTap: () => controller.selectSexe('male'),
                             child: Container(
                               padding: const EdgeInsets.all(TSpacing.md),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(TRadius.lg),
                                 border: Border.all(
                                   color:
-                                      controller.selectedGender.value == 'Homme'
+                                      controller.selectedSexe.value == 'male'
                                           ? TColors.primary
                                           : TColors.neutral300,
                                 ),
                                 color:
-                                    controller.selectedGender.value == 'Homme'
+                                    controller.selectedSexe.value == 'male'
                                         ? TColors.primary.withOpacity(.1)
                                         : TColors.neutral200,
                               ),
@@ -632,8 +632,7 @@ class RegisterScreen extends GetView<RegisterController> {
                                   Icon(
                                     Icons.male_rounded,
                                     color:
-                                        controller.selectedGender.value ==
-                                                'Homme'
+                                        controller.selectedSexe.value == 'male'
                                             ? TColors.primary
                                             : TColors.textSecondary(context),
                                   ),
@@ -644,13 +643,13 @@ class RegisterScreen extends GetView<RegisterController> {
                                       context,
                                     ).copyWith(
                                       color:
-                                          controller.selectedGender.value ==
-                                                  'Homme'
+                                          controller.selectedSexe.value ==
+                                                  'male'
                                               ? TColors.primary
                                               : TColors.textSecondary(context),
                                       fontWeight:
-                                          controller.selectedGender.value ==
-                                                  'Homme'
+                                          controller.selectedSexe.value ==
+                                                  'male'
                                               ? FontWeight.w600
                                               : FontWeight.w400,
                                     ),
@@ -663,19 +662,19 @@ class RegisterScreen extends GetView<RegisterController> {
                         const SizedBox(width: TSpacing.md),
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => controller.selectGender('Femme'),
+                            onTap: () => controller.selectSexe('female'),
                             child: Container(
                               padding: const EdgeInsets.all(TSpacing.md),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(TRadius.lg),
                                 border: Border.all(
                                   color:
-                                      controller.selectedGender.value == 'Femme'
+                                      controller.selectedSexe.value == 'female'
                                           ? TColors.primary
                                           : TColors.neutral300,
                                 ),
                                 color:
-                                    controller.selectedGender.value == 'Femme'
+                                    controller.selectedSexe.value == 'female'
                                         ? TColors.primary.withOpacity(.1)
                                         : TColors.neutral200,
                               ),
@@ -685,8 +684,8 @@ class RegisterScreen extends GetView<RegisterController> {
                                   Icon(
                                     Icons.female_rounded,
                                     color:
-                                        controller.selectedGender.value ==
-                                                'Femme'
+                                        controller.selectedSexe.value ==
+                                                'female'
                                             ? TColors.primary
                                             : TColors.textSecondary(context),
                                   ),
@@ -697,13 +696,13 @@ class RegisterScreen extends GetView<RegisterController> {
                                       context,
                                     ).copyWith(
                                       color:
-                                          controller.selectedGender.value ==
-                                                  'Femme'
+                                          controller.selectedSexe.value ==
+                                                  'female'
                                               ? TColors.primary
                                               : TColors.textSecondary(context),
                                       fontWeight:
-                                          controller.selectedGender.value ==
-                                                  'Femme'
+                                          controller.selectedSexe.value ==
+                                                  'female'
                                               ? FontWeight.w600
                                               : FontWeight.w400,
                                     ),
