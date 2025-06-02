@@ -132,13 +132,11 @@ class RegisterController extends GetxController
   Future<void> selectDate(BuildContext context) async {
     final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(
-        const Duration(days: 6570),
-      ), // 18 years ago
+      initialDate: DateTime.now().subtract(const Duration(days: 6570)),
+      // 18 years ago
       firstDate: DateTime(1950),
-      lastDate: DateTime.now().subtract(
-        const Duration(days: 4380),
-      ), // 12 years ago
+      lastDate: DateTime.now().subtract(const Duration(days: 4380)),
+      // 12 years ago
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

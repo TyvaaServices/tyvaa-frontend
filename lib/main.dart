@@ -9,6 +9,7 @@ import 'package:passenger_tyvaa/app/i18n/translations.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+
 // Import deprecated theme for backward compatibility until migration is complete
 // @deprecated - Will be removed in future versions
 // import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart'

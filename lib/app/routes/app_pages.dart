@@ -14,8 +14,8 @@ import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permis
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
 import 'package:passenger_tyvaa/app/modules/publish_ride/views/publish_ride_view.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/bindings/ride_search_binding.dart';
-import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_search_view.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_details_view.dart';
+import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_search_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';

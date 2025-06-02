@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/controllers/ride_search_controller.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_details_view.dart';
-import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 import '../bindings/ride_search_binding.dart';

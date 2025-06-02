@@ -72,9 +72,13 @@ class TRadius {
   static const double pill = 100.0;
 
   static BorderRadius get buttonRadius => BorderRadius.circular(lg);
+
   static BorderRadius get cardRadius => BorderRadius.circular(lg);
+
   static BorderRadius get inputRadius => BorderRadius.circular(md);
+
   static BorderRadius get chipRadius => BorderRadius.circular(pill);
+
   static BorderRadius get modalRadius =>
       const BorderRadius.vertical(top: Radius.circular(xl));
 }

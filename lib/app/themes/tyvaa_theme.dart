@@ -1,6 +1,5 @@
 // @deprecated This theme system is deprecated. Please use design_system.dart and TColors instead.
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 
 // @deprecated Use TColors from design_system.dart instead
 class AppColors {

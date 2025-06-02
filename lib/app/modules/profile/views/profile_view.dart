@@ -380,14 +380,25 @@ class ProfileScreen extends GetView<ProfileController> {
             ),
           ),
           SizedBox(height: TSpacing.xl),
-          _buildInfoRow(
-            context,
-            Icons.email_rounded,
-            'Email',
-            'cheikh@tyvaa.com',
-            Colors.blue,
-          ),
-          SizedBox(height: TSpacing.lg),
+
+          Obx(() {
+            final userEmail = controller.user.value.email;
+            return userEmail != null && userEmail.isNotEmpty
+                ? Column(
+                  children: [
+                    _buildInfoRow(
+                      context,
+                      Icons.email_rounded,
+                      'Email',
+                      userEmail,
+                      Colors.blue,
+                    ),
+                    SizedBox(height: TSpacing.lg),
+                  ],
+                )
+                : SizedBox.shrink();
+          }),
+
           Obx(
             () => _buildInfoRow(
               context,

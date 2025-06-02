@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/driver_verification/views/driver_verification_view.dart';
 import 'package:passenger_tyvaa/app/modules/publish_ride/views/succes_publish_view.dart';
-import 'package:passenger_tyvaa/app/modules/publish_ride/views/verification_required_screen.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
 enum PublishStepType { departure, arrival, time, date, summary }
@@ -164,8 +162,8 @@ class PublishRideController extends GetxController {
       // Get.back();
     });
     // Get.to(VerificationRequiredScreen());
-    // Get.toNamed(Routes.DRIVER_VERIFICATION);
-    Get.to(RidePublishedSuccessScreen());
+    Get.toNamed(Routes.DRIVER_VERIFICATION);
+    // Get.to(RidePublishedSuccessScreen());
   }
 
   String getStepTitle() {

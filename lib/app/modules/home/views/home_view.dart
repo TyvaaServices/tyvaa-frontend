@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+
 import '../../../routes/app_pages.dart';
-import '../../search/views/search_page.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});

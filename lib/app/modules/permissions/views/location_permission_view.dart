@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/controllers/location_permission_controller.dart';
-import 'package:passenger_tyvaa/app/themes/tyvaa_theme.dart';
+
 import '../../../../generated/assets.dart';
 import '../../../themes/design_system.dart';
 
