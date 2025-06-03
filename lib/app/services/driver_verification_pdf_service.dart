@@ -11,21 +11,9 @@ import 'package:share_plus/share_plus.dart';
 
 class DriverVerificationPdfService {
   static const PdfColor tyvaaPrimaryColor = PdfColor(0.416, 0.051, 0.855);
-  static const PdfColor tyvaaPrimaryLight = PdfColor(
-    0.576,
-    0.337,
-    0.816,
-  ); // #9356D0
-  static const PdfColor tyvaaGreyLight = PdfColor(
-    0.973,
-    0.976,
-    0.996,
-  ); // #F8F9FE
-  static const PdfColor tyvaaGreyBorder = PdfColor(
-    0.875,
-    0.882,
-    0.914,
-  ); // #DFE1E9
+  static const PdfColor tyvaaPrimaryLight = PdfColor(0.576, 0.337, 0.816);
+  static const PdfColor tyvaaGreyLight = PdfColor(0.973, 0.976, 0.996);
+  static const PdfColor tyvaaGreyBorder = PdfColor(0.875, 0.882, 0.914);
 
   Future<Uint8List> generateDriverVerificationPdf({
     required String driverName,
@@ -89,7 +77,6 @@ class DriverVerificationPdfService {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                // Header
                 pw.Container(
                   width: double.infinity,
                   padding: const pw.EdgeInsets.all(10),
@@ -119,7 +106,6 @@ class DriverVerificationPdfService {
 
                 pw.SizedBox(height: 15),
 
-                // Driver info
                 pw.Container(
                   padding: const pw.EdgeInsets.all(10),
                   color: tyvaaGreyLight,
@@ -276,7 +262,7 @@ class DriverVerificationPdfService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final sanitizedName = driverName
-          .replaceAll(RegExp(r'[^\w\s]+'), '')
+          .replaceAll(RegExp(r'[^\\w\s]+'), '')
           .trim()
           .replaceAll(' ', '_');
       final file = File(
