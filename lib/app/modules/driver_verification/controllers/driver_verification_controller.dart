@@ -11,38 +11,52 @@ class DriverVerificationController extends GetxController {
   final currentStep = 0.obs;
 
   // Driver's license data
-  final driverLicenseImage = Rx<File?>(null);
+  final driverLicenseFrontImage = Rx<File?>(null);
+  final driverLicenseBackImage = Rx<File?>(null);
   final driverLicenseNumberController = TextEditingController();
   final driverLicenseExpiryController = TextEditingController();
 
   // License form validation flags
-  final hasAttemptedNextWithoutLicense = false.obs;
+  final hasAttemptedNextWithoutLicenseFront = false.obs;
+  final hasAttemptedNextWithoutLicenseBack = false.obs;
   final hasAttemptedNextWithInvalidLicenseNumber = false.obs;
   final hasAttemptedNextWithInvalidExpiryDate = false.obs;
 
-  // Vehicle data
+  // Vehicle data (Carte Grise)
+  final carteGriseFrontImage = Rx<File?>(null);
+  final carteGriseBackImage = Rx<File?>(null);
   final carBrandController = TextEditingController();
   final carModelController = TextEditingController();
   final licensePlateController = TextEditingController();
-  final carImage = Rx<File?>(null);
 
   // Car form validation flags
+  final hasAttemptedNextWithoutCarteGriseFront = false.obs;
+  final hasAttemptedNextWithoutCarteGriseBack = false.obs;
   final hasAttemptedNextWithInvalidCarBrand = false.obs;
   final hasAttemptedNextWithInvalidCarModel = false.obs;
   final hasAttemptedNextWithInvalidLicensePlate = false.obs;
 
   // ID card data
-  final idCardImage = Rx<File?>(null);
+  final idCardFrontImage = Rx<File?>(null);
+  final idCardBackImage = Rx<File?>(null);
   final idNumberController = TextEditingController();
 
   // ID form validation flags
-  final hasAttemptedNextWithoutIdCard = false.obs;
+  final hasAttemptedNextWithoutIdCardFront = false.obs;
+  final hasAttemptedNextWithoutIdCardBack = false.obs;
   final hasAttemptedNextWithInvalidIdNumber = false.obs;
 
   // Review and submission
   final termsAccepted = false.obs;
   final isSubmitting = false.obs;
   final submissionError = ''.obs;
+
+  // Legacy fields - kept for backward compatibility but not used in new UI
+  final driverLicenseImage = Rx<File?>(null);
+  final carImage = Rx<File?>(null);
+  final idCardImage = Rx<File?>(null);
+  final hasAttemptedNextWithoutLicense = false.obs;
+  final hasAttemptedNextWithoutIdCard = false.obs;
 
   @override
   void onInit() {
@@ -76,9 +90,15 @@ class DriverVerificationController extends GetxController {
       }
     });
 
-    ever(driverLicenseImage, (value) {
+    ever(driverLicenseFrontImage, (value) {
       if (value != null) {
-        hasAttemptedNextWithoutLicense.value = false;
+        hasAttemptedNextWithoutLicenseFront.value = false;
+      }
+    });
+
+    ever(driverLicenseBackImage, (value) {
+      if (value != null) {
+        hasAttemptedNextWithoutLicenseBack.value = false;
       }
     });
 
@@ -100,9 +120,27 @@ class DriverVerificationController extends GetxController {
       }
     });
 
-    ever(idCardImage, (value) {
+    ever(carteGriseFrontImage, (value) {
       if (value != null) {
-        hasAttemptedNextWithoutIdCard.value = false;
+        hasAttemptedNextWithoutCarteGriseFront.value = false;
+      }
+    });
+
+    ever(carteGriseBackImage, (value) {
+      if (value != null) {
+        hasAttemptedNextWithoutCarteGriseBack.value = false;
+      }
+    });
+
+    ever(idCardFrontImage, (value) {
+      if (value != null) {
+        hasAttemptedNextWithoutIdCardFront.value = false;
+      }
+    });
+
+    ever(idCardBackImage, (value) {
+      if (value != null) {
+        hasAttemptedNextWithoutIdCardBack.value = false;
       }
     });
 
@@ -140,58 +178,111 @@ class DriverVerificationController extends GetxController {
   void validateAndProceedFromLicenseStep() {
     bool isValid = true;
 
-    if (driverLicenseImage.value == null) {
-      hasAttemptedNextWithoutLicense.value = true;
+    if (driverLicenseFrontImage.value == null) {
+      hasAttemptedNextWithoutLicenseFront.value = true;
       isValid = false;
     }
 
-    // if (isValid) {
-    nextStep();
-    // }
+    if (driverLicenseBackImage.value == null) {
+      hasAttemptedNextWithoutLicenseBack.value = true;
+      isValid = false;
+    }
+
+    if (isValid) {
+      nextStep();
+    }
   }
 
   void validateAndProceedFromCarStep() {
     bool isValid = true;
 
+    if (carteGriseFrontImage.value == null) {
+      hasAttemptedNextWithoutCarteGriseFront.value = true;
+      isValid = false;
+    }
+
+    if (carteGriseBackImage.value == null) {
+      hasAttemptedNextWithoutCarteGriseBack.value = true;
+      isValid = false;
+    }
+
     if (carBrandController.text.trim().isEmpty) {
-      // hasAttemptedNextWithInvalidCarBrand.value = true;
+      hasAttemptedNextWithInvalidCarBrand.value = true;
       isValid = false;
     }
 
     if (carModelController.text.trim().isEmpty) {
-      // hasAttemptedNextWithInvalidCarModel.value = true;
+      hasAttemptedNextWithInvalidCarModel.value = true;
       isValid = false;
     }
 
     if (licensePlateController.text.trim().isEmpty) {
-      // hasAttemptedNextWithInvalidLicensePlate.value = true;
+      hasAttemptedNextWithInvalidLicensePlate.value = true;
       isValid = false;
     }
 
-    // if (isValid) {
-    nextStep();
-    // }
+    if (isValid) {
+      nextStep();
+    }
+  }
+
+  void validateAndProceedFromCarteGriseStep() {
+    bool isValid = true;
+
+    if (carteGriseFrontImage.value == null) {
+      hasAttemptedNextWithoutCarteGriseFront.value = true;
+      isValid = false;
+    }
+
+    if (carteGriseBackImage.value == null) {
+      hasAttemptedNextWithoutCarteGriseBack.value = true;
+      isValid = false;
+    }
+
+    if (carBrandController.text.trim().isEmpty) {
+      hasAttemptedNextWithInvalidCarBrand.value = true;
+      isValid = false;
+    }
+
+    if (carModelController.text.trim().isEmpty) {
+      hasAttemptedNextWithInvalidCarModel.value = true;
+      isValid = false;
+    }
+
+    if (licensePlateController.text.trim().isEmpty) {
+      hasAttemptedNextWithInvalidLicensePlate.value = true;
+      isValid = false;
+    }
+
+    if (isValid) {
+      nextStep();
+    }
   }
 
   void validateAndProceedFromIdStep() {
     bool isValid = true;
 
-    if (idCardImage.value == null) {
-      hasAttemptedNextWithoutIdCard.value = true;
+    if (idCardFrontImage.value == null) {
+      hasAttemptedNextWithoutIdCardFront.value = true;
+      isValid = false;
+    }
+
+    if (idCardBackImage.value == null) {
+      hasAttemptedNextWithoutIdCardBack.value = true;
       isValid = false;
     }
 
     if (idNumberController.text.trim().isEmpty) {
-      // hasAttemptedNextWithInvalidIdNumber.value = true;
+      hasAttemptedNextWithInvalidIdNumber.value = true;
       isValid = false;
     }
-    isValid = true;
-    // if (isValid) {
-    nextStep();
-    // }
+
+    if (isValid) {
+      nextStep();
+    }
   }
 
-  Future<void> pickDriverLicense() async {
+  Future<void> pickDriverLicenseFront() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.camera,
@@ -199,15 +290,11 @@ class DriverVerificationController extends GetxController {
     );
 
     if (image != null) {
-      driverLicenseImage.value = File(image.path);
+      driverLicenseFrontImage.value = File(image.path);
     }
   }
 
-  void removeDriverLicenseImage() {
-    driverLicenseImage.value = null;
-  }
-
-  Future<void> pickCarImage() async {
+  Future<void> pickDriverLicenseBack() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.camera,
@@ -215,15 +302,19 @@ class DriverVerificationController extends GetxController {
     );
 
     if (image != null) {
-      carImage.value = File(image.path);
+      driverLicenseBackImage.value = File(image.path);
     }
   }
 
-  void removeCarImage() {
-    carImage.value = null;
+  void removeDriverLicenseFrontImage() {
+    driverLicenseFrontImage.value = null;
   }
 
-  Future<void> pickIdCard() async {
+  void removeDriverLicenseBackImage() {
+    driverLicenseBackImage.value = null;
+  }
+
+  Future<void> pickCarteGriseFront() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.camera,
@@ -231,12 +322,60 @@ class DriverVerificationController extends GetxController {
     );
 
     if (image != null) {
-      idCardImage.value = File(image.path);
+      carteGriseFrontImage.value = File(image.path);
     }
   }
 
-  void removeIdCardImage() {
-    idCardImage.value = null;
+  Future<void> pickCarteGriseBack() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      carteGriseBackImage.value = File(image.path);
+    }
+  }
+
+  void removeCarteGriseFrontImage() {
+    carteGriseFrontImage.value = null;
+  }
+
+  void removeCarteGriseBackImage() {
+    carteGriseBackImage.value = null;
+  }
+
+  Future<void> pickIdCardFront() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      idCardFrontImage.value = File(image.path);
+    }
+  }
+
+  Future<void> pickIdCardBack() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      idCardBackImage.value = File(image.path);
+    }
+  }
+
+  void removeIdCardFrontImage() {
+    idCardFrontImage.value = null;
+  }
+
+  void removeIdCardBackImage() {
+    idCardBackImage.value = null;
   }
 
   Future<void> pickExpiryDate(BuildContext context) async {
