@@ -81,9 +81,93 @@ class SuccessStep extends StatelessWidget {
               text: 'Retour à l\'accueil',
               onPressed: () => Get.offAllNamed(Routes.MAIN),
             ),
+
+            // TEMPORARY TEST BUTTON - TO BE REMOVED AFTER TESTING
+            const SizedBox(height: TSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.amber.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.amber),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'BOUTON DE TEST - À SUPPRIMER',
+                    style: TextStyle(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(
+                    () => ElevatedButton.icon(
+                      onPressed:
+                          controller.isGeneratingPdf.value
+                              ? null
+                              : () => _generatePdfInBackground(context),
+                      icon:
+                          controller.isGeneratingPdf.value
+                              ? Container(
+                                width: 20,
+                                height: 20,
+                                padding: const EdgeInsets.all(2),
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Icon(Icons.picture_as_pdf),
+                      label: Text(
+                        controller.isGeneratingPdf.value
+                            ? 'Génération en cours...'
+                            : 'Générer le PDF de vérification',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  // Function to generate PDF in a background thread
+  Future<void> _generatePdfInBackground(BuildContext context) async {
+    // Simulate some sample data for testing
+    if (controller.driverLicenseFrontImage.value == null) {
+      _showTestDataAlert(context);
+      return;
+    }
+
+    // Use compute to run in a separate isolate
+    await controller.generateAndPreviewPdf(context);
+  }
+
+  // Show alert if test data is missing
+  void _showTestDataAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Données de test manquantes'),
+            content: const Text(
+              'Pour tester la génération du PDF, vous devez d\'abord parcourir les étapes et télécharger toutes les photos requises.\n\n'
+              'Vous pouvez saisir des informations de test dans les champs et prendre des photos pour tester.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Compris'),
+              ),
+            ],
+          ),
     );
   }
 }

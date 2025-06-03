@@ -1,10 +1,15 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
+import 'dart:async'; // Add this import for better timer management
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
+import 'package:passenger_tyvaa/app/services/driver_verification_pdf_service.dart';
 
 class DriverVerificationController extends GetxController {
   // Step management
@@ -58,6 +63,18 @@ class DriverVerificationController extends GetxController {
   final hasAttemptedNextWithoutLicense = false.obs;
   final hasAttemptedNextWithoutIdCard = false.obs;
 
+  // Driver personal information
+  final driverNameController = TextEditingController();
+  final driverPhoneController = TextEditingController();
+  final driverEmailController = TextEditingController();
+
+  // PDF Service
+  final _pdfService = DriverVerificationPdfService();
+  final isGeneratingPdf = false.obs;
+
+  // Camera loading state
+  final isCameraLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -73,6 +90,9 @@ class DriverVerificationController extends GetxController {
     carModelController.dispose();
     licensePlateController.dispose();
     idNumberController.dispose();
+    driverNameController.dispose();
+    driverPhoneController.dispose();
+    driverEmailController.dispose();
     super.onClose();
   }
 
@@ -239,20 +259,10 @@ class DriverVerificationController extends GetxController {
       isValid = false;
     }
 
-    if (carBrandController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidCarBrand.value = true;
-      isValid = false;
-    }
-
-    if (carModelController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidCarModel.value = true;
-      isValid = false;
-    }
-
-    if (licensePlateController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidLicensePlate.value = true;
-      isValid = false;
-    }
+    // Debug print to help troubleshoot
+    print("Carte Grise validation result: $isValid");
+    print("Front image: ${carteGriseFrontImage.value != null}");
+    print("Back image: ${carteGriseBackImage.value != null}");
 
     if (isValid) {
       nextStep();
@@ -272,38 +282,121 @@ class DriverVerificationController extends GetxController {
       isValid = false;
     }
 
-    if (idNumberController.text.trim().isEmpty) {
-      hasAttemptedNextWithInvalidIdNumber.value = true;
-      isValid = false;
-    }
-
     if (isValid) {
       nextStep();
     }
   }
 
-  Future<void> pickDriverLicenseFront() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
+  // Optimized image picking method with loading state and timeout
+  Future<void> _optimizedImagePick({
+    required Function(File) onImageSelected,
+    required String errorMessage,
+    bool preferGalleryInEmulator = true,
+  }) async {
+    isCameraLoading.value = true;
 
-    if (image != null) {
-      driverLicenseFrontImage.value = File(image.path);
+    try {
+      final ImagePicker picker = ImagePicker();
+
+      // For emulator, default to gallery if specified
+      // On real devices, use camera by default
+      ImageSource source = ImageSource.camera;
+      if (preferGalleryInEmulator && kDebugMode) {
+        source = ImageSource.gallery;
+      }
+
+      // Set a timeout for camera operations
+      final XFile? image = await picker
+          .pickImage(
+            source: source,
+            imageQuality: 40, // Further reduced for emulator
+            maxWidth: 800,
+            maxHeight: 800,
+            preferredCameraDevice: CameraDevice.rear,
+          )
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () {
+              Get.snackbar(
+                'Délai dépassé',
+                'L\'opération a pris trop de temps. Veuillez réessayer.',
+                backgroundColor: Colors.orange.shade100,
+                colorText: Colors.orange.shade900,
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              return null;
+            },
+          );
+
+      if (image != null) {
+        onImageSelected(File(image.path));
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+      Get.snackbar(
+        'Erreur',
+        errorMessage,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isCameraLoading.value = false;
     }
   }
 
-  Future<void> pickDriverLicenseBack() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
+  Future<void> pickDriverLicenseFront() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => driverLicenseFrontImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo du permis (recto). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
     );
+  }
 
-    if (image != null) {
-      driverLicenseBackImage.value = File(image.path);
-    }
+  Future<void> pickDriverLicenseBack() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => driverLicenseBackImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo du permis (verso). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
+    );
+  }
+
+  Future<void> pickCarteGriseFront() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => carteGriseFrontImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo de la carte grise (recto). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
+    );
+  }
+
+  Future<void> pickCarteGriseBack() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => carteGriseBackImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo de la carte grise (verso). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
+    );
+  }
+
+  Future<void> pickIdCardFront() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => idCardFrontImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo de la pièce d\'identité (recto). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
+    );
+  }
+
+  Future<void> pickIdCardBack() async {
+    await _optimizedImagePick(
+      onImageSelected: (file) => idCardBackImage.value = file,
+      errorMessage:
+          'Impossible de prendre la photo de la pièce d\'identité (verso). Veuillez réessayer.',
+      preferGalleryInEmulator: true,
+    );
   }
 
   void removeDriverLicenseFrontImage() {
@@ -314,60 +407,12 @@ class DriverVerificationController extends GetxController {
     driverLicenseBackImage.value = null;
   }
 
-  Future<void> pickCarteGriseFront() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
-
-    if (image != null) {
-      carteGriseFrontImage.value = File(image.path);
-    }
-  }
-
-  Future<void> pickCarteGriseBack() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
-
-    if (image != null) {
-      carteGriseBackImage.value = File(image.path);
-    }
-  }
-
   void removeCarteGriseFrontImage() {
     carteGriseFrontImage.value = null;
   }
 
   void removeCarteGriseBackImage() {
     carteGriseBackImage.value = null;
-  }
-
-  Future<void> pickIdCardFront() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
-
-    if (image != null) {
-      idCardFrontImage.value = File(image.path);
-    }
-  }
-
-  Future<void> pickIdCardBack() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
-
-    if (image != null) {
-      idCardBackImage.value = File(image.path);
-    }
   }
 
   void removeIdCardFrontImage() {
@@ -417,5 +462,134 @@ class DriverVerificationController extends GetxController {
 
   void goToHome() {
     Get.offAllNamed(Routes.MAIN);
+  }
+
+  // Generate and preview verification PDF
+  Future<void> generateAndPreviewPdf(BuildContext context) async {
+    if (!_validateAllRequiredDocuments()) {
+      Get.snackbar(
+        'Informations manquantes',
+        'Veuillez compléter toutes les informations et télécharger tous les documents nécessaires.',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    isGeneratingPdf.value = true;
+
+    try {
+      print("Starting PDF generation...");
+      final pdfBytes = await _pdfService.generateDriverVerificationPdf(
+        driverName:
+            driverNameController.text.isEmpty
+                ? 'Non spécifié'
+                : driverNameController.text,
+        driverPhone:
+            driverPhoneController.text.isEmpty
+                ? 'Non spécifié'
+                : driverPhoneController.text,
+        driverEmail:
+            driverEmailController.text.isEmpty
+                ? null
+                : driverEmailController.text,
+        dateNaissance: null, // Add this parameter
+        driverLicenseFrontImage: driverLicenseFrontImage.value!,
+        driverLicenseBackImage: driverLicenseBackImage.value!,
+        carteGriseFrontImage: carteGriseFrontImage.value!,
+        carteGriseBackImage: carteGriseBackImage.value!,
+        idCardFrontImage: idCardFrontImage.value!,
+        idCardBackImage: idCardBackImage.value!,
+      );
+      print("PDF generation completed successfully");
+
+      await _pdfService.previewPdf(pdfBytes);
+    } catch (e) {
+      print("Error generating PDF: $e");
+      Get.snackbar(
+        'Erreur',
+        'Impossible de générer le PDF. Veuillez réessayer. Erreur: ${e.toString()}',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isGeneratingPdf.value = false;
+    }
+  }
+
+  // Generate and share verification PDF
+  Future<void> generateAndSharePdf() async {
+    if (!_validateAllRequiredDocuments()) {
+      Get.snackbar(
+        'Informations manquantes',
+        'Veuillez compléter toutes les informations et télécharger tous les documents nécessaires.',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    isGeneratingPdf.value = true;
+
+    try {
+      final pdfBytes = await _pdfService.generateDriverVerificationPdf(
+        driverName:
+            driverNameController.text.isEmpty
+                ? 'Non spécifié'
+                : driverNameController.text,
+        driverPhone:
+            driverPhoneController.text.isEmpty
+                ? 'Non spécifié'
+                : driverPhoneController.text,
+        driverEmail:
+            driverEmailController.text.isEmpty
+                ? 'Non spécifié'
+                : driverEmailController.text,
+        driverLicenseFrontImage: driverLicenseFrontImage.value!,
+        driverLicenseBackImage: driverLicenseBackImage.value!,
+        carteGriseFrontImage: carteGriseFrontImage.value!,
+        carteGriseBackImage: carteGriseBackImage.value!,
+        idCardFrontImage: idCardFrontImage.value!,
+        idCardBackImage: idCardBackImage.value!,
+      );
+
+      final driverName =
+          driverNameController.text.isEmpty
+              ? 'Chauffeur'
+              : driverNameController.text;
+      await _pdfService.saveAndSharePdf(pdfBytes, driverName);
+    } catch (e) {
+      Get.snackbar(
+        'Erreur',
+        'Impossible de générer le PDF. Veuillez réessayer.',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isGeneratingPdf.value = false;
+    }
+  }
+
+  // Validate all required documents are provided
+  bool _validateAllRequiredDocuments() {
+    // Print debug information to help diagnose issues
+    print("Validating documents:");
+    print("Driver License Front: ${driverLicenseFrontImage.value != null}");
+    print("Driver License Back: ${driverLicenseBackImage.value != null}");
+    print("Carte Grise Front: ${carteGriseFrontImage.value != null}");
+    print("Carte Grise Back: ${carteGriseBackImage.value != null}");
+    print("ID Card Front: ${idCardFrontImage.value != null}");
+    print("ID Card Back: ${idCardBackImage.value != null}");
+
+    return driverLicenseFrontImage.value != null &&
+        driverLicenseBackImage.value != null &&
+        carteGriseFrontImage.value != null &&
+        carteGriseBackImage.value != null &&
+        idCardFrontImage.value != null &&
+        idCardBackImage.value != null;
   }
 }
