@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
-import 'dart:typed_data';
 import 'dart:async'; // Add this import for better timer management
 
 import 'package:flutter/foundation.dart';
@@ -8,96 +6,85 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/services/driver_verification_pdf_service.dart';
 
+import '../../../api/api_client.dart';
+
 class DriverVerificationController extends GetxController {
-  // Step management
   final currentStep = 0.obs;
 
-  // Driver's license data
   final driverLicenseFrontImage = Rx<File?>(null);
   final driverLicenseBackImage = Rx<File?>(null);
   final driverLicenseNumberController = TextEditingController();
   final driverLicenseExpiryController = TextEditingController();
 
-  // License form validation flags
   final hasAttemptedNextWithoutLicenseFront = false.obs;
   final hasAttemptedNextWithoutLicenseBack = false.obs;
   final hasAttemptedNextWithInvalidLicenseNumber = false.obs;
   final hasAttemptedNextWithInvalidExpiryDate = false.obs;
 
-  // Vehicle data (Carte Grise)
   final carteGriseFrontImage = Rx<File?>(null);
   final carteGriseBackImage = Rx<File?>(null);
   final carBrandController = TextEditingController();
   final carModelController = TextEditingController();
   final licensePlateController = TextEditingController();
+  late ProfileController profileController;
 
-  // Car form validation flags
   final hasAttemptedNextWithoutCarteGriseFront = false.obs;
   final hasAttemptedNextWithoutCarteGriseBack = false.obs;
   final hasAttemptedNextWithInvalidCarBrand = false.obs;
   final hasAttemptedNextWithInvalidCarModel = false.obs;
   final hasAttemptedNextWithInvalidLicensePlate = false.obs;
 
-  // ID card data
   final idCardFrontImage = Rx<File?>(null);
   final idCardBackImage = Rx<File?>(null);
   final idNumberController = TextEditingController();
 
-  // ID form validation flags
   final hasAttemptedNextWithoutIdCardFront = false.obs;
   final hasAttemptedNextWithoutIdCardBack = false.obs;
   final hasAttemptedNextWithInvalidIdNumber = false.obs;
 
-  // Review and submission
   final termsAccepted = false.obs;
   final isSubmitting = false.obs;
   final submissionError = ''.obs;
 
-  // Legacy fields - kept for backward compatibility but not used in new UI
   final driverLicenseImage = Rx<File?>(null);
   final carImage = Rx<File?>(null);
   final idCardImage = Rx<File?>(null);
   final hasAttemptedNextWithoutLicense = false.obs;
   final hasAttemptedNextWithoutIdCard = false.obs;
 
-  // Driver personal information
-  final driverNameController = TextEditingController();
-  final driverPhoneController = TextEditingController();
-  final driverEmailController = TextEditingController();
-
-  // PDF Service
   final _pdfService = DriverVerificationPdfService();
   final isGeneratingPdf = false.obs;
 
-  // Camera loading state
   final isCameraLoading = false.obs;
+  late Logger logger;
+  late ApiClient apiClient;
 
   @override
   void onInit() {
     super.onInit();
     _setupListeners();
+    profileController = Get.find<ProfileController>();
+    apiClient = Get.find<ApiClient>();
+    logger = Logger();
   }
 
   @override
   void onClose() {
-    // Dispose controllers
     driverLicenseNumberController.dispose();
     driverLicenseExpiryController.dispose();
     carBrandController.dispose();
     carModelController.dispose();
     licensePlateController.dispose();
     idNumberController.dispose();
-    driverNameController.dispose();
-    driverPhoneController.dispose();
-    driverEmailController.dispose();
     super.onClose();
   }
 
   void _setupListeners() {
-    // Reset validation errors when fields change
     driverLicenseNumberController.addListener(() {
       if (driverLicenseNumberController.text.isNotEmpty) {
         hasAttemptedNextWithInvalidLicenseNumber.value = false;
@@ -259,10 +246,9 @@ class DriverVerificationController extends GetxController {
       isValid = false;
     }
 
-    // Debug print to help troubleshoot
-    print("Carte Grise validation result: $isValid");
-    print("Front image: ${carteGriseFrontImage.value != null}");
-    print("Back image: ${carteGriseBackImage.value != null}");
+    logger.d("Carte Grise validation result: $isValid");
+    logger.d("Front image: ${carteGriseFrontImage.value != null}");
+    logger.d("Back image: ${carteGriseBackImage.value != null}");
 
     if (isValid) {
       nextStep();
@@ -287,7 +273,6 @@ class DriverVerificationController extends GetxController {
     }
   }
 
-  // Optimized image picking method with loading state and timeout
   Future<void> _optimizedImagePick({
     required Function(File) onImageSelected,
     required String errorMessage,
@@ -298,18 +283,15 @@ class DriverVerificationController extends GetxController {
     try {
       final ImagePicker picker = ImagePicker();
 
-      // For emulator, default to gallery if specified
-      // On real devices, use camera by default
       ImageSource source = ImageSource.camera;
       if (preferGalleryInEmulator && kDebugMode) {
         source = ImageSource.gallery;
       }
 
-      // Set a timeout for camera operations
       final XFile? image = await picker
           .pickImage(
             source: source,
-            imageQuality: 40, // Further reduced for emulator
+            imageQuality: 40,
             maxWidth: 800,
             maxHeight: 800,
             preferredCameraDevice: CameraDevice.rear,
@@ -438,20 +420,41 @@ class DriverVerificationController extends GetxController {
     }
   }
 
-  Future<void> submitVerification() async {
+  Future<void> submitDriverApplication() async {
     if (!termsAccepted.value) {
       submissionError.value = 'Veuillez accepter les conditions pour continuer';
       return;
     }
 
     isSubmitting.value = true;
-
+    var pdfBytes;
     try {
-      // Here you would typically upload the data to your backend
-      // For now, we'll simulate a network request
-      await Future.delayed(const Duration(seconds: 2));
+      pdfBytes = await _pdfService.generateDriverVerificationPdf(
+        driverName: profileController.user.value.fullName ?? 'Non spécifié',
+        driverPhone: profileController.user.value.phoneNumber ?? 'Non spécifié',
+        driverEmail: profileController.user.value.email ?? 'Non spécifié',
+        dateNaissance:
+            profileController.user.value.dateOfBirth != null
+                ? DateFormat(
+                  'dd/MM/yyyy',
+                ).format(profileController.user.value.dateOfBirth!)
+                : 'Non spécifié',
+        driverLicenseFrontImage: driverLicenseFrontImage.value!,
+        driverLicenseBackImage: driverLicenseBackImage.value!,
+        carteGriseFrontImage: carteGriseFrontImage.value!,
+        carteGriseBackImage: carteGriseBackImage.value!,
+        idCardFrontImage: idCardFrontImage.value!,
+        idCardBackImage: idCardBackImage.value!,
+      );
 
-      nextStep();
+      final response = await apiClient.submitDriverApplication(pdfBytes);
+
+      if (response.statusCode == 200) {
+        nextStep();
+      } else {
+        submissionError.value =
+            'Une erreur est survenue lors de la soumission. Veuillez réessayer.';
+      }
     } catch (e) {
       submissionError.value =
           'Une erreur est survenue lors de la soumission. Veuillez réessayer.';
@@ -464,62 +467,6 @@ class DriverVerificationController extends GetxController {
     Get.offAllNamed(Routes.MAIN);
   }
 
-  // Generate and preview verification PDF
-  Future<void> generateAndPreviewPdf(BuildContext context) async {
-    if (!_validateAllRequiredDocuments()) {
-      Get.snackbar(
-        'Informations manquantes',
-        'Veuillez compléter toutes les informations et télécharger tous les documents nécessaires.',
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    isGeneratingPdf.value = true;
-
-    try {
-      print("Starting PDF generation...");
-      final pdfBytes = await _pdfService.generateDriverVerificationPdf(
-        driverName:
-            driverNameController.text.isEmpty
-                ? 'Non spécifié'
-                : driverNameController.text,
-        driverPhone:
-            driverPhoneController.text.isEmpty
-                ? 'Non spécifié'
-                : driverPhoneController.text,
-        driverEmail:
-            driverEmailController.text.isEmpty
-                ? null
-                : driverEmailController.text,
-        dateNaissance: null, // Add this parameter
-        driverLicenseFrontImage: driverLicenseFrontImage.value!,
-        driverLicenseBackImage: driverLicenseBackImage.value!,
-        carteGriseFrontImage: carteGriseFrontImage.value!,
-        carteGriseBackImage: carteGriseBackImage.value!,
-        idCardFrontImage: idCardFrontImage.value!,
-        idCardBackImage: idCardBackImage.value!,
-      );
-      print("PDF generation completed successfully");
-
-      await _pdfService.previewPdf(pdfBytes);
-    } catch (e) {
-      print("Error generating PDF: $e");
-      Get.snackbar(
-        'Erreur',
-        'Impossible de générer le PDF. Veuillez réessayer. Erreur: ${e.toString()}',
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } finally {
-      isGeneratingPdf.value = false;
-    }
-  }
-
-  // Generate and share verification PDF
   Future<void> generateAndSharePdf() async {
     if (!_validateAllRequiredDocuments()) {
       Get.snackbar(
@@ -536,18 +483,15 @@ class DriverVerificationController extends GetxController {
 
     try {
       final pdfBytes = await _pdfService.generateDriverVerificationPdf(
-        driverName:
-            driverNameController.text.isEmpty
-                ? 'Non spécifié'
-                : driverNameController.text,
-        driverPhone:
-            driverPhoneController.text.isEmpty
-                ? 'Non spécifié'
-                : driverPhoneController.text,
-        driverEmail:
-            driverEmailController.text.isEmpty
-                ? 'Non spécifié'
-                : driverEmailController.text,
+        driverName: profileController.user.value.fullName ?? 'Non spécifié',
+        driverPhone: profileController.user.value.phoneNumber ?? 'Non spécifié',
+        driverEmail: profileController.user.value.email ?? 'Non spécifié',
+        dateNaissance:
+            profileController.user.value.dateOfBirth != null
+                ? DateFormat(
+                  'dd/MM/yyyy',
+                ).format(profileController.user.value.dateOfBirth!)
+                : 'Non spécifié',
         driverLicenseFrontImage: driverLicenseFrontImage.value!,
         driverLicenseBackImage: driverLicenseBackImage.value!,
         carteGriseFrontImage: carteGriseFrontImage.value!,
@@ -557,9 +501,7 @@ class DriverVerificationController extends GetxController {
       );
 
       final driverName =
-          driverNameController.text.isEmpty
-              ? 'Chauffeur'
-              : driverNameController.text;
+          profileController.user.value.fullName ?? 'Non spécifié';
       await _pdfService.saveAndSharePdf(pdfBytes, driverName);
     } catch (e) {
       Get.snackbar(
@@ -574,17 +516,7 @@ class DriverVerificationController extends GetxController {
     }
   }
 
-  // Validate all required documents are provided
   bool _validateAllRequiredDocuments() {
-    // Print debug information to help diagnose issues
-    print("Validating documents:");
-    print("Driver License Front: ${driverLicenseFrontImage.value != null}");
-    print("Driver License Back: ${driverLicenseBackImage.value != null}");
-    print("Carte Grise Front: ${carteGriseFrontImage.value != null}");
-    print("Carte Grise Back: ${carteGriseBackImage.value != null}");
-    print("ID Card Front: ${idCardFrontImage.value != null}");
-    print("ID Card Back: ${idCardBackImage.value != null}");
-
     return driverLicenseFrontImage.value != null &&
         driverLicenseBackImage.value != null &&
         carteGriseFrontImage.value != null &&
