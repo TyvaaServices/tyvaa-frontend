@@ -1,6 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart' hide FormData, MultipartFile;
+import 'package:get/get.dart' hide FormData, MultipartFile, Response;
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/modules/auth/controllers/login_controller.dart';
 import 'package:passenger_tyvaa/app/modules/auth/controllers/register_controller.dart';
@@ -80,45 +82,6 @@ class ApiClient {
     }
   }
 
-  // Updated: Return null if register fails, otherwise the full response
-  // Future<Map<String, dynamic>?> registerUser(
-  //   String fullName,
-  //   String phoneNumber, {
-  //   bool isDriver = false,
-  // }) async {
-  //   if (!_connectivityController.hasInternet.value) {
-  //     logger.w('No internet connection. Unable to register user.');
-  //     return null;
-  //   }
-  //
-  //   try {
-  //     final response = await dio.post(
-  //       '/users/register',
-  //       data: {
-  //         'fullName': fullName,
-  //         'phoneNumber': phoneNumber,
-  //         'isDriver': isDriver,
-  //       },
-  //     );
-  //
-  //     if (response.statusCode == 201) {
-  //       final data = response.data;
-  //       logger.d('User registered successfully');
-  //       return {
-  //         'user': data['user'],
-  //         'otp': data['otp'],
-  //         'token': data['token'],
-  //       };
-  //     } else {
-  //       logger.e('Failed to register user: ${response.statusCode}');
-  //       return null;
-  //     }
-  //   } on DioException catch (e) {
-  //     logger.e('Error registering user: ${e.message}');
-  //     return null;
-  //   }
-  // }
-
   Future<bool> updateUserProfile(
     User user,
     ProfileController controller,
@@ -194,6 +157,22 @@ class ApiClient {
       }
     } on DioException catch (e) {
       return false;
+    }
+  }
+
+  Future<Response> submitDriverApplication(Uint8List pdfBytes) async {
+    try {
+      final formData = FormData.fromMap({
+        'pdf': MultipartFile.fromBytes(
+          pdfBytes,
+          filename: 'driver_application.pdf',
+        ),
+      });
+
+      return await dio.post('/users/driver-application', data: formData);
+    } catch (e) {
+      logger.e('Error submitting driver application: ${e.toString()}');
+      rethrow;
     }
   }
 }
