@@ -157,7 +157,7 @@ class ReviewStep extends StatelessWidget {
                     onPressed:
                         (controller.termsAccepted.value &&
                                 !controller.isSubmitting.value)
-                            ? () => controller.submitVerification()
+                            ? () => controller.submitDriverApplication()
                             : null,
                   ),
                 ),
