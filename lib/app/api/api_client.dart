@@ -10,7 +10,7 @@ import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controll
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
-class ApiClient {
+class ApiClient{
   var logger = Logger();
   final Dio dio = Dio(
     BaseOptions(
@@ -32,7 +32,6 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Check connectivity before sending requests
           if (!_connectivityController.hasInternet.value) {
             logger.w('No internet connection. Request queued: ${options.path}');
             return handler.reject(
@@ -48,22 +47,45 @@ class ApiClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+
+          options.extra['retries'] = 0; // Initialize retry count
           return handler.next(options);
         },
         onError: (error, handler) async {
-          // Handle different types of errors
-          if (error.type == DioExceptionType.connectionError ||
-              error.type == DioExceptionType.connectionTimeout) {
-            logger.w('Connection error: ${error.message}');
-            // Could implement retry logic here
-          } else if (error.response?.statusCode == 401) {
-            // Unauthorized - could handle token refresh or logout
-            // Get.offAllNamed('/login');
+          const maxRetries = 3;
+          const retryDelay = Duration(seconds: 2);
+
+          final shouldRetry = [
+            DioExceptionType.connectionTimeout,
+            DioExceptionType.receiveTimeout,
+            DioExceptionType.sendTimeout,
+            DioExceptionType.connectionError,
+          ].contains(error.type);
+
+          if (shouldRetry) {
+            final retries = error.requestOptions.extra['retries'] ?? 0;
+            if (retries < maxRetries) {
+              logger.w('Retrying request... Attempt ${retries + 1}');
+
+              await Future.delayed(retryDelay);
+
+              final options = error.requestOptions;
+              options.extra['retries'] = retries + 1;
+
+              try {
+                final response = await dio.fetch(options);
+                return handler.resolve(response);
+              } catch (e) {
+                return handler.next(e as DioException);
+              }
+            }
           }
+
           return handler.next(error);
         },
       ),
     );
+
   }
 
   Future<User?> getUserProfile(int id) async {
