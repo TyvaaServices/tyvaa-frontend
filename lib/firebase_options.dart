@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'tyvaa-project.firebasestorage.app',
     iosBundleId: 'com.chouly.tyvaa',
   );
+
 }

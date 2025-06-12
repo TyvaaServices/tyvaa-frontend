@@ -27,8 +27,12 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final storage = FlutterSecureStorage();
-  final token = await storage.read(key: "auth_token");
+  var token;
+  if(await storage.containsKey(key: "auth_token")){
+
+   token = await storage.read(key: "auth_token");
   print("un token ici :" + token!);
+  }
   // await storage.deleteAll();
   Jiffy.setLocale('fr');
   runApp(
