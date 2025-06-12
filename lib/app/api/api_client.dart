@@ -48,7 +48,7 @@ class ApiClient{
             options.headers['Authorization'] = 'Bearer $token';
           }
 
-          options.extra['retries'] = 0; // Initialize retry count
+          options.extra['retries'] = 0;
           return handler.next(options);
         },
         onError: (error, handler) async {

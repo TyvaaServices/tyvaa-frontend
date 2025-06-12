@@ -26,8 +26,8 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  final storage = FlutterSecureStorage();
-  var token;
+  final storage = const FlutterSecureStorage();
+  String? token= '';
   if(await storage.containsKey(key: "auth_token")){
 
    token = await storage.read(key: "auth_token");
