@@ -45,7 +45,8 @@ void main() async {
         // TODO: Replace with Get.deviceLocale in production
         fallbackLocale: Locale('en'),
         //tu intervertis ici rek si tu veux sauter le login
-        initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
+        //initialRoute: token.isEmpty ? AppPages.INITIAL : Routes.PAYMENT,
+        initialRoute: Routes.RIDE_SEARCH,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,
