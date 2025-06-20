@@ -22,6 +22,8 @@ import '../modules/auth/views/login_view.dart';
 import '../modules/driver_verification/bindings/driver_verification_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
+import '../modules/payment/views/payment_view.dart';
+import '../modules/payment/bindings/payment_binding.dart';
 
 part 'app_routes.dart';
 
@@ -132,6 +134,13 @@ class AppPages {
       name: _Paths.DRIVER_VERIFICATION,
       page: () => DriverVerificationView(),
       binding: DriverVerificationBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT,
+      page: () => const PaymentView(),
+      binding: PaymentBinding(),
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 500),
     ),
