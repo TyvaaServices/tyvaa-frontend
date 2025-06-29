@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 
 import '../../../../domain/entities/user.dart';
@@ -14,8 +13,6 @@ class RegisterController extends GetxController
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
   final UserRepository _userRepository = UserRepository();
-  final apiClient = ApiClient();
-  String otp = '';
   String token = '';
   late User user;
 
@@ -167,24 +164,55 @@ class RegisterController extends GetxController
 
     isLoading.value = true;
 
-    await Future.delayed(const Duration(seconds: 2));
-    final isDone = await apiClient.registerUser(user, this);
+    try {
+      user.email = emailController.text.trim();
+      final phoneNumber = '+221${phoneMask.unmaskText(phoneController.text)}';
+      final response = await _userRepository.requestRegisterOtp(
+        phoneNumber: phoneNumber,
+      );
 
-    isLoading.value = false;
-    if (!isDone) return;
-    await _userRepository.saveUser(user);
-    print("full username ${user.fullName}");
-
-    Get.snackbar(
-      'Succès',
-      'Compte créé avec succès!',
-      backgroundColor: TColors.success,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.TOP,
-    );
-
-    await Future.delayed(const Duration(seconds: 2));
-    Get.offAllNamed(Routes.OTP, arguments: [otp, token]);
+      if (response) {
+        isLoading.value = false;
+        Get.snackbar(
+          'Succès',
+          'OTP envoyé avec succès!',
+          backgroundColor: TColors.success,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+        await Future.delayed(const Duration(seconds: 1));
+        Get.offAllNamed(
+          Routes.OTP,
+          arguments: {
+            'phone': phoneNumber,
+            'user': user,
+            'isRegistration': true,
+          },
+        );
+      } else {
+        isLoading.value = false;
+        Get.snackbar(
+          'Erreur',
+          'Échec de l\'envoi de l\'OTP. Veuillez réessayer.',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = 'Erreur lors de l\'inscription: $e';
+      if (e.toString().contains('400')) {
+        errorMessage = 'Données invalides. Vérifiez vos informations.';
+      }
+      Get.snackbar(
+        'Erreur',
+        errorMessage,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
   @override

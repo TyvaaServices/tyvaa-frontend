@@ -45,62 +45,102 @@ class RideSearchView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Intro text
-          Text(
-            'Où souhaitez-vous aller?',
-            style: TTypography.headingLarge(context),
-          ),
-
-          const SizedBox(height: TSpacing.sm),
-
-          Text(
-            'Trouvez des trajets partagés à Dakar',
-            style: TTypography.bodyMedium(
-              context,
-            ).copyWith(color: TColors.textSecondary(context)),
-          ),
-
-          const SizedBox(height: TSpacing.xl),
-
-          // Departure point selection
-          _buildPointSelection(
-            context,
-            title: 'Point de départ',
-            hint: 'D\'où partez-vous?',
-            icon: Icons.trip_origin,
-            iconColor: TColors.primary,
-            selectedValue: controller.departurePoint,
-            onTap:
-                () => _showLandmarkSelection(
-                  context,
-                  'Choisir un point de départ',
-                  controller.departurePoint,
+          // Header with decorative elements
+          Container(
+            margin: const EdgeInsets.only(bottom: TSpacing.xl),
+            child: Stack(
+              children: [
+                // Background decorative element
+                Positioned(
+                  right: -20,
+                  top: -15,
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        colors: [
+                          TColors.primaryLight.withOpacity(0.3),
+                          TColors.primaryLight.withOpacity(0.0),
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ),
-          ),
-
-          const SizedBox(height: TSpacing.lg),
-
-          // Destination selection
-          _buildPointSelection(
-            context,
-            title: 'Destination',
-            hint: 'Où allez-vous?',
-            icon: Icons.location_on,
-            iconColor: TColors.accent,
-            selectedValue: controller.arrivalPoint,
-            onTap:
-                () => _showLandmarkSelection(
-                  context,
-                  'Choisir une destination',
-                  controller.arrivalPoint,
-                  exclude: controller.departurePoint.value,
+                // Header text
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Où souhaitez-vous aller?',
+                      style: TTypography.headingLarge(context),
+                    ),
+                    const SizedBox(height: TSpacing.sm),
+                    Text(
+                      'Trouvez des trajets partagés à Dakar',
+                      style: TTypography.bodyMedium(context)
+                          .copyWith(color: TColors.textSecondary(context)),
+                    ),
+                  ],
                 ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: TSpacing.lg),
+          // Main search card
+          Container(
+            decoration: BoxDecoration(
+              color: TColors.surface(context),
+              borderRadius: TRadius.cardRadius,
+              boxShadow: TShadows.subtle,
+            ),
+            child: Column(
+              children: [
+                // Departure point selection
+                _buildPointSelection(
+                  context,
+                  title: 'Point de départ',
+                  hint: 'D\'où partez-vous?',
+                  icon: Icons.trip_origin,
+                  iconColor: TColors.primary,
+                  selectedValue: controller.departurePoint,
+                  onTap: () => _showLandmarkSelection(
+                    context,
+                    'Choisir un point de départ',
+                    controller.departurePoint,
+                  ),
+                ),
 
-          // Date selection
-          // _buildDateSelection(context),
+                // Divider
+                Padding(
+                  padding: const EdgeInsets.only(left: 56),
+                  child: Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: TColors.neutral200,
+                  ),
+                ),
+
+                // Destination selection
+                _buildPointSelection(
+                  context,
+                  title: 'Destination',
+                  hint: 'Où allez-vous?',
+                  icon: Icons.location_on,
+                  iconColor: TColors.accent,
+                  selectedValue: controller.arrivalPoint,
+                  onTap: () => _showLandmarkSelection(
+                    context,
+                    'Choisir une destination',
+                    controller.arrivalPoint,
+                    exclude: controller.departurePoint.value,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           const SizedBox(height: TSpacing.xxl),
 
           // Search button
@@ -115,19 +155,50 @@ class RideSearchView extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: TRadius.buttonRadius,
                 ),
-                elevation: 0,
+                elevation: 2,
               ),
-              child: Text('Rechercher', style: TTextStyles.buttonStatic),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.search, size: 20),
+                  const SizedBox(width: TSpacing.sm),
+                  Text('Rechercher', style: TTextStyles.buttonStatic),
+                ],
+              ),
             ),
           ),
 
           const SizedBox(height: TSpacing.xl),
 
-          // Recent searches (can be expanded in the future)
-          Text('Recherches récentes', style: TTypography.headingSmall(context)),
+          // Recent searches section
+          Container(
+            margin: const EdgeInsets.only(bottom: TSpacing.md),
+            child: Row(
+              children: [
+                Text('Recherches récentes', style: TTypography.headingSmall(context)),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    // This would typically clear recent searches
+                    Get.snackbar(
+                      'Information',
+                      'Historique effacé',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: TColors.primary,
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text('Effacer', style: TTypography.bodySmall(context).copyWith(color: TColors.primary)),
+                ),
+              ],
+            ),
+          ),
 
-          const SizedBox(height: TSpacing.md),
-
+          // Recent search items with improved styling
           _buildRecentSearchItem(
             context,
             departure: 'UCAD',
@@ -288,28 +359,79 @@ class RideSearchView extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: TSpacing.sm),
+        margin: const EdgeInsets.only(bottom: TSpacing.md),
         padding: const EdgeInsets.all(TSpacing.md),
         decoration: BoxDecoration(
-          color: TColors.surface(context).withOpacity(0.7),
+          color: TColors.surface(context),
           borderRadius: TRadius.cardRadius,
           border: Border.all(color: TColors.neutral300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: TColors.neutral300.withOpacity(0.5),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.history,
-              color: TColors.textSecondary(context),
-              size: 20,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: TColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.history,
+                color: TColors.primary,
+                size: 16,
+              ),
             ),
             const SizedBox(width: TSpacing.md),
             Expanded(
-              child: Text(
-                '$departure → $arrival',
-                style: TTypography.bodyMedium(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        departure,
+                        style: TTypography.bodyMedium(context)
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(Icons.arrow_forward, size: 14, color: TColors.neutral600),
+                      const SizedBox(width: 6),
+                      Text(
+                        arrival,
+                        style: TTypography.bodyMedium(context)
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Appuyer pour rechercher',
+                    style: TTypography.labelSmall(context).copyWith(
+                      color: TColors.textSecondary(context),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Icon(Icons.north_west, color: TColors.primary, size: 18),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: TColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(TRadius.pill),
+              ),
+              child: Icon(
+                Icons.north_west,
+                color: TColors.primary,
+                size: 14,
+              ),
+            ),
           ],
         ),
       ),
