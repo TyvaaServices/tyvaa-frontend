@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../themes/design_system.dart';
 import '../../../widgets/primary_button.dart';
+import '../controllers/home_controller.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends GetView<HomeController> {
   final _controller = PageController();
   final RxInt _currentPage = 0.obs;
 
@@ -32,7 +34,6 @@ class OnboardingScreen extends StatelessWidget {
                 (_, index) => _buildPage(index, titleStyle, subtitleStyle),
           ),
 
-          // ======== Bouton "Passer" ========
           Positioned(
             top: 50,
             right: 24,
@@ -79,8 +80,6 @@ class OnboardingScreen extends StatelessWidget {
                       : const SizedBox(),
             ),
           ),
-
-          // ======== Indicateur de page & bouton suivant/commencer ========
           Positioned(
             bottom: 24,
             left: 24,
@@ -115,7 +114,8 @@ class OnboardingScreen extends StatelessWidget {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        Get.offAllNamed('/login');
+                        controller.dismissOnboarding();
+                        Get.offAllNamed(Routes.MAIN);
                       }
                     },
                   ),
