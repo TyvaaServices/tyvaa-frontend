@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import 'package:passenger_tyvaa/domain/entities/driver_profile.dart';
+import 'package:passenger_tyvaa/domain/entities/passenger_profile.dart';
 
 part 'user.g.dart';
 
@@ -11,28 +13,28 @@ class User extends HiveObject {
   String? phoneNumber;
 
   @HiveField(2)
-  bool? isOnline;
-
-  @HiveField(3)
-  bool? isDriver;
-
-  @HiveField(4)
-  bool? isVerified;
-
-  @HiveField(5)
-  bool? isBlocked;
-
-  @HiveField(6)
   String? fullName;
 
-  @HiveField(7)
+  @HiveField(3)
   String? fcmToken;
 
+  @HiveField(4)
+  String? profileImage;
+
+  @HiveField(5)
+  String? sexe;
+
+  @HiveField(6)
+  DateTime? dateOfBirth;
+
+  @HiveField(7)
+  String? email;
+
   @HiveField(8)
-  String? driverLicense;
+  bool? isActive;
 
   @HiveField(9)
-  String? carImage;
+  bool? isBlocked;
 
   @HiveField(10)
   double? latitude;
@@ -41,60 +43,98 @@ class User extends HiveObject {
   double? longitude;
 
   @HiveField(12)
-  DateTime? dateOfBirth;
+  DateTime? lastLogin;
 
   @HiveField(13)
-  String? sexe;
+  DateTime? createdAt;
 
   @HiveField(14)
-  String? email;
+  DateTime? updatedAt;
 
   @HiveField(15)
-  DateTime? createdAt;
+  PassengerProfile? passengerProfile;
+
+  @HiveField(16)
+  DriverProfile? driverProfile;
+
+  @HiveField(17)
+  bool? isOnline;
+
+  @HiveField(18)
+  bool? isDriver;
+
+  @HiveField(19)
+  bool? isVerified;
+
+  @HiveField(20)
+  String? driverLicense;
+
+  @HiveField(21)
+  String? carImage;
 
   User({
     this.id,
     this.phoneNumber,
+    this.fullName,
+    this.fcmToken,
+    this.profileImage,
+    this.sexe,
+    this.dateOfBirth,
+    this.email,
+    this.isActive,
+    this.isBlocked,
+    this.latitude,
+    this.longitude,
+    this.lastLogin,
+    this.createdAt,
+    this.updatedAt,
+    this.passengerProfile,
+    this.driverProfile,
+    // Legacy fields
     this.isOnline,
     this.isDriver,
     this.isVerified,
-    this.isBlocked,
-    this.createdAt,
-    this.dateOfBirth,
-    this.sexe,
-    this.email,
-    this.fullName,
-    this.fcmToken,
     this.driverLicense,
     this.carImage,
-    this.latitude,
-    this.longitude,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       phoneNumber: json['phoneNumber'],
+      fullName: json['fullName'],
+      fcmToken: json['fcmToken'],
+      profileImage: json['profileImage'],
+      sexe: json['sexe'],
+      dateOfBirth:
+          json['dateOfBirth'] != null
+              ? DateTime.parse(json['dateOfBirth'])
+              : null,
+      email: json['email'],
+      isActive: json['isActive'],
+      isBlocked: json['isBlocked'],
+      latitude: json['latitude']?.toDouble(),
+      longitude: json['longitude']?.toDouble(),
+      lastLogin:
+          json['lastLogin'] != null ? DateTime.parse(json['lastLogin']) : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      passengerProfile:
+          json['passengerProfile'] != null
+              ? PassengerProfile.fromJson(json['passengerProfile'])
+              : null,
+      driverProfile:
+          json['driverProfile'] != null
+              ? DriverProfile.fromJson(json['driverProfile'])
+              : null,
+      // Legacy fields for backward compatibility
       isOnline: json['isOnline'],
       isDriver: json['isDriver'],
       isVerified: json['isVerified'],
-      isBlocked: json['isBlocked'],
-      fullName: json['fullName'],
-      fcmToken: json['fcmToken'],
       driverLicense: json['driverLicense'],
       carImage: json['carImage'],
-      dateOfBirth: DateTime.parse(json['dateOfBirth']),
-      sexe: json['sexe'],
-      email: json['email'],
-      latitude:
-          json['latitude'] != null
-              ? (json['latitude'] as num).toDouble()
-              : null,
-      longitude:
-          json['longitude'] != null
-              ? (json['longitude'] as num).toDouble()
-              : null,
-      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -102,21 +142,27 @@ class User extends HiveObject {
     return {
       'id': id,
       'phoneNumber': phoneNumber,
-      "fullName": fullName,
+      'fullName': fullName,
+      'fcmToken': fcmToken,
+      'profileImage': profileImage,
+      'sexe': sexe,
+      'dateOfBirth': dateOfBirth?.toIso8601String(),
+      'email': email,
+      'isActive': isActive,
+      'isBlocked': isBlocked,
+      'latitude': latitude,
+      'longitude': longitude,
+      'lastLogin': lastLogin?.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'passengerProfile': passengerProfile?.toJson(),
+      'driverProfile': driverProfile?.toJson(),
+      // Legacy fields
       'isOnline': isOnline,
       'isDriver': isDriver,
       'isVerified': isVerified,
-      'isBlocked': isBlocked,
-      'nomComplet': fullName,
-      'fcmToken': fcmToken,
-      'dateOfBirth': dateOfBirth?.toIso8601String(),
-      'sexe': sexe,
-      'email': email,
       'driverLicense': driverLicense,
       'carImage': carImage,
-      'latitude': latitude,
-      'longitude': longitude,
-      'createdAt': createdAt?.toIso8601String(),
     };
   }
 }

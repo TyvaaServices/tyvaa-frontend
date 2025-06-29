@@ -1,5 +1,6 @@
+import 'package:dio/src/response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
@@ -88,6 +89,109 @@ class UserRepository {
     } catch (e) {
       _logger.e('Error synchronizing user data: $e');
       return false;
+    }
+  }
+
+  /// Request login OTP
+  Future<bool> requestLoginOtp(String phone) async {
+    try {
+      final response = await _apiClient.requestLoginOtp(phone);
+
+      return response.statusCode == 200;
+    } catch (e) {
+      _logger.e('Error requesting login OTP: $e');
+      return false;
+    }
+  }
+
+  /// Request registration OTP
+  Future<bool> requestRegisterOtp({required String phoneNumber}) async {
+    try {
+      final response = await _apiClient.requestRegisterOtp(
+        phoneNumber: phoneNumber,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      _logger.e('Error requesting register OTP: $e');
+      return false;
+    }
+  }
+
+  /// Verify OTP
+  Future<bool> verifyOtp({required String phone, required String otp}) async {
+    Response? response = null;
+    try {
+      response = await _apiClient.verifyOtp(phone: phone, otp: otp);
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        final FlutterSecureStorage storage = const FlutterSecureStorage();
+        if (data['token'] != null && data['user'] != null) {
+          await storage.write(key: 'auth_token', value: data['token']);
+          await storage.write(
+            key: 'user_id',
+            value: data['user']['id']?.toString() ?? '',
+          );
+          saveUser(User.fromJson(data['user']));
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Error verifying OTP: $e and ${response?.data['error']}');
+      return false;
+    }
+  }
+
+  /// Register user with OTP
+  Future<bool> createUser({
+    required Map<String, dynamic> user,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiClient.createUser(user: user, otp: otp);
+      if (response.statusCode == 201 && response.data != null) {
+        final data = response.data;
+        final FlutterSecureStorage storage = const FlutterSecureStorage();
+        if (data['user'] != null) {
+          await storage.write(
+            key: 'user_id',
+            value: data['user']['id']?.toString() ?? '',
+          );
+          await storage.write(
+            key: 'user_name',
+            value: data['user']['name'] ?? '',
+          );
+          await storage.write(
+            key: 'user_email',
+            value: data['user']['email'] ?? '',
+          );
+          await storage.write(
+            key: 'user_phone',
+            value: data['user']['phone'] ?? '',
+          );
+        }
+        if (data['token'] != null) {
+          await storage.write(key: 'auth_token', value: data['token']);
+        }
+        // Optionally save to Hive/local storage if needed
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Error creating user: $e');
+      return false;
+    }
+  }
+
+  /// Resend OTP (handles both registration and login)
+  Future<bool> resendOtp({
+    required String phoneNumber,
+    required bool isRegistration,
+  }) async {
+    if (isRegistration) {
+      return await requestRegisterOtp(phoneNumber: phoneNumber);
+    } else {
+      return await requestLoginOtp(phoneNumber);
     }
   }
 
