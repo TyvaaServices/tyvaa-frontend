@@ -6,7 +6,6 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:passenger_tyvaa/app/repositories/user_repository.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
-import '../../../api/api_client.dart';
 import '../../../services/connectivity_service.dart';
 
 class LoginController extends GetxController
@@ -32,11 +31,9 @@ class LoginController extends GetxController
   bool get isValid => unmasked.value.length == 9;
   final phoneFocus = FocusNode();
 
-  final _apiClient = Get.find<ApiClient>();
   final _userRepository = UserRepository();
   final _connectivityController = Get.find<ConnectivityController>();
   final _logger = Logger();
-  String otp = '';
   String token = '';
 
   @override
@@ -99,7 +96,6 @@ class LoginController extends GetxController
 
     try {
       if (!_connectivityController.hasInternet.value) {
-        // No internet connection, show error message
         Get.snackbar(
           'Pas de connexion internet',
           'Veuillez vérifier votre connexion internet et réessayer.',
@@ -113,35 +109,41 @@ class LoginController extends GetxController
         return;
       }
 
-      // Online login flow
-      final response = await _apiClient.loginUser(unmasked.value, this);
+      // Always send the masked phone (with +221) to the repository
+      final phone = '+221${unmasked.value}';
+      final response = await _userRepository.requestLoginOtp(phone);
 
-      if (!response) {
+      if (response) {
+        isLoading.value = false;
+        _logger.d('Login OTP requested successfully');
+        Get.toNamed(
+          '/otp',
+          arguments: {'phone': phone, 'isRegistration': false},
+        );
+      } else {
         isLoading.value = false;
         Get.snackbar(
           'Erreur',
-          'Échec de connexion. Vérifiez votre numéro et réessayez.',
+          'Échec de la demande d\'OTP. Vérifiez votre numéro et réessayez.',
           backgroundColor: Colors.red.withOpacity(0.8),
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
         );
-        return;
       }
-
-      await _userRepository.saveUser(user);
-      _logger.d('User saved to local storage after login: ${user.fullName}');
-
-      isLoading.value = false;
-      // Navigate to OTP verification
-      Get.toNamed('/otp', arguments: [otp, token]);
     } catch (e) {
       HapticFeedback.heavyImpact();
       _logger.e('Login error: $e');
       isLoading.value = false;
+      String errorMessage = 'Erreur lors de la connexion';
+      if (e.toString().contains('400')) {
+        errorMessage = 'Numéro de téléphone invalide';
+      }
       Get.snackbar(
         'Erreur',
-        'Erreur lors de la connexion: $e',
+        errorMessage,
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
       );
     }
   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -7,13 +6,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
-import '../../../api/api_client.dart';
 import '../../../constants/app_constants.dart';
+import '../../../repositories/user_repository.dart';
 
 class OtpVerificationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final int otpLength = AppConstants.otpLength;
-  String correctOtp = "";
+  String phoneNumber = "";
   final int resendDelaySeconds = AppConstants.otpResendDelaySeconds;
 
   late List<TextEditingController> digitControllers;
@@ -29,7 +28,7 @@ class OtpVerificationController extends GetxController
   late AnimationController shakeController;
   late Animation<double> shakeAnimation;
 
-  final _apiClient = ApiClient();
+  final _userRepository = UserRepository();
   final _secureStorage = const FlutterSecureStorage();
   final _logger = Logger();
 
@@ -38,13 +37,10 @@ class OtpVerificationController extends GetxController
     super.onInit();
 
     if (Get.arguments != null) {
-      correctOtp = Get.arguments[0];
+      phoneNumber = Get.arguments['phone'] ?? '';
       _logger.d(Get.arguments);
       print(Get.arguments);
-      debugPrint("Correct OTP set from token: $correctOtp");
-    } else {
-      correctOtp = AppConstants.demoCorrectOtp;
-      debugPrint("Using demo OTP: $correctOtp");
+      debugPrint("Phone number for OTP verification: $phoneNumber");
     }
 
     digitControllers = List.generate(otpLength, (_) => TextEditingController());
@@ -93,51 +89,53 @@ class OtpVerificationController extends GetxController
     if (isVerifying.value || !isOtpComplete) return;
 
     isVerifying.value = true;
+    hasError.value = false;
+    errorMessage.value = '';
 
     try {
-      if (completeOtp == correctOtp) {
-        isVerified.value = true;
-
-        await _secureStorage.write(key: 'auth_token', value: Get.arguments[1]);
-
-        // Just check if permission is needed, but don't request it
-        final needsPermission = await _needsLocationPermission();
-
-        if (needsPermission) {
-          // Navigate to our custom location permission screen
-          Get.offAllNamed('/location-permission');
+      final isRegistration = Get.arguments?['isRegistration'] ?? false;
+      if (isRegistration) {
+        final user = Get.arguments?['user'];
+        final success = await _userRepository.createUser(
+          user: user.toJson(),
+          otp: completeOtp,
+        );
+        if (success) {
+          // Registration success: you may want to fetch user data here if needed
+          isVerified.value = true;
+          final needsPermission = await _needsLocationPermission();
+          if (needsPermission) {
+            Get.offAllNamed('/location-permission');
+          } else {
+            Get.offAllNamed('/main');
+          }
         } else {
-          // Permission already granted, go directly to main screen
-          Get.offAllNamed('/main');
-        }
-        return;
-      }
-
-      // If not matching, try to verify with API
-      final response = await _apiClient.dio.post(
-        '/verify-otp',
-        data: {'otp': completeOtp},
-      );
-
-      if (response.statusCode == 200) {
-        isVerified.value = true;
-
-        // Just check if permission is needed, but don't request it
-        final needsPermission = await _needsLocationPermission();
-
-        if (needsPermission) {
-          // Navigate to our custom location permission screen
-          Get.offAllNamed('/location-permission');
-        } else {
-          // Permission already granted, go directly to main screen
-          Get.offAllNamed('/main');
+          hasError.value = true;
+          errorMessage.value = 'Registration failed. Please try again.';
+          _shakeError();
         }
       } else {
-        hasError.value = true;
-        errorMessage.value = 'Invalid OTP. Please try again.';
-        _shakeError();
+        final success = await _userRepository.verifyOtp(
+          phone: phoneNumber,
+          otp: completeOtp,
+        );
+        if (success) {
+          // Login OTP verified: you may want to fetch user data here if needed
+          isVerified.value = true;
+          final needsPermission = await _needsLocationPermission();
+          if (needsPermission) {
+            Get.offAllNamed('/location-permission');
+          } else {
+            Get.offAllNamed('/main');
+          }
+        } else {
+          hasError.value = true;
+          errorMessage.value = 'Invalid OTP. Please try again.';
+          _shakeError();
+        }
       }
     } catch (e) {
+      _logger.e('OTP verification error: $e');
       hasError.value = true;
       errorMessage.value = 'An error occurred. Please try again later.';
       _shakeError();
@@ -167,19 +165,49 @@ class OtpVerificationController extends GetxController
     canResend.value = false;
     resendCountdown.value = resendDelaySeconds;
 
-    final random = Random();
-    correctOtp = List.generate(otpLength, (_) => random.nextInt(9) + 1).join();
-
-    // Affiche un message temporaire contenant le code OTP généré (à supprimer en production)
-    Get.snackbar(
-      'Votre OTP',
-      'Votre code OTP est : $correctOtp',
-      backgroundColor: Get.theme.primaryColor.withOpacity(0.8),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-    );
+    try {
+      final isRegistration = Get.arguments?['isRegistration'] ?? false;
+      final success = await _userRepository.resendOtp(
+        phoneNumber: phoneNumber,
+        isRegistration: isRegistration,
+      );
+      if (success) {
+        Get.snackbar(
+          'OTP Sent',
+          'A new OTP has been sent to your phone',
+          backgroundColor: Get.theme.primaryColor.withOpacity(0.8),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to resend OTP. Please try again.',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+        );
+        canResend.value = true;
+        return;
+      }
+    } catch (e) {
+      _logger.e('Resend OTP error: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to resend OTP. Please try again.',
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      canResend.value = true;
+      return;
+    }
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (resendCountdown.value > 0) {

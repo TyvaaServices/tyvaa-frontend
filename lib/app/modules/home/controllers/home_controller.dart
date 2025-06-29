@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/search/controllers/search_controller.dart';
+import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/socket/SocketService.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   final bannerController = PageController(viewportFraction: 0.9);
@@ -19,11 +20,9 @@ class HomeController extends GetxController {
   RxBool isDriver = true.obs;
   final permissionChecked = false.obs;
 
-  // First-time user tracking
   RxBool isFirstTimeUser = true.obs;
   RxBool showOnboarding = false.obs;
 
-  // Upcoming rides list
   final upcomingRides = <Map<String, dynamic>>[].obs;
 
   late ConfettiController confettiController;
@@ -44,6 +43,8 @@ class HomeController extends GetxController {
       'subtitle': 'Rejoignez des milliers de membres',
     },
   ];
+
+  final _secureStorage = const FlutterSecureStorage();
 
   @override
   Future<void> onInit() async {
@@ -78,17 +79,13 @@ class HomeController extends GetxController {
     });
   }
 
-  // Check if this is the user's first time
   Future<void> _checkFirstTimeUser() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      isFirstTimeUser.value = !(prefs.getBool('seen_home_onboarding') ?? false);
-
-      // If first time user, navigate to dedicated onboarding view instead of showing overlay
+      final seen = await _secureStorage.read(key: 'seen_home_onboarding');
+      isFirstTimeUser.value = seen != 'true';
       if (isFirstTimeUser.value) {
-        // Small delay to ensure app is fully loaded before navigation
         Future.delayed(Duration(milliseconds: 300), () {
-          Get.toNamed('/onboarding');
+          Get.toNamed(Routes.ONBOARDING);
         });
       }
     } catch (e) {
@@ -99,11 +96,10 @@ class HomeController extends GetxController {
   // Mark user as having seen the onboarding
   Future<void> dismissOnboarding() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('seen_home_onboarding', true);
-      showOnboarding.value = false;
+      await _secureStorage.write(key: 'seen_home_onboarding', value: 'true');
+      isFirstTimeUser.value = false;
     } catch (e) {
-      print('Error saving onboarding status: $e');
+      print('Error saving onboarding seen flag: $e');
     }
   }
 
