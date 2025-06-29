@@ -17,7 +17,7 @@ class ChatRepositoryImpl extends GetConnect implements ChatRepository {
     String personality,
     List<Message> history,
   ) async {
-    final response = await post('/support/chat', {
+    final response = await post('/support/chatbot', {
       'message': content,
       'personality': personality,
       'history':

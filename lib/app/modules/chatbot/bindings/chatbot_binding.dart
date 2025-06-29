@@ -9,7 +9,9 @@ class ChatbotBinding extends Bindings {
     Get.lazyPut<ChatbotController>(
       fenix: true,
       () => ChatbotController(
-        chatRepository: ChatRepositoryImpl(baseUrl: 'http://10.0.2.2:2000'),
+        chatRepository: ChatRepositoryImpl(
+          baseUrl: 'http://10.0.2.2:3000/api/v1',
+        ),
       ),
     );
   }

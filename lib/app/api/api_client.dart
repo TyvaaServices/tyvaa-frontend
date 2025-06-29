@@ -4,17 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile, Response;
 import 'package:logger/logger.dart';
-import 'package:passenger_tyvaa/app/modules/auth/controllers/login_controller.dart';
-import 'package:passenger_tyvaa/app/modules/auth/controllers/register_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
-class ApiClient{
+class ApiClient {
   var logger = Logger();
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://10.0.2.2:2000',
+      baseUrl: 'http://10.0.2.2:3000/api/v1',
       connectTimeout: Duration(milliseconds: 8000),
       receiveTimeout: Duration(milliseconds: 8000),
       headers: {
@@ -85,7 +83,6 @@ class ApiClient{
         },
       ),
     );
-
   }
 
   Future<User?> getUserProfile(int id) async {
@@ -137,49 +134,35 @@ class ApiClient{
     }
   }
 
-  Future<bool> loginUser(String phoneNumber, LoginController controller) async {
-    if (!_connectivityController.hasInternet.value) {
-      logger.w('No internet connection. Unable to login.');
-      return false;
-    }
-
-    try {
-      final response = await dio.post(
-        '/users/login',
-        data: {'phoneNumber': phoneNumber},
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-        controller.otp = data['otp'];
-        controller.token = data['token'];
-        controller.user = User.fromJson(response.data['user']);
-        logger.d('User login successful');
-        return true;
-      } else {
-        logger.e('Failed to login user: ${response.statusCode}');
-        return false;
-      }
-    } on DioException catch (e) {
-      logger.e('Error logging in user: ${e.message}');
-      return false;
-    }
+  Future<Response> requestLoginOtp(String phone) async {
+    return await dio.post(
+      '/users/request-login-otp',
+      data: {'phoneNumber': phone},
+    );
   }
 
-  Future<bool> registerUser(User user, RegisterController controller) async {
-    try {
-      final response = await dio.post('/users/register', data: user.toJson());
-      if (response.statusCode == 201) {
-        controller.otp = response.data['otp'];
-        controller.token = response.data['token'];
-        controller.user = User.fromJson(response.data['user']);
-        return true;
-      } else {
-        return false;
-      }
-    } on DioException catch (e) {
-      return false;
-    }
+  Future<Response> requestRegisterOtp({required String phoneNumber}) async {
+    return await dio.post(
+      '/users/request-register-otp',
+      data: {'phoneNumber': phoneNumber},
+    );
+  }
+
+  Future<Response> verifyOtp({
+    required String phone,
+    required String otp,
+  }) async {
+    return await dio.post(
+      '/users/verify',
+      data: {'phoneNumber': phone, 'otp': otp},
+    );
+  }
+
+  Future<Response> createUser({
+    required Map<String, dynamic> user,
+    required String otp,
+  }) async {
+    return await dio.post('/users/register', data: {'user': user, 'otp': otp});
   }
 
   Future<Response> submitDriverApplication(Uint8List pdfBytes) async {
