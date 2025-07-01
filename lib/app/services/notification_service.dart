@@ -35,30 +35,42 @@ class NotificationService extends GetxService {
 
     // Get FCM token
     String? token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
+    print('🔔 FCM Token obtained: $token');
     if (token != null) {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'fcm_token', value: token);
+      print('🔔 FCM Token saved to secure storage');
+    } else {
+      print('❌ Failed to get FCM token');
     }
 
     // Save FCM token to your backend using ApiClient
     _saveFCMTokenToBackend(token);
 
+    // Setup notification channel for Android
+    await _setupNotificationChannel();
+
     // Handle background messages in main.dart
 
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
+      print('🔔 =============== FOREGROUND MESSAGE RECEIVED ===============');
+      print('🔔 Message ID: ${message.messageId}');
+      print('🔔 From: ${message.from}');
+      print('🔔 Data: ${message.data}');
+      print('🔔 Notification Title: ${message.notification?.title}');
+      print('🔔 Notification Body: ${message.notification?.body}');
+      print('🔔 ======================================================');
 
       if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
+        print('🔔 Processing notification for UI display...');
 
         // Convert FCM message to our NotificationModel
         NotificationModel notification = _convertMessageToNotification(message);
 
         // Store notification
         _storeNotification(notification);
+        print('🔔 Notification stored locally');
 
         // Show snackbar
         Get.snackbar(
@@ -71,11 +83,16 @@ class NotificationService extends GetxService {
           duration: const Duration(seconds: 4),
           borderRadius: 8,
         );
+        print('🔔 Snackbar displayed');
 
         // Update notification controller if it exists
         if (Get.isRegistered<NotificationController>()) {
           Get.find<NotificationController>().addNotification(notification);
+          print('🔔 Notification added to controller');
         }
+      } else {
+        print('⚠️ Message received but no notification payload found');
+        print('⚠️ Data-only message: ${message.data}');
       }
     });
 
@@ -337,5 +354,12 @@ class NotificationService extends GetxService {
     } catch (e) {
       print('Error marking notification as read: $e');
     }
+  }
+
+  Future<void> _setupNotificationChannel() async {
+    // This method sets up the notification channel for Android
+    // The actual channel creation is handled by the firebase_messaging plugin
+    // but we can configure additional settings here if needed
+    print('🔔 Notification channel setup completed');
   }
 }

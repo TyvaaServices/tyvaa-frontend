@@ -21,6 +21,7 @@ class RideSearchView extends StatelessWidget {
           'Rechercher un trajet',
           style: TTypography.headingMedium(context),
         ),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         backgroundColor: TColors.background(context),
         leading: IconButton(

@@ -121,7 +121,7 @@ class UserRepository {
   Future<bool> verifyOtp({required String phone, required String otp}) async {
     Response? response = null;
     try {
-      response = await _apiClient.verifyOtp(phone: phone, otp: otp);
+      response = await _apiClient.verifyOtp(phoneNumber: phone, otp: otp);
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data;
         final FlutterSecureStorage storage = const FlutterSecureStorage();

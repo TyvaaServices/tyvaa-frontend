@@ -12,7 +12,13 @@ import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("🔙 Background Message: ${message.notification?.title}");
+  print("� =============== BACKGROUND MESSAGE RECEIVED ===============");
+  print("🔔 Message ID: ${message.messageId}");
+  print("🔔 From: ${message.from}");
+  print("🔔 Data: ${message.data}");
+  print("🔔 Notification Title: ${message.notification?.title}");
+  print("🔔 Notification Body: ${message.notification?.body}");
+  print("🔔 ========================================================");
 }
 
 void main() async {
