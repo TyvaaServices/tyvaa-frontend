@@ -4,9 +4,9 @@ import 'package:passenger_tyvaa/app/modules/notification/controllers/notificatio
 class NotificationBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<NotificationController>(
-      fenix: true,
-      () => NotificationController(),
+    Get.put(
+      NotificationController(),
+      permanent: true,
     );
   }
 }
