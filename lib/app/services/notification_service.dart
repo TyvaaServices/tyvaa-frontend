@@ -2,24 +2,29 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/user.dart';
-import '../api/api_client.dart'; // Import for ApiClient
+import '../api/api_client.dart';
 import '../modules/notification/controllers/notification_controller.dart';
+import 'local_notification_service.dart';
 
 class NotificationService extends GetxService {
   static const String NOTIFICATIONS_KEY = 'tyvaa_notifications';
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final RxBool isInitialized = false.obs;
-  late ApiClient _apiClient; // ApiClient instance
+  late ApiClient _apiClient;
   User? user;
 
   Future<NotificationService> init() async {
+    print('🔔 Initializing NotificationService...');
+
+    // Initialize local notifications first
+    LocalNotificationService.initialize();
+    await LocalNotificationService.createNotificationChannel();
+
     // Initialize ApiClient
     _apiClient = Get.find<ApiClient>();
     user = Hive.box<User>('users').get('currentUser');
@@ -29,9 +34,16 @@ class NotificationService extends GetxService {
       alert: true,
       badge: true,
       sound: true,
+      provisional: false,
+      criticalAlert: false,
+      carPlay: false,
+      announcement: false,
     );
 
-    print('User granted permission: ${settings.authorizationStatus}');
+    print('🔔 User granted permission: ${settings.authorizationStatus}');
+
+    // Also request local notification permissions
+    await _requestLocalNotificationPermissions();
 
     // Get FCM token
     String? token = await _firebaseMessaging.getToken();
@@ -40,18 +52,36 @@ class NotificationService extends GetxService {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'fcm_token', value: token);
       print('🔔 FCM Token saved to secure storage');
+      _saveFCMTokenToBackend(token);
     } else {
       print('❌ Failed to get FCM token');
     }
 
-    // Save FCM token to your backend using ApiClient
-    _saveFCMTokenToBackend(token);
+    // Handle token refresh
+    _firebaseMessaging.onTokenRefresh.listen((String token) {
+      print('🔔 FCM Token refreshed: $token');
+      const storage = FlutterSecureStorage();
+      storage.write(key: 'fcm_token', value: token);
+      _saveFCMTokenToBackend(token);
+    });
 
-    // Setup notification channel for Android
-    await _setupNotificationChannel();
+    // Set up message handlers
+    _setupMessageHandlers();
 
-    // Handle background messages in main.dart
+    isInitialized.value = true;
+    print('🔔 NotificationService initialized successfully');
+    return this;
+  }
 
+  Future<void> _requestLocalNotificationPermissions() async {
+    try {
+      await LocalNotificationService.requestPermissions();
+    } catch (e) {
+      print('Error requesting local notification permissions: $e');
+    }
+  }
+
+  void _setupMessageHandlers() {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('🔔 =============== FOREGROUND MESSAGE RECEIVED ===============');
@@ -63,33 +93,23 @@ class NotificationService extends GetxService {
       print('🔔 ======================================================');
 
       if (message.notification != null) {
-        print('🔔 Processing notification for UI display...');
-
-        // Convert FCM message to our NotificationModel
-        NotificationModel notification = _convertMessageToNotification(message);
-
         // Store notification
+        final notification = _convertMessageToNotification(message);
         _storeNotification(notification);
-        print('🔔 Notification stored locally');
 
-        // Show snackbar
-        Get.snackbar(
-          message.notification?.title ?? 'New notification',
-          message.notification?.body ?? '',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.black87,
-          colorText: Colors.white,
-          margin: const EdgeInsets.all(10),
-          duration: const Duration(seconds: 4),
-          borderRadius: 8,
-        );
-        print('🔔 Snackbar displayed');
+        // Show local notification with enhanced settings for foreground
+        LocalNotificationService.showNotificationFromFCM(message);
 
-        // Update notification controller if it exists
+        // Update in-app notification list if controller exists
         if (Get.isRegistered<NotificationController>()) {
-          Get.find<NotificationController>().addNotification(notification);
-          print('🔔 Notification added to controller');
+          final controller = Get.find<NotificationController>();
+          controller.addNotification(notification);
+          print(
+            '🔔 Notification added to in-app list. Total: ${controller.notifications.length}',
+          );
         }
+
+        print('🔔 Foreground notification processed');
       } else {
         print('⚠️ Message received but no notification payload found');
         print('⚠️ Data-only message: ${message.data}');
@@ -98,12 +118,8 @@ class NotificationService extends GetxService {
 
     // Handle notification tap when app is in background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification tapped in background!');
-
-      if (message.notification != null) {
-        // Handle notification tap action
-        _handleNotificationTap(message);
-      }
+      print('🔔 Notification tapped in background!');
+      _handleNotificationTap(message);
     });
 
     // Check for initial message (app opened from terminated state)
@@ -111,38 +127,19 @@ class NotificationService extends GetxService {
       RemoteMessage? message,
     ) {
       if (message != null) {
-        print('App opened from terminated state via notification!');
-        // Handle notification tap action
+        print('🔔 App opened from terminated state via notification!');
         _handleNotificationTap(message);
       }
     });
-
-    isInitialized.value = true;
-    return this;
   }
 
   void _handleNotificationTap(RemoteMessage message) {
-    // Convert FCM message to NotificationModel
-    NotificationModel notification = _convertMessageToNotification(message);
+    // Convert FCM message to NotificationModel and mark as read
+    final notification = _convertMessageToNotification(message);
+    markAsRead(notification.id);
 
-    // Mark as read
-    _markAsRead(notification.id);
-
-    // Navigate based on notification type
-    if (message.data.containsKey('route')) {
-      final String route = message.data['route'];
-      Get.toNamed(route);
-    } else if (message.data.containsKey('type')) {
-      switch (message.data['type']) {
-        case 'tripAccepted':
-          Get.toNamed('/trip-details', arguments: message.data['tripId']);
-          break;
-        case 'message':
-          Get.toNamed('/chat', arguments: message.data['chatId']);
-          break;
-        // Add other navigation cases as needed
-      }
-    }
+    // Handle navigation based on notification data
+    LocalNotificationService.handleNotificationTap(jsonEncode(message.data));
   }
 
   NotificationModel _convertMessageToNotification(RemoteMessage message) {
@@ -182,22 +179,28 @@ class NotificationService extends GetxService {
 
   Future<void> _storeNotification(NotificationModel notification) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      List<String> storedNotifications =
-          prefs.getStringList(NOTIFICATIONS_KEY) ?? [];
+      const storage = FlutterSecureStorage();
+
+      // Get existing notifications from secure storage
+      String? existingNotificationsJson = await storage.read(
+        key: NOTIFICATIONS_KEY,
+      );
+      List<dynamic> storedNotifications = [];
+
+      if (existingNotificationsJson != null) {
+        storedNotifications = jsonDecode(existingNotificationsJson);
+      }
 
       // Add new notification
-      storedNotifications.add(
-        jsonEncode({
-          'id': notification.id,
-          'title': notification.title,
-          'message': notification.message,
-          'type': notification.type.toString(),
-          'time': notification.time.toIso8601String(),
-          'isRead': notification.isRead,
-          'actionData': notification.actionData,
-        }),
-      );
+      storedNotifications.add({
+        'id': notification.id,
+        'title': notification.title,
+        'message': notification.message,
+        'type': notification.type.toString(),
+        'time': notification.time.toIso8601String(),
+        'isRead': notification.isRead,
+        'actionData': notification.actionData,
+      });
 
       // Limit to 50 notifications to avoid excessive storage
       if (storedNotifications.length > 50) {
@@ -206,7 +209,11 @@ class NotificationService extends GetxService {
         );
       }
 
-      await prefs.setStringList(NOTIFICATIONS_KEY, storedNotifications);
+      // Store back to secure storage
+      await storage.write(
+        key: NOTIFICATIONS_KEY,
+        value: jsonEncode(storedNotifications),
+      );
     } catch (e) {
       print('Error storing notification: $e');
     }
@@ -214,17 +221,16 @@ class NotificationService extends GetxService {
 
   Future<List<NotificationModel>> getStoredNotifications() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      List<String>? storedNotifications = prefs.getStringList(
-        NOTIFICATIONS_KEY,
-      );
+      const storage = FlutterSecureStorage();
+      String? notificationsJson = await storage.read(key: NOTIFICATIONS_KEY);
 
-      if (storedNotifications == null || storedNotifications.isEmpty) {
+      if (notificationsJson == null || notificationsJson.isEmpty) {
         return [];
       }
 
-      return storedNotifications.map((jsonString) {
-        final Map<String, dynamic> data = jsonDecode(jsonString);
+      List<dynamic> storedNotifications = jsonDecode(notificationsJson);
+
+      return storedNotifications.map((data) {
         return NotificationModel(
           id: data['id'],
           title: data['title'],
@@ -258,23 +264,26 @@ class NotificationService extends GetxService {
 
   Future<void> markAsRead(String notificationId) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      List<String>? storedNotifications = prefs.getStringList(
-        NOTIFICATIONS_KEY,
+      const storage = FlutterSecureStorage();
+      String? notificationsJson = await storage.read(key: NOTIFICATIONS_KEY);
+
+      if (notificationsJson == null) return;
+
+      List<dynamic> storedNotifications = jsonDecode(notificationsJson);
+
+      // Update the specific notification
+      for (var notification in storedNotifications) {
+        if (notification['id'] == notificationId) {
+          notification['isRead'] = true;
+          break;
+        }
+      }
+
+      // Store back to secure storage
+      await storage.write(
+        key: NOTIFICATIONS_KEY,
+        value: jsonEncode(storedNotifications),
       );
-
-      if (storedNotifications == null) return;
-
-      List<String> updatedNotifications =
-          storedNotifications.map((jsonString) {
-            final Map<String, dynamic> data = jsonDecode(jsonString);
-            if (data['id'] == notificationId) {
-              data['isRead'] = true;
-            }
-            return jsonEncode(data);
-          }).toList();
-
-      await prefs.setStringList(NOTIFICATIONS_KEY, updatedNotifications);
 
       // Update controller if available
       if (Get.isRegistered<NotificationController>()) {
@@ -287,8 +296,8 @@ class NotificationService extends GetxService {
 
   Future<void> clearAllNotifications() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(NOTIFICATIONS_KEY);
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: NOTIFICATIONS_KEY);
 
       // Update controller if available
       if (Get.isRegistered<NotificationController>()) {
@@ -296,6 +305,31 @@ class NotificationService extends GetxService {
       }
     } catch (e) {
       print('Error clearing notifications: $e');
+    }
+  }
+
+  Future<void> deleteNotification(String notificationId) async {
+    try {
+      const storage = FlutterSecureStorage();
+      String? notificationsJson = await storage.read(key: NOTIFICATIONS_KEY);
+
+      if (notificationsJson == null) return;
+
+      List<dynamic> storedNotifications = jsonDecode(notificationsJson);
+
+      // Remove the specific notification
+      storedNotifications.removeWhere(
+        (notification) => notification['id'] == notificationId,
+      );
+
+      // Store back to secure storage
+      await storage.write(
+        key: NOTIFICATIONS_KEY,
+        value: jsonEncode(storedNotifications),
+      );
+      print('🗑️ Notification deleted from storage: $notificationId');
+    } catch (e) {
+      print('Error deleting notification: $e');
     }
   }
 
@@ -324,42 +358,5 @@ class NotificationService extends GetxService {
     } catch (e) {
       print('Error saving FCM token: $e');
     }
-  }
-
-  Future<void> _markAsRead(String notificationId) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      List<String>? storedNotifications = prefs.getStringList(
-        NOTIFICATIONS_KEY,
-      );
-
-      if (storedNotifications == null) return;
-
-      List<String> updatedNotifications =
-          storedNotifications.map((jsonString) {
-            final Map<String, dynamic> data = jsonDecode(jsonString);
-            if (data['id'] == notificationId) {
-              data['isRead'] = true;
-            }
-            return jsonEncode(data);
-          }).toList();
-
-      await prefs.setStringList(NOTIFICATIONS_KEY, updatedNotifications);
-
-      // Update controller if available and notifications screen is open
-      if (Get.isRegistered<NotificationController>()) {
-        final controller = Get.find<NotificationController>();
-        controller.markAsRead(notificationId);
-      }
-    } catch (e) {
-      print('Error marking notification as read: $e');
-    }
-  }
-
-  Future<void> _setupNotificationChannel() async {
-    // This method sets up the notification channel for Android
-    // The actual channel creation is handled by the firebase_messaging plugin
-    // but we can configure additional settings here if needed
-    print('🔔 Notification channel setup completed');
   }
 }

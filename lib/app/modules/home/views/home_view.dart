@@ -4,6 +4,7 @@ import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dar
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:passenger_tyvaa/app/widgets/notification_bell.dart';
 
 import '../../../routes/app_pages.dart';
 
@@ -128,7 +129,7 @@ class HomeScreen extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Salut, ${profileController.user.value!.fullName} 👋',
+                'Salut, ${profileController.user.value.fullName} 👋',
                 style: TTypography.headingSmall(context),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -164,69 +165,11 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildNotificationButton(BuildContext context) {
     return Obx(() {
-      final hasNotifications = notificationController.notifications.isNotEmpty;
-
-      return Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(TRadius.md),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: TColors.surface(context),
-            borderRadius: BorderRadius.circular(TRadius.md),
-            boxShadow: TShadows.subtle,
-            border: Border.all(
-              color:
-                  hasNotifications
-                      ? TColors.error.withOpacity(0.5)
-                      : Colors.transparent,
-              width: 1.5,
-            ),
-          ),
-          child: InkWell(
-            onTap: () => Get.toNamed('/notification'),
-            borderRadius: BorderRadius.circular(TRadius.md),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(TSpacing.md),
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    color:
-                        hasNotifications
-                            ? TColors.error
-                            : TColors.textPrimary(context),
-                    size: 24,
-                  ),
-                ),
-                if (hasNotifications)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: TColors.error,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: TColors.surface(context),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: TColors.error.withOpacity(0.5),
-                            blurRadius: 4,
-                            spreadRadius: 0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
+      return NotificationBell(
+        hasNotifications: notificationController.notifications.isNotEmpty,
+        unreadCount: notificationController.unreadCount,
+        onTap: () => Get.toNamed('/notification'),
+        size: 24,
       );
     });
   }

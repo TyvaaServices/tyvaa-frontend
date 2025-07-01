@@ -16,6 +16,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // Required for flutter_local_notifications
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -26,11 +28,12 @@ android {
         // Import the Firebase BoM
         implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
 
+        // Core library desugaring for flutter_local_notifications
+        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 
         // TODO: Add the dependencies for Firebase products you want to use
         // When using the BoM, don't specify versions in Firebase dependencies
         implementation("com.google.firebase:firebase-analytics")
-
 
         // Add the dependencies for any other desired Firebase products
         // https://firebase.google.com/docs/android/setup#available-libraries

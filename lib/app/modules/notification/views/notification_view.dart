@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:passenger_tyvaa/app/services/local_notification_service.dart';
 
 import '../controllers/notification_controller.dart';
 
@@ -11,6 +12,12 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Always fetch notifications when screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('🔄 Screen: Triggering notification fetch...');
+      controller.fetchNotifications();
+    });
+
     return Scaffold(
       backgroundColor: TColors.background(context),
       appBar: AppBar(
@@ -33,6 +40,27 @@ class NotificationsScreen extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         actions: [
+          // Add test notification button for debugging
+          IconButton(
+            icon: Icon(Icons.bug_report, color: TColors.textPrimary(context)),
+            onPressed: () async {
+              await LocalNotificationService.showTestNotification();
+              Get.snackbar(
+                'Test Notification',
+                'Test notification sent! Check if you hear sound/feel vibration.',
+                backgroundColor: TColors.primary.withOpacity(0.1),
+                colorText: TColors.textPrimary(context),
+              );
+            },
+          ),
+          // Add refresh button for debugging
+          IconButton(
+            icon: Icon(Icons.refresh, color: TColors.textPrimary(context)),
+            onPressed: () {
+              print('🔄 Manual refresh triggered');
+              controller.forceRefresh();
+            },
+          ),
           Obx(
             () =>
                 controller.notifications.isNotEmpty

@@ -17,6 +17,14 @@ class NotificationController extends GetxController {
     fetchNotifications();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Force refresh when controller is ready
+    print('🔄 Controller: Ready - fetching notifications again...');
+    fetchNotifications();
+  }
+
   void _initializeNotificationService() {
     if (Get.isRegistered<NotificationService>()) {
       _notificationService = Get.find<NotificationService>();
@@ -29,72 +37,23 @@ class NotificationController extends GetxController {
   }
 
   Future<void> fetchNotifications() async {
+    print('🔄 Controller: Fetching notifications...');
     isLoading.value = true;
     hasError.value = false;
 
     try {
-      // Get stored notifications from service
       final storedNotifications =
           await _notificationService.getStoredNotifications();
 
-      if (storedNotifications.isNotEmpty) {
-        notifications.value = storedNotifications;
-      }
-      // else {
-      //   // Fallback to mock data for demonstration
-      //   await Future.delayed(Duration(milliseconds: 800));
-      //   notifications.value = [
-      //     // NotificationModel(
-      //     //   id: '1',
-      //     //   title: 'Demande acceptée',
-      //     //   message:
-      //     //       'Votre demande pour rejoindre le trajet Dakar → Saint-Louis a été acceptée par le conducteur.',
-      //     //   type: NotificationType.tripAccepted,
-      //     //   time: DateTime.now().subtract(Duration(minutes: 15)),
-      //     //   isRead: false,
-      //     //   actionData: {'tripId': 'T123', 'driverId': 'D456'},
-      //     // ),
-      //     // NotificationModel(
-      //     //   id: '2',
-      //     //   title: 'Nouveau message',
-      //     //   message: 'Amadou: À quelle heure comptez-vous arriver à Thiès?',
-      //     //   type: NotificationType.message,
-      //     //   time: DateTime.now().subtract(Duration(hours: 2)),
-      //     //   isRead: false,
-      //     //   actionData: {'chatId': 'C789', 'senderId': 'U567'},
-      //     // ),
-      //     // NotificationModel(
-      //     //   id: '3',
-      //     //   title: 'Rappel de trajet',
-      //     //   message:
-      //     //       'Votre trajet vers Mbour démarre dans 2 heures. Préparez-vous!',
-      //     //   type: NotificationType.reminder,
-      //     //   time: DateTime.now().subtract(Duration(hours: 6)),
-      //     //   isRead: true,
-      //     //   actionData: {'tripId': 'T456'},
-      //     // ),
-      //     // NotificationModel(
-      //     //   id: '4',
-      //     //   title: 'Annulation de trajet',
-      //     //   message:
-      //     //       'Désolé, le trajet Dakar → Touba du 10 mai a été annulé par le conducteur.',
-      //     //   type: NotificationType.tripCancelled,
-      //     //   time: DateTime.now().subtract(Duration(days: 1)),
-      //     //   isRead: true,
-      //     //   actionData: {'tripId': 'T789'},
-      //     // ),
-      //     // NotificationModel(
-      //     //   id: '5',
-      //     //   title: 'Promotion spéciale',
-      //     //   message:
-      //     //       '50% de réduction sur votre prochain trajet! Utilisez le code TYVAA50.',
-      //     //   type: NotificationType.promo,
-      //     //   time: DateTime.now().subtract(Duration(days: 2)),
-      //     //   isRead: true,
-      //     //   actionData: {'promoCode': 'TYVAA50'},
-      //     // ),
-      //   ];
-      // }
+      print(
+        '🔄 Controller: Retrieved ${storedNotifications.length} notifications from storage',
+      );
+
+      // Always update the notifications list, even if empty
+      notifications.value = storedNotifications;
+      print(
+        '🔄 Controller: Updated notifications list with ${notifications.length} items',
+      );
     } catch (e) {
       hasError.value = true;
       print('Error fetching notifications: $e');
@@ -113,7 +72,6 @@ class NotificationController extends GetxController {
       notifications[index] = notification;
       notifications.refresh();
 
-      // Update in storage via service
       _notificationService.markAsRead(notificationId);
     }
   }
@@ -124,15 +82,21 @@ class NotificationController extends GetxController {
       notification.isRead = true;
       notifications[i] = notification;
 
-      // Update each in storage
       _notificationService.markAsRead(notification.id);
     }
     notifications.refresh();
   }
 
   void deleteNotification(String notificationId) {
+    print('🗑️ Controller: Deleting notification: $notificationId');
+    final initialCount = notifications.length;
     notifications.removeWhere((n) => n.id == notificationId);
-    // TODO: Add method to remove individual notification from storage
+    final finalCount = notifications.length;
+    print(
+      '🗑️ Controller: Notifications count changed from $initialCount to $finalCount',
+    );
+
+    _notificationService.deleteNotification(notificationId);
   }
 
   void clearAllNotifications() {
@@ -140,11 +104,21 @@ class NotificationController extends GetxController {
     _notificationService.clearAllNotifications();
   }
 
-  // Method to add a new notification (called from service)
   void addNotification(NotificationModel notification) {
-    // Add to the beginning of the list
+    print('🔔 Controller: Adding notification: ${notification.title}');
     notifications.insert(0, notification);
     notifications.refresh();
+    print(
+      '🔔 Controller: Total notifications after add: ${notifications.length}',
+    );
+    // Force update
+    update();
+  }
+
+  // Force refresh method that can be called externally
+  void forceRefresh() {
+    print('🔄 Controller: Force refresh triggered');
+    fetchNotifications();
   }
 }
 
