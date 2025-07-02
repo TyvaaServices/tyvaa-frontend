@@ -237,5 +237,24 @@ Future<List<Map<String, dynamic>>> getUserBookings(int userId) async {
       return [];
     }
   }
+  /// Cancel a booking
+Future<bool> cancelBooking(int bookingId) async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, cannot cancel booking');
+      return false;
+    }
+
+    try {
+      final response = await _apiClient.cancelBooking(bookingId);
+      if (response.statusCode == 200 && response.data != null) {
+        _logger.d('Booking cancelled successfully: ${response.data}');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Error cancelling booking: $e');
+      return false;
+    }
+  }
 
 }
