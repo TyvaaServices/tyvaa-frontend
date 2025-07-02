@@ -199,4 +199,25 @@ class UserRepository {
   Future<void> logout() async {
     await _userBox.delete('currentUser');
   }
+
+  //create booking
+  Future<bool> createBooking(Map<String, dynamic> bookingData) async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, cannot create booking');
+      return false;
+    }
+
+    try {
+      final response = await _apiClient.createBooking(booking: bookingData);
+      if (response.statusCode == 201 && response.data != null) {
+        _logger.d('Booking created successfully: ${response.data}');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Error creating booking: $e');
+      return false;
+    }
+  }
+
 }
