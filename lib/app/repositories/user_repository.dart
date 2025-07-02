@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
+import 'package:passenger_tyvaa/domain/entities/booking.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 import '../modules/profile/controllers/profile_controller.dart';
@@ -19,14 +20,12 @@ class UserRepository {
   final ConnectivityController _connectivity =
       Get.find<ConnectivityController>();
 
-  // Singleton instance
   static final UserRepository _instance = UserRepository._();
 
   factory UserRepository() => _instance;
 
   UserRepository._();
 
-  /// Gets the current user from local storage
   User? getCurrentUser() {
     try {
       return _userBox.get('currentUser');
@@ -36,7 +35,6 @@ class UserRepository {
     }
   }
 
-  /// Saves user to local storage after receiving from remote
   Future<bool> saveUser(User user) async {
     try {
       final FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -52,7 +50,6 @@ class UserRepository {
     }
   }
 
-  /// Tries to fetch fresh user data from API and update local storage
   Future<User?> refreshUserData(int userId) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, returning cached user data');
@@ -73,7 +70,6 @@ class UserRepository {
     }
   }
 
-  /// Synchronizes local user data with the remote API
   Future<bool> synchronizeUserData(User user) async {
     if (!_connectivity.hasInternet.value) {
       return false;
@@ -92,7 +88,6 @@ class UserRepository {
     }
   }
 
-  /// Request login OTP
   Future<bool> requestLoginOtp(String phone) async {
     try {
       final response = await _apiClient.requestLoginOtp(phone);
@@ -104,7 +99,6 @@ class UserRepository {
     }
   }
 
-  /// Request registration OTP
   Future<bool> requestRegisterOtp({required String phoneNumber}) async {
     try {
       final response = await _apiClient.requestRegisterOtp(
@@ -117,7 +111,6 @@ class UserRepository {
     }
   }
 
-  /// Verify OTP
   Future<bool> verifyOtp({required String phone, required String otp}) async {
     Response? response = null;
     try {
@@ -142,7 +135,6 @@ class UserRepository {
     }
   }
 
-  /// Register user with OTP
   Future<bool> createUser({
     required Map<String, dynamic> user,
     required String otp,
@@ -183,7 +175,6 @@ class UserRepository {
     }
   }
 
-  /// Resend OTP (handles both registration and login)
   Future<bool> resendOtp({
     required String phoneNumber,
     required bool isRegistration,
@@ -195,32 +186,11 @@ class UserRepository {
     }
   }
 
-  /// Logout and clear user data
   Future<void> logout() async {
     await _userBox.delete('currentUser');
   }
 
-  //create booking
-  Future<bool> createBooking(Map<String, dynamic> bookingData) async {
-    if (!_connectivity.hasInternet.value) {
-      _logger.d('No internet connection, cannot create booking');
-      return false;
-    }
-
-    try {
-      final response = await _apiClient.createBooking(booking: bookingData);
-      if (response.statusCode == 201 && response.data != null) {
-        _logger.d('Booking created successfully: ${response.data}');
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _logger.e('Error creating booking: $e');
-      return false;
-    }
-  }
-  /// Get user bookings
-Future<List<Map<String, dynamic>>> getUserBookings(int userId) async {
+  Future<List<Map<String, dynamic>>> getUserBookings(int userId) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, returning empty booking list');
       return [];
@@ -237,8 +207,8 @@ Future<List<Map<String, dynamic>>> getUserBookings(int userId) async {
       return [];
     }
   }
-  /// Cancel a booking
-Future<bool> cancelBooking(int bookingId) async {
+
+  Future<bool> cancelBooking(int bookingId) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot cancel booking');
       return false;
@@ -255,10 +225,8 @@ Future<bool> cancelBooking(int bookingId) async {
       _logger.e('Error cancelling booking: $e');
       return false;
     }
-
   }
 
-  //book a ride
   Future<bool> bookRide(Map<String, dynamic> bookingData) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot book ride');
@@ -269,6 +237,9 @@ Future<bool> cancelBooking(int bookingId) async {
       final response = await _apiClient.bookRide(booking: bookingData);
       if (response.statusCode == 201 && response.data != null) {
         _logger.d('Ride booked successfully: ${response.data}');
+        Booking booking = Booking.fromJson(response.data);
+        final bookingBox = Hive.box<Booking>('bookings');
+        await bookingBox.put(booking.id, booking);
         return true;
       }
       return false;
@@ -277,5 +248,4 @@ Future<bool> cancelBooking(int bookingId) async {
       return false;
     }
   }
-
 }

@@ -1,47 +1,50 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'booking.dart';
+part of 'ride_instance.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BookingAdapter extends TypeAdapter<Booking> {
+class RideinstanceAdapter extends TypeAdapter<Rideinstance> {
   @override
   final int typeId = 3;
 
   @override
-  Booking read(BinaryReader reader) {
+  Rideinstance read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Booking(
+    return Rideinstance(
       id: fields[0] as int,
-      rideInstanceId: fields[1] as int,
-      seatsBooked: fields[2] as int,
-      status: fields[3] as String,
-      userId: fields[4] as int,
-      rideInstance: fields[5] as Rideinstance?,
+      rideId: fields[1] as int,
+      rideDate: fields[2] as String,
+      seatsAvailable: fields[3] as int,
+      seatsBooked: fields[4] as int,
+      status: fields[5] as String,
+      ride: fields[6] as RideModel?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Booking obj) {
+  void write(BinaryWriter writer, Rideinstance obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.rideInstanceId)
+      ..write(obj.rideId)
       ..writeByte(2)
-      ..write(obj.seatsBooked)
+      ..write(obj.rideDate)
       ..writeByte(3)
-      ..write(obj.status)
+      ..write(obj.seatsAvailable)
       ..writeByte(4)
-      ..write(obj.userId)
+      ..write(obj.seatsBooked)
       ..writeByte(5)
-      ..write(obj.rideInstance);
+      ..write(obj.status)
+      ..writeByte(6)
+      ..write(obj.ride);
   }
 
   @override
@@ -50,7 +53,7 @@ class BookingAdapter extends TypeAdapter<Booking> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BookingAdapter &&
+      other is RideinstanceAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
