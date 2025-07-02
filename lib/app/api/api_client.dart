@@ -274,6 +274,36 @@ class ApiClient {
   }) async {
     return await dio.post('/users/register', data: {'user': user, 'otp': otp});
   }
+  //create a booking
+  Future<Response>createBooking({
+    required Map<String,dynamic>booking
+   })async{
+    return await dio.post('/bookings',data:booking);
+  }
+  //get all bookings
+  Future<Response>getAllBookings() async {
+   return await dio.get('/bookings');
+  }
+
+  // recuperer toutes les reservations dun utilisateur
+  Future<Response> getUserBookings(int userId) async {
+    return await dio.get('/bookings/user/$userId');
+  }
+//recuperer une reservation par son id
+  Future<Response>getBookingById(int bookingId) async {
+    return await dio.get('/bookings/$bookingId');
+  }
+
+  //annuler une reservation
+  Future<Response> cancelBooking(int bookingId) async {
+    return await dio.delete('/bookings/$bookingId');
+  }
+
+  //reserver une place pour un trajet
+  Future<Response> bookRide({required Map<String,dynamic>booking}) async {
+    return await dio.post('/bookings/book', data: booking);
+  }
+
 
   Future<Response> submitDriverApplication(Uint8List pdfBytes) async {
     try {
