@@ -219,5 +219,23 @@ class UserRepository {
       return false;
     }
   }
+  /// Get user bookings
+Future<List<Map<String, dynamic>>> getUserBookings(int userId) async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, returning empty booking list');
+      return [];
+    }
+
+    try {
+      final response = await _apiClient.getUserBookings(userId);
+      if (response.statusCode == 200 && response.data != null) {
+        return List<Map<String, dynamic>>.from(response.data);
+      }
+      return [];
+    } catch (e) {
+      _logger.e('Error fetching user bookings: $e');
+      return [];
+    }
+  }
 
 }
