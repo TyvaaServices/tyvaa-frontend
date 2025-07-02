@@ -255,6 +255,27 @@ Future<bool> cancelBooking(int bookingId) async {
       _logger.e('Error cancelling booking: $e');
       return false;
     }
+
+  }
+
+  //book a ride
+  Future<bool> bookRide(Map<String, dynamic> bookingData) async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, cannot book ride');
+      return false;
+    }
+
+    try {
+      final response = await _apiClient.bookRide(booking: bookingData);
+      if (response.statusCode == 201 && response.data != null) {
+        _logger.d('Ride booked successfully: ${response.data}');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Error booking ride: $e');
+      return false;
+    }
   }
 
 }
