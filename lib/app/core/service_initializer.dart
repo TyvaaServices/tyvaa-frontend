@@ -9,7 +9,10 @@ import 'package:passenger_tyvaa/app/services/notification_service.dart';
 import 'package:passenger_tyvaa/app/services/permission_service.dart';
 import 'package:passenger_tyvaa/app/services/synchronization_service.dart';
 import 'package:passenger_tyvaa/domain/entities/driver_profile.dart';
+import 'package:passenger_tyvaa/domain/entities/message.dart';
 import 'package:passenger_tyvaa/domain/entities/passenger_profile.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_model.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 import 'package:passenger_tyvaa/firebase_options.dart';
 
@@ -25,11 +28,12 @@ class ServiceInitializer {
 
     await Hive.initFlutter();
 
-    // Register all Hive type adapters
     Hive.registerAdapter(UserAdapter());
     Hive.registerAdapter(PassengerProfileAdapter());
     Hive.registerAdapter(DriverProfileAdapter());
-
+    Hive.registerAdapter(RideModelAdapter());
+    Hive.registerAdapter(RideinstanceAdapter());
+    Hive.registerAdapter(MessageAdapter());
     await Hive.openBox<User>('users');
 
     Get.put(ConnectivityController(), permanent: true);

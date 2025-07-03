@@ -12,6 +12,7 @@ import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 import 'package:passenger_tyvaa/app/services/local_notification_service.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:passenger_tyvaa/app/config/environment.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -24,18 +25,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("🔔 Notification Body: ${message.notification?.body}");
   print("🔔 ========================================================");
 
-  // Store notification when app is in background/terminated
   if (message.notification != null) {
     print("🔔 Storing and showing background notification...");
 
-    // Initialize local notifications for background
     LocalNotificationService.initialize();
     await LocalNotificationService.createNotificationChannel();
 
-    // Show the notification in system tray
     await LocalNotificationService.showNotificationFromFCM(message);
-
-    // Store notification for in-app list
     await _storeBackgroundNotification(message);
     print("🔔 Background notification processed successfully");
   }
@@ -46,7 +42,6 @@ Future<void> _storeBackgroundNotification(RemoteMessage message) async {
     const String NOTIFICATIONS_KEY = 'tyvaa_notifications';
     const storage = FlutterSecureStorage();
 
-    // Get existing notifications from secure storage
     String? existingNotificationsJson = await storage.read(
       key: NOTIFICATIONS_KEY,
     );
@@ -56,8 +51,7 @@ Future<void> _storeBackgroundNotification(RemoteMessage message) async {
       storedNotifications = jsonDecode(existingNotificationsJson);
     }
 
-    // Determine notification type from data
-    String notificationType = 'reminder'; // Default
+    String notificationType = 'reminder';
     if (message.data.containsKey('type')) {
       switch (message.data['type']) {
         case 'message':
@@ -78,7 +72,6 @@ Future<void> _storeBackgroundNotification(RemoteMessage message) async {
       }
     }
 
-    // Create notification object
     final notificationData = {
       'id':
           message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
@@ -90,17 +83,14 @@ Future<void> _storeBackgroundNotification(RemoteMessage message) async {
       'actionData': message.data,
     };
 
-    // Add new notification
     storedNotifications.add(notificationData);
 
-    // Limit to 50 notifications to avoid excessive storage
     if (storedNotifications.length > 50) {
       storedNotifications = storedNotifications.sublist(
         storedNotifications.length - 50,
       );
     }
 
-    // Store back to secure storage
     await storage.write(
       key: NOTIFICATIONS_KEY,
       value: jsonEncode(storedNotifications),
@@ -115,12 +105,17 @@ void main() async {
   final initializer = ServiceInitializer();
   await initializer.init();
 
+  await Environment.load();
+
+  if (Environment.isDevelopment) {
+    Environment.printConfig();
+  }
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final storage = const FlutterSecureStorage();
   String? token = '';
 
-  // await storage.deleteAll();
   if (await storage.containsKey(key: "auth_token")) {
     token = await storage.read(key: "auth_token");
     print("un token ici :" + token!);
@@ -133,11 +128,8 @@ void main() async {
         debugShowCheckedModeBanner: false,
         translations: TyvaaTranslation(),
         locale: Locale('fr'),
-        // TODO: Replace with Get.deviceLocale in production
         fallbackLocale: Locale('en'),
-        //tu intervertis ici rek si tu veux sauter le login
         initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
-        // initialRoute: Routes.RIDE_SEARCH,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,

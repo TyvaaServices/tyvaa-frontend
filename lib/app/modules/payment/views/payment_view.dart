@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/payment_controller.dart';
+import '../../../themes/design_system.dart';
 
 class PaymentView extends GetView<PaymentController> {
   const PaymentView({Key? key}) : super(key: key);
@@ -8,157 +9,198 @@ class PaymentView extends GetView<PaymentController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.background(context),
       appBar: AppBar(
-        title: const Text('Paiement de course'),
+        backgroundColor: TColors.surface(context),
+        elevation: 0,
+        title: Text(
+          'Réserver trajet',
+          style: TTypography.headlineSmall(context),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios, color: TColors.textPrimary(context)),
           onPressed: () => Get.back(),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(TSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            // Amount card with clean design
+            Container(
+              padding: EdgeInsets.all(TSpacing.lg),
+              decoration: BoxDecoration(
+                color: TColors.surface(context),
+                borderRadius: TRadius.cardRadius,
+                border: Border.all(color: TColors.neutral300, width: 1),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Montant à payer',
-                      style: Get.textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(() => Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Montant à payer',
+                    style: TTypography.bodyLarge(
+                      context,
+                    ).copyWith(color: TColors.textSecondary(context)),
+                  ),
+                  SizedBox(height: TSpacing.sm),
+                  Obx(
+                    () => Text(
                       '${controller.amount.value.toStringAsFixed(0)} XOF',
-                      style: Get.textTheme.headlineMedium?.copyWith(
+                      style: TTypography.displayMedium(context).copyWith(
+                        color: TColors.primary,
                         fontWeight: FontWeight.bold,
-                        color: Get.theme.primaryColor,
-                      ),
-                    )),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Choisissez votre méthode de paiement',
-                      style: Get.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: TSpacing.xl),
+
+            // Simple payment button
+            Container(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () => controller.initiateCinetPayPayment(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: TRadius.buttonRadius,
+                  ),
+                ),
+                child: Obx(
+                  () =>
+                      controller.isLoading.value
+                          ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            'Confirmer le paiement',
+                            style: TTypography.labelLarge(context).copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
 
-            // Bouton Wave
-            ElevatedButton(
-              onPressed: () => controller.initiateWavePayment(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1DC8C6),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            SizedBox(height: TSpacing.md),
+
+            // Error message with clean design
+            Obx(
+              () =>
+                  controller.errorMessage.value.isNotEmpty
+                      ? Container(
+                        padding: EdgeInsets.all(TSpacing.md),
+                        decoration: BoxDecoration(
+                          color: TColors.error.withOpacity(0.1),
+                          borderRadius: TRadius.inputRadius,
+                          border: Border.all(
+                            color: TColors.error.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: TColors.error,
+                              size: 20,
+                            ),
+                            SizedBox(width: TSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                controller.errorMessage.value,
+                                style: TTypography.bodyMedium(
+                                  context,
+                                ).copyWith(color: TColors.error),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      : const SizedBox.shrink(),
+            ),
+
+            SizedBox(height: TSpacing.md),
+
+            // Success message
+            Obx(
+              () =>
+                  controller.successMessage.value.isNotEmpty
+                      ? Container(
+                        padding: EdgeInsets.all(TSpacing.md),
+                        decoration: BoxDecoration(
+                          color: TColors.success.withOpacity(0.1),
+                          borderRadius: TRadius.inputRadius,
+                          border: Border.all(
+                            color: TColors.success.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: TColors.success,
+                              size: 20,
+                            ),
+                            SizedBox(width: TSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                controller.successMessage.value,
+                                style: TTypography.bodyMedium(
+                                  context,
+                                ).copyWith(color: TColors.success),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      : const SizedBox.shrink(),
+            ),
+
+            Spacer(),
+
+            // Secure payment note
+            Container(
+              padding: EdgeInsets.all(TSpacing.md),
+              decoration: BoxDecoration(
+                color: TColors.neutral200.withOpacity(0.5),
+                borderRadius: TRadius.inputRadius,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/icons/wave_icon.png',
-                    height: 24,
-                    width: 24,
+                  Icon(
+                    Icons.security,
+                    color: TColors.textSecondary(context),
+                    size: 16,
                   ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Payer avec Wave',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  SizedBox(width: TSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Paiement sécurisé via CinetPay',
+                      style: TTypography.bodySmall(
+                        context,
+                      ).copyWith(color: TColors.textSecondary(context)),
                     ),
                   ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 16),
-
-            OutlinedButton(
-              onPressed: () => controller.initiateOrangeMoneyPayment(),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: Get.theme.primaryColor),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/icons/orange_money.png',
-                    height: 24,
-                    width: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  const Text('Payer avec Orange Money'),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            OutlinedButton(
-              onPressed: () => controller.initiateFreeMoneyPayment(),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: Get.theme.primaryColor),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/icons/free_money.png',
-                    height: 24,
-                    width: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  const Text('Payer avec Free Money'),
-                ],
-              ),
-            ),
-
-            // Message d'erreur
-            Obx(() => controller.errorMessage.value.isNotEmpty
-              ? Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    controller.errorMessage.value,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                )
-              : const SizedBox.shrink()
-            ),
-
-            // Indicateur de chargement
-            Obx(() => controller.isLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : const SizedBox.shrink()
             ),
           ],
         ),

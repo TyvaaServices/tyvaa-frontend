@@ -6,6 +6,7 @@ class PaymentBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<PaymentController>(
       () => PaymentController(),
+      fenix: true,
     );
   }
 }
