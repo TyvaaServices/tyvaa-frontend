@@ -35,7 +35,6 @@ class _NotificationBellState extends State<NotificationBell>
   void initState() {
     super.initState();
 
-    // Bell shake animation
     _bellController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -45,7 +44,6 @@ class _NotificationBellState extends State<NotificationBell>
       CurvedAnimation(parent: _bellController, curve: Curves.elasticOut),
     );
 
-    // Pulse animation for badge
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -55,7 +53,6 @@ class _NotificationBellState extends State<NotificationBell>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    // Start animations if there are notifications
     if (widget.hasNotifications) {
       _startAnimations();
     }
@@ -65,7 +62,6 @@ class _NotificationBellState extends State<NotificationBell>
   void didUpdateWidget(NotificationBell oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Start animations when new notifications arrive
     if (widget.hasNotifications && !oldWidget.hasNotifications) {
       _startAnimations();
     } else if (!widget.hasNotifications) {
@@ -131,7 +127,6 @@ class _NotificationBellState extends State<NotificationBell>
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // Bell icon with animation
                 AnimatedBuilder(
                   animation: _bellAnimation,
                   builder: (context, child) {
@@ -157,7 +152,6 @@ class _NotificationBellState extends State<NotificationBell>
                   },
                 ),
 
-                // Notification badge
                 if (widget.hasNotifications && widget.unreadCount > 0)
                   Positioned(
                     top: -6,
@@ -210,7 +204,6 @@ class _NotificationBellState extends State<NotificationBell>
                     ),
                   ),
 
-                // Simple dot indicator for when count is 0 but has notifications
                 if (widget.hasNotifications && widget.unreadCount == 0)
                   Positioned(
                     top: -2,
@@ -281,7 +274,6 @@ class NotificationBellPainter extends CustomPainter {
     final bellWidth = size.width * 0.7;
     final bellHeight = size.height * 0.8;
 
-    // Draw bell body
     final bellRect = RRect.fromRectAndCorners(
       Rect.fromCenter(
         center: center.translate(0, -size.height * 0.05),
@@ -294,11 +286,9 @@ class NotificationBellPainter extends CustomPainter {
       bottomRight: Radius.circular(4),
     );
 
-    // Fill bell body
     canvas.drawRRect(bellRect, fillPaint);
     canvas.drawRRect(bellRect, paint);
 
-    // Draw bell mouth (bottom rim)
     final mouthY = center.dy + bellHeight * 0.25;
     canvas.drawLine(
       Offset(center.dx - bellWidth * 0.4, mouthY),
@@ -306,7 +296,6 @@ class NotificationBellPainter extends CustomPainter {
       paint..strokeWidth = 3.0,
     );
 
-    // Draw bell clapper
     final clapperCenter = Offset(center.dx, mouthY - bellHeight * 0.15);
     canvas.drawCircle(
       clapperCenter,
@@ -316,7 +305,6 @@ class NotificationBellPainter extends CustomPainter {
         ..strokeWidth = 2.0,
     );
 
-    // Draw bell top mounting
     final mountY = center.dy - bellHeight * 0.4;
     canvas.drawLine(
       Offset(center.dx - size.width * 0.1, mountY),
@@ -325,8 +313,6 @@ class NotificationBellPainter extends CustomPainter {
         ..strokeWidth = 2.5
         ..style = PaintingStyle.stroke,
     );
-
-    // Draw sound waves if there are notifications
     if (hasNotifications) {
       final wavePaint =
           Paint()
@@ -334,7 +320,6 @@ class NotificationBellPainter extends CustomPainter {
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1.5;
 
-      // Draw 3 concentric wave arcs
       for (int i = 1; i <= 3; i++) {
         final waveRadius = bellWidth * 0.3 * i;
         final waveCenter = Offset(

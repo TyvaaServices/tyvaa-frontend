@@ -22,16 +22,14 @@ class _ConnectivityListenerState extends State<ConnectivityListener> {
     controller = Get.find<ConnectivityController>();
     previouslyOnline = controller.hasInternet.value;
 
-    // Listen to changes in the internet status only once
     controller.hasInternet.listen((online) {
       if (!online && previouslyOnline) {
         Get.snackbar(
-          'Pas d\'Internet', // French translation
+          'Pas d\'Internet',
           'Vous êtes hors ligne ou votre réseau est inutilisable.',
-          // French translation
           backgroundColor: Colors.red,
           colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM, // Position at the bottom
+          snackPosition: SnackPosition.BOTTOM,
         );
       } else if (online && !previouslyOnline) {
         Get.snackbar(

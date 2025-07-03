@@ -10,11 +10,9 @@ class TypingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomLeft,
-      // Aligns the indicator to the bottom-left of the screen
       child: Container(
         width: 80,
         margin: EdgeInsets.symmetric(vertical: 8),
-        // Adds margin around the indicator
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: botColor.withOpacity(0.1),
@@ -23,7 +21,7 @@ class TypingIndicator extends StatelessWidget {
         ),
         child: SpinKitThreeBounce(
           color: botColor,
-          size: 16, // The size of the typing indicator
+          size: 16,
         ),
       ),
     );

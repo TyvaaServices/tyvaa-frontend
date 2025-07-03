@@ -34,7 +34,6 @@ class ChatMessageInput extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Optional icons
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -44,7 +43,6 @@ class ChatMessageInput extends StatelessWidget {
             child: Icon(Icons.mic, color: textColor.withOpacity(0.7), size: 20),
           ),
           SizedBox(width: 12),
-          // Text field
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -71,7 +69,6 @@ class ChatMessageInput extends StatelessWidget {
             ),
           ),
           SizedBox(width: 12),
-          // Send button
           GestureDetector(
             onTapDown: (_) => controller.isPressingSend.value = true,
             onTapUp: (_) => controller.isPressingSend.value = false,

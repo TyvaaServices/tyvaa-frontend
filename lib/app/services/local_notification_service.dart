@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-
 import '../routes/app_pages.dart';
 
 class LocalNotificationService {
@@ -52,7 +50,6 @@ class LocalNotificationService {
             Get.toNamed(Routes.RIDE_DETAILS, arguments: data['tripId']);
             break;
           case 'message':
-            // Navigate to chat or main screen for now
             Get.toNamed(Routes.MAIN);
             break;
           case 'promo':
@@ -74,8 +71,8 @@ class LocalNotificationService {
   static Future<void> createNotificationChannel() async {
     if (Platform.isAndroid) {
       final AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'tyvaa_notifications', // Channel ID
-        'Tyvaa Notifications', // Channel name
+        'tyvaa_notifications',
+        'Tyvaa Notifications',
         description: 'Notifications for Tyvaa app',
         importance: Importance.max,
         enableVibration: true,
@@ -92,7 +89,6 @@ class LocalNotificationService {
           >()
           ?.createNotificationChannel(channel);
 
-      // Also try to ensure notification settings are properly configured
       await _checkAndConfigureNotificationSettings();
     }
   }
@@ -106,13 +102,11 @@ class LocalNotificationService {
               >();
 
       if (androidPlugin != null) {
-        // Check if notifications are enabled for this channel
         final List<AndroidNotificationChannel>? channels =
             await androidPlugin.getNotificationChannels();
 
         print('📱 Available notification channels: ${channels?.length ?? 0}');
 
-        // Request permission to modify notification policy if needed
         final bool? areNotificationsEnabled =
             await androidPlugin.areNotificationsEnabled();
         print('📱 Notifications enabled: $areNotificationsEnabled');
@@ -178,7 +172,7 @@ class LocalNotificationService {
         ),
         autoCancel: true,
         playSound: true,
-        sound: null, // Use default system sound
+        sound: null,
         fullScreenIntent: false,
         category: AndroidNotificationCategory.message,
         visibility: NotificationVisibility.public,
@@ -189,7 +183,6 @@ class LocalNotificationService {
             icon: DrawableResourceAndroidBitmap('@drawable/ic_notification'),
           ),
         ],
-        // Force the notification to show even in foreground
         ongoing: false,
         onlyAlertOnce: false,
         when: DateTime.now().millisecondsSinceEpoch,
@@ -281,15 +274,12 @@ class LocalNotificationService {
 
   static Future<int> getBadgeCount() async {
     if (Platform.isIOS) {
-      // On iOS, we can get badge count from the system
-      return 0; // Implement based on your needs
+      return 0;
     }
     return 0;
   }
 
   static Future<void> setBadgeCount(int count) async {
-    // This would require additional packages like flutter_app_badger
-    // For now, we'll just log it
     print('Setting badge count to: $count');
   }
 

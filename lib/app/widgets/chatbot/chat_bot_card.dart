@@ -59,7 +59,6 @@ class ChatBotCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Avatar container
             Hero(
               tag: 'avatar_$name',
               child: AnimatedContainer(
@@ -90,7 +89,6 @@ class ChatBotCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name & Check
                   Row(
                     children: [
                       Text(
@@ -118,7 +116,6 @@ class ChatBotCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  // Description
                   Text(
                     description,
                     style: TextStyle(
@@ -130,7 +127,6 @@ class ChatBotCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 12),
-                  // Personality tags
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(

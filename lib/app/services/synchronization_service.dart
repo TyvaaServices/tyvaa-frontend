@@ -27,11 +27,9 @@ class SynchronizationService extends GetxService {
   static const String _pendingChangesKey = 'has_pending_changes';
 
   Future<SynchronizationService> init() async {
-    //essaye de verifier si il y a des changements locaux
     final storedFlag = await _secureStorage.read(key: _pendingChangesKey);
     _hasPendingChanges.value = storedFlag == 'true';
 
-    // et la si ya internet on sync
     _connectivityWorker = ever(connectivityController.hasInternet, (
       bool hasInternet,
     ) {

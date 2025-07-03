@@ -13,7 +13,6 @@ class ConnectivityController extends GetxController {
   }
 
   void _initConnectivityMonitoring() {
-    // Listen to connectivity changes (Wi-Fi, Mobile, None)
     Connectivity().onConnectivityChanged.listen((_) async {
       final connectivityResult = await Connectivity().checkConnectivity();
       isConnected.value = connectivityResult != ConnectivityResult.none;

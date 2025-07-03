@@ -107,6 +107,13 @@ class TTypography {
   );
 
   // Heading styles
+  static TextStyle headlineSmall(BuildContext context) => TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
+    color: TColors.textPrimary(context),
+  );
+
   static TextStyle headingLarge(BuildContext context) => TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w700,

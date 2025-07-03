@@ -21,15 +21,12 @@ class NotificationService extends GetxService {
   Future<NotificationService> init() async {
     print('🔔 Initializing NotificationService...');
 
-    // Initialize local notifications first
     LocalNotificationService.initialize();
     await LocalNotificationService.createNotificationChannel();
 
-    // Initialize ApiClient
     _apiClient = Get.find<ApiClient>();
     user = Hive.box<User>('users').get('currentUser');
 
-    // Request permission for notifications
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
@@ -42,10 +39,8 @@ class NotificationService extends GetxService {
 
     print('🔔 User granted permission: ${settings.authorizationStatus}');
 
-    // Also request local notification permissions
     await _requestLocalNotificationPermissions();
 
-    // Get FCM token
     String? token = await _firebaseMessaging.getToken();
     print('🔔 FCM Token obtained: $token');
     if (token != null) {
@@ -57,7 +52,6 @@ class NotificationService extends GetxService {
       print('❌ Failed to get FCM token');
     }
 
-    // Handle token refresh
     _firebaseMessaging.onTokenRefresh.listen((String token) {
       print('🔔 FCM Token refreshed: $token');
       const storage = FlutterSecureStorage();
@@ -65,7 +59,6 @@ class NotificationService extends GetxService {
       _saveFCMTokenToBackend(token);
     });
 
-    // Set up message handlers
     _setupMessageHandlers();
 
     isInitialized.value = true;
@@ -82,7 +75,6 @@ class NotificationService extends GetxService {
   }
 
   void _setupMessageHandlers() {
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('🔔 =============== FOREGROUND MESSAGE RECEIVED ===============');
       print('🔔 Message ID: ${message.messageId}');
@@ -93,14 +85,11 @@ class NotificationService extends GetxService {
       print('🔔 ======================================================');
 
       if (message.notification != null) {
-        // Store notification
         final notification = _convertMessageToNotification(message);
         _storeNotification(notification);
 
-        // Show local notification with enhanced settings for foreground
         LocalNotificationService.showNotificationFromFCM(message);
 
-        // Update in-app notification list if controller exists
         if (Get.isRegistered<NotificationController>()) {
           final controller = Get.find<NotificationController>();
           controller.addNotification(notification);
@@ -116,13 +105,11 @@ class NotificationService extends GetxService {
       }
     });
 
-    // Handle notification tap when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('🔔 Notification tapped in background!');
       _handleNotificationTap(message);
     });
 
-    // Check for initial message (app opened from terminated state)
     FirebaseMessaging.instance.getInitialMessage().then((
       RemoteMessage? message,
     ) {
@@ -134,18 +121,13 @@ class NotificationService extends GetxService {
   }
 
   void _handleNotificationTap(RemoteMessage message) {
-    // Convert FCM message to NotificationModel and mark as read
     final notification = _convertMessageToNotification(message);
     markAsRead(notification.id);
-
-    // Handle navigation based on notification data
     LocalNotificationService.handleNotificationTap(jsonEncode(message.data));
   }
 
   NotificationModel _convertMessageToNotification(RemoteMessage message) {
-    NotificationType type = NotificationType.reminder; // Default
-
-    // Determine notification type from data
+    NotificationType type = NotificationType.reminder; 
     if (message.data.containsKey('type')) {
       switch (message.data['type']) {
         case 'message':
@@ -181,7 +163,6 @@ class NotificationService extends GetxService {
     try {
       const storage = FlutterSecureStorage();
 
-      // Get existing notifications from secure storage
       String? existingNotificationsJson = await storage.read(
         key: NOTIFICATIONS_KEY,
       );
@@ -191,7 +172,6 @@ class NotificationService extends GetxService {
         storedNotifications = jsonDecode(existingNotificationsJson);
       }
 
-      // Add new notification
       storedNotifications.add({
         'id': notification.id,
         'title': notification.title,
@@ -202,14 +182,12 @@ class NotificationService extends GetxService {
         'actionData': notification.actionData,
       });
 
-      // Limit to 50 notifications to avoid excessive storage
       if (storedNotifications.length > 50) {
         storedNotifications = storedNotifications.sublist(
           storedNotifications.length - 50,
         );
       }
 
-      // Store back to secure storage
       await storage.write(
         key: NOTIFICATIONS_KEY,
         value: jsonEncode(storedNotifications),
@@ -271,7 +249,6 @@ class NotificationService extends GetxService {
 
       List<dynamic> storedNotifications = jsonDecode(notificationsJson);
 
-      // Update the specific notification
       for (var notification in storedNotifications) {
         if (notification['id'] == notificationId) {
           notification['isRead'] = true;
@@ -279,13 +256,11 @@ class NotificationService extends GetxService {
         }
       }
 
-      // Store back to secure storage
       await storage.write(
         key: NOTIFICATIONS_KEY,
         value: jsonEncode(storedNotifications),
       );
 
-      // Update controller if available
       if (Get.isRegistered<NotificationController>()) {
         Get.find<NotificationController>().markAsRead(notificationId);
       }
@@ -299,7 +274,6 @@ class NotificationService extends GetxService {
       const storage = FlutterSecureStorage();
       await storage.delete(key: NOTIFICATIONS_KEY);
 
-      // Update controller if available
       if (Get.isRegistered<NotificationController>()) {
         Get.find<NotificationController>().clearAllNotifications();
       }
@@ -317,12 +291,10 @@ class NotificationService extends GetxService {
 
       List<dynamic> storedNotifications = jsonDecode(notificationsJson);
 
-      // Remove the specific notification
       storedNotifications.removeWhere(
         (notification) => notification['id'] == notificationId,
       );
 
-      // Store back to secure storage
       await storage.write(
         key: NOTIFICATIONS_KEY,
         value: jsonEncode(storedNotifications),
@@ -333,7 +305,6 @@ class NotificationService extends GetxService {
     }
   }
 
-  // Save FCM token to your backend server using ApiClient
   void _saveFCMTokenToBackend(String? token) async {
     if (token == null) return;
 
@@ -341,7 +312,7 @@ class NotificationService extends GetxService {
       final response = await _apiClient.dio.post(
         '/users/${user!.id}/fcm-token',
         data: {
-          'fcmToken': token, // Replace with actual user ID from storage
+          'fcmToken': token,
         },
       );
 

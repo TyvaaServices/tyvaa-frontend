@@ -9,12 +9,10 @@ class PermissionService extends GetxService {
   final _logger = Logger();
   final _secureStorage = FlutterSecureStorage();
 
-  // Observable status variables
   final isLocationPermissionGranted = false.obs;
   final isLocationServiceEnabled = false.obs;
   final locationDeniedForever = false.obs;
 
-  // Constants for storage keys
   static const String _locationPermissionDeniedPermanently =
       'location_denied_permanently';
 
@@ -24,17 +22,13 @@ class PermissionService extends GetxService {
     return this;
   }
 
-  /// Checks the current location permission status WITHOUT requesting permission
   Future<LocationPermission> _checkLocationPermission() async {
     try {
-      // Check if location services are enabled
       isLocationServiceEnabled.value =
           await Geolocator.isLocationServiceEnabled();
 
-      // Only check permission status, don't request it
       final permission = await Geolocator.checkPermission();
 
-      // Update our observables based on the permission status
       isLocationPermissionGranted.value =
           permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always;
@@ -42,7 +36,6 @@ class PermissionService extends GetxService {
       locationDeniedForever.value =
           permission == LocationPermission.deniedForever;
 
-      // Save denial status for future app launches
       if (permission == LocationPermission.deniedForever) {
         await _secureStorage.write(
           key: _locationPermissionDeniedPermanently,
@@ -60,19 +53,14 @@ class PermissionService extends GetxService {
     }
   }
 
-  /// Check permission status without requesting it
   Future<LocationPermission> checkLocationPermission() async {
     return await Geolocator.checkPermission();
   }
 
-  /// Explicitly requests location permission from the user
-  /// THIS WILL TRIGGER THE SYSTEM DIALOG
   Future<LocationPermission> requestLocationPermission() async {
     try {
-      // This is where the Android system dialog appears
       final permission = await Geolocator.requestPermission();
 
-      // Update observables based on the user's response
       isLocationPermissionGranted.value =
           permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always;
@@ -80,7 +68,6 @@ class PermissionService extends GetxService {
       locationDeniedForever.value =
           permission == LocationPermission.deniedForever;
 
-      // Save denial status for future app launches
       if (permission == LocationPermission.deniedForever) {
         await _secureStorage.write(
           key: _locationPermissionDeniedPermanently,
@@ -95,17 +82,14 @@ class PermissionService extends GetxService {
     }
   }
 
-  /// Opens location settings on the device
   Future<bool> openLocationSettings() async {
     return await Geolocator.openLocationSettings();
   }
 
-  /// Opens the app settings page on the device
   Future<bool> openAppSettings() async {
     return await Geolocator.openAppSettings();
   }
 
-  /// Shows a custom dialog explaining why the app needs location permission
   void showPermissionRationale(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
@@ -175,8 +159,6 @@ class PermissionService extends GetxService {
     );
   }
 
-  /// Checks if location permission is required for navigation
-  /// Returns true if the user should be directed to permission screen
   Future<bool> shouldShowPermissionScreen() async {
     final permissionStatus = await checkLocationPermission();
     final isEnabled = await Geolocator.isLocationServiceEnabled();

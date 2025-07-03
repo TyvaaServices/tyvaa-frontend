@@ -18,7 +18,6 @@ class NetworkErrorPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Lottie animation or image
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child:
@@ -37,7 +36,6 @@ class NetworkErrorPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // Error title
             Text(
               'Oops!',
               style: TextStyle(
@@ -49,7 +47,6 @@ class NetworkErrorPage extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Error message
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
@@ -65,7 +62,6 @@ class NetworkErrorPage extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Additional helper text
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
@@ -77,7 +73,6 @@ class NetworkErrorPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // Retry button
             InkWell(
               onTap: onRetry ?? () => Get.back(),
               borderRadius: BorderRadius.circular(30),

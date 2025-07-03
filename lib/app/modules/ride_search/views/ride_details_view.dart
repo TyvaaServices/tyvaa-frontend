@@ -4,91 +4,58 @@ import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/controllers/ride_search_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
+import '../../payment/views/payment_view.dart';
+
 class RideDetailsView extends StatelessWidget {
   final RideSearchController controller = Get.find();
   final _numberOfSeatsController = TextEditingController(text: '1');
-  final _messageController = TextEditingController();
 
   RideDetailsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TColors.background(context),
       body: Obx(() {
         final ride = controller.selectedRide.value;
 
         if (ride == null) {
-          return const Center(
-            child: Text('Trajet non trouvé'),
-          );
+          return const Center(child: Text('Trajet non trouvé'));
         }
 
-        return CustomScrollView(
-          slivers: [
-            // Modern app bar with gradient
-            SliverAppBar(
-              expandedHeight: 120,
-              floating: false,
-              pinned: true,
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              flexibleSpace: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF6a0dad),
-                      Color(0xFF8B1FE8),
-                    ],
-                  ),
-                ),
-                child: FlexibleSpaceBar(
-                  title: Text(
-                    'Détails du trajet',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  centerTitle: false,
-                ),
-              ),
-              leading: Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
-                  onPressed: () => Get.back(),
-                ),
-              ),
-            ),
+        return Column(
+          children: [
+            // Clean header
+            _buildCleanHeader(context),
 
-            // Main content
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+            // Main content with clean spacing
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Hero ride card
-                    _buildHeroRideCard(context, ride),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 8),
 
-                    // Driver card
-                    _buildDriverCard(context, ride),
-                    const SizedBox(height: 24),
+                    // Route visualization - clean and minimal
+                    _buildCleanRoute(context, ride),
 
-                    // Trip details
-                    _buildTripDetailsCard(context, ride),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
 
-                    // Booking options
-                    _buildBookingCard(context, ride),
+                    // Trip info in a clean grid
+                    _buildTripInfo(context, ride),
+
+                    const SizedBox(height: 32),
+
+                    // Driver info - simplified
+                    _buildDriverInfo(context, ride),
+
+                    const SizedBox(height: 32),
+
+                    // Booking section - clean and focused
+                    _buildBookingSection(context, ride),
+
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -97,579 +64,504 @@ class RideDetailsView extends StatelessWidget {
           ],
         );
       }),
-      // Fixed bottom booking bar
+      // Clean bottom action
       bottomNavigationBar: Obx(() {
         final ride = controller.selectedRide.value;
         if (ride == null) return const SizedBox.shrink();
 
-        return _buildBottomBookingBar(context, ride);
+        return _buildCleanBottomAction(context, ride);
       }),
     );
   }
 
-  Widget _buildHeroRideCard(BuildContext context, RideSearchModel ride) {
+  Widget _buildCleanHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 8,
+        left: 20,
+        right: 20,
+        bottom: 16,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+        color: TColors.surface(context),
+        border: Border(
+          bottom: BorderSide(
+            color: TColors.neutral300.withOpacity(0.3),
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: TColors.neutral200.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: TColors.textPrimary(context),
+                size: 18,
+              ),
+              onPressed: () => Get.back(),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              'Détails du trajet',
+              style: TTypography.headingMedium(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCleanRoute(BuildContext context, RideSearchModel ride) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TColors.neutral300.withOpacity(0.3),
+          width: 0.5,
+        ),
+      ),
       child: Column(
         children: [
-          // Time and price header
+          // Time and price header - clean layout
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6a0dad), Color(0xFF8B1FE8)],
+              // Time
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Départ',
+                    style: TTypography.labelSmall(context).copyWith(
+                      color: TColors.textSecondary(context),
+                      fontSize: 13,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${ride.departureTime.hour.toString().padLeft(2, '0')}:${ride.departureTime.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                  const SizedBox(height: 2),
+                  Text(
+                    '${ride.departureTime.hour.toString().padLeft(2, '0')}:${ride.departureTime.minute.toString().padLeft(2, '0')}',
+                    style: TTypography.headingLarge(context).copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: TColors.primary,
+                    ),
                   ),
-                ),
+                ],
               ),
+              // Price
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981),
-                  borderRadius: BorderRadius.circular(20),
+                  color: TColors.success.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TColors.success.withOpacity(0.2),
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   '${ride.price.toInt()} FCFA',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  style: TTypography.headingSmall(context).copyWith(
+                    color: TColors.success,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 32),
 
-          // Date info
+          // Route visualization - minimal and elegant
+          Column(
+            children: [
+              // Departure
+              Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: TColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DÉPART',
+                          style: TTypography.labelSmall(context).copyWith(
+                            color: TColors.textSecondary(context),
+                            letterSpacing: 0.5,
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ride.departurePoint,
+                          style: TTypography.bodyLarge(
+                            context,
+                          ).copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // Connection line - minimal
+              Container(
+                margin: const EdgeInsets.only(left: 6, top: 12, bottom: 12),
+                width: 2,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: TColors.neutral400.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+
+              // Arrival
+              Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: TColors.accent,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ARRIVÉE',
+                          style: TTypography.labelSmall(context).copyWith(
+                            color: TColors.textSecondary(context),
+                            letterSpacing: 0.5,
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ride.arrivalPoint,
+                          style: TTypography.bodyLarge(
+                            context,
+                          ).copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // Date info - clean format
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: TColors.neutral200.withOpacity(0.4),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  DateFormat('EEEE d MMMM yyyy', 'fr_FR').format(ride.departureDate),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
-                  ),
+                  DateFormat(
+                    'EEEE d MMMM yyyy',
+                    'fr_FR',
+                  ).format(ride.departureDate),
+                  style: TTypography.bodyMedium(
+                    context,
+                  ).copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (ride.isRecurring && ride.recurringDays != null) ...[
                   const SizedBox(height: 4),
                   Text(
                     'Récurrent: ${ride.recurringDays!.join(', ')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TTypography.bodySmall(
+                      context,
+                    ).copyWith(color: TColors.textSecondary(context)),
                   ),
                 ],
               ],
             ),
           ),
-
-          const SizedBox(height: 24),
-
-          // Route visualization
-          _buildModernRoute(context, ride),
         ],
       ),
     );
   }
 
-  Widget _buildModernRoute(BuildContext context, RideSearchModel ride) {
-    return Column(
+  Widget _buildTripInfo(BuildContext context, RideSearchModel ride) {
+    return Row(
       children: [
-        // Departure
-        Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: const BoxDecoration(
-                color: Color(0xFF6a0dad),
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'DÉPART',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    ride.departurePoint,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1F2937),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-
-        // Animated line
-        Container(
-          margin: const EdgeInsets.only(left: 6, top: 8, bottom: 8),
-          child: Column(
-            children: List.generate(3, (index) => Container(
-              width: 2,
-              height: 8,
-              margin: const EdgeInsets.symmetric(vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6a0dad).withOpacity(0.3),
-                borderRadius: BorderRadius.circular(1),
-              ),
-            )),
+        Expanded(
+          child: _buildInfoTile(
+            context,
+            icon: Icons.airline_seat_recline_normal_outlined,
+            title: 'Places disponibles',
+            value: '${ride.availableSeats}',
+            color: TColors.primary,
           ),
         ),
-
-        // Arrival
-        Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: const BoxDecoration(
-                color: Color(0xFF10B981),
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ARRIVÉE',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    ride.arrivalPoint,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1F2937),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildInfoTile(
+            context,
+            icon: Icons.schedule_outlined,
+            title: 'Durée estimée',
+            value: '25-30 min',
+            color: TColors.info,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildDriverCard(BuildContext context, RideSearchModel ride) {
+  Widget _buildInfoTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TColors.neutral300.withOpacity(0.3),
+          width: 0.5,
+        ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Votre chauffeur',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F2937),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Icon(icon, size: 20, color: color),
           ),
-
           const SizedBox(height: 16),
-
-          Row(
-            children: [
-              // Enhanced driver avatar
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6a0dad), Color(0xFF8B1FE8)],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF6a0dad).withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Container(
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    child: Image.asset(
-                      ride.chauffeurImageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 16),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      ride.chauffeurName,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1F2937),
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFEF3C7),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                size: 14,
-                                color: Color(0xFFF59E0B),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ride.chauffeurRating.toString(),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFFF59E0B),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFD1FAE5),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.verified,
-                                size: 14,
-                                color: Color(0xFF10B981),
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'Vérifié',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF10B981),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // Profile button
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF6a0dad).withOpacity(0.3)),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Get.snackbar(
-                      'Profil du chauffeur',
-                      'Cette fonctionnalité sera bientôt disponible',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.person_outline,
-                    color: Color(0xFF6a0dad),
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            value,
+            style: TTypography.headingMedium(
+              context,
+            ).copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TTypography.labelSmall(
+              context,
+            ).copyWith(color: TColors.textSecondary(context)),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTripDetailsCard(BuildContext context, RideSearchModel ride) {
+  Widget _buildDriverInfo(BuildContext context, RideSearchModel ride) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TColors.neutral300.withOpacity(0.3),
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Driver avatar - clean and simple
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: TColors.primary.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(ride.chauffeurImageUrl, fit: BoxFit.cover),
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // Driver info - minimal
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ride.chauffeurName,
+                  style: TTypography.bodyLarge(
+                    context,
+                  ).copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.star_rounded, size: 16, color: Colors.amber),
+                    const SizedBox(width: 4),
+                    Text(
+                      ride.chauffeurRating.toString(),
+                      style: TTypography.bodySmall(
+                        context,
+                      ).copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: TColors.success.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Vérifié',
+                        style: TTypography.labelSmall(context).copyWith(
+                          color: TColors.success,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Simple action button
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: TColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: IconButton(
+              onPressed: () => _showDriverProfile(context, ride),
+              icon: Icon(
+                Icons.arrow_forward_ios,
+                color: TColors.primary,
+                size: 14,
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBookingSection(BuildContext context, RideSearchModel ride) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TColors.neutral300.withOpacity(0.3),
+          width: 0.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Détails du trajet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F2937),
-            ),
+          Text(
+            'Réservation',
+            style: TTypography.headingSmall(
+              context,
+            ).copyWith(fontWeight: FontWeight.w600),
           ),
 
           const SizedBox(height: 20),
 
-          // Grid of details
-          Row(
-            children: [
-              Expanded(
-                child: _buildDetailItem(
-                  icon: Icons.airline_seat_recline_normal_outlined,
-                  iconColor: const Color(0xFF6a0dad),
-                  title: 'Places disponibles',
-                  value: '${ride.availableSeats}',
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildDetailItem(
-                  icon: Icons.schedule_outlined,
-                  iconColor: const Color(0xFF3B82F6),
-                  title: 'Durée estimée',
-                  value: '25-30 min',
-                ),
-              ),
-            ],
-          ),
-
-          if (ride.isRecurring && ride.recurringDays != null) ...[
-            const SizedBox(height: 16),
-            _buildDetailItem(
-              icon: Icons.repeat_outlined,
-              iconColor: const Color(0xFF8B5CF6),
-              title: 'Récurrence',
-              value: ride.recurringDays!.join(', '),
-              fullWidth: true,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String value,
-    bool fullWidth = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: iconColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2937),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBookingCard(BuildContext context, RideSearchModel ride) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Options de réservation',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F2937),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Seats selector
+          // Seats selector - clean design
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Nombre de places',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF374151),
-                ),
-              ),
-
+              Text('Nombre de places', style: TTypography.bodyMedium(context)),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
-                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TColors.neutral300.withOpacity(0.5),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
                     _buildCounterButton(
                       icon: Icons.remove,
                       onPressed: () {
-                        final current = int.parse(_numberOfSeatsController.text);
+                        final current = int.parse(
+                          _numberOfSeatsController.text,
+                        );
                         if (current > 1) {
-                          _numberOfSeatsController.text = (current - 1).toString();
+                          _numberOfSeatsController.text =
+                              (current - 1).toString();
                         }
                       },
                     ),
                     Container(
-                      width: 50,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      width: 40,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         _numberOfSeatsController.text,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TTypography.bodyMedium(
+                          context,
+                        ).copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
                     _buildCounterButton(
                       icon: Icons.add,
                       onPressed: () {
-                        final current = int.parse(_numberOfSeatsController.text);
+                        final current = int.parse(
+                          _numberOfSeatsController.text,
+                        );
                         if (current < ride.availableSeats) {
-                          _numberOfSeatsController.text = (current + 1).toString();
+                          _numberOfSeatsController.text =
+                              (current + 1).toString();
                         }
                       },
                     ),
@@ -677,33 +569,6 @@ class RideDetailsView extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // Message field
-          TextField(
-            controller: _messageController,
-            decoration: InputDecoration(
-              hintText: 'Message pour le chauffeur (optionnel)',
-              hintStyle: TextStyle(color: Colors.grey[500]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF6a0dad), width: 2),
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF9FAFB),
-              contentPadding: const EdgeInsets.all(16),
-            ),
-            maxLines: 3,
           ),
         ],
       ),
@@ -720,35 +585,36 @@ class RideDetailsView extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           child: Icon(
             icon,
-            size: 18,
-            color: const Color(0xFF6B7280),
+            size: 16,
+            color: TColors.textSecondary(Get.context!),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBottomBookingBar(BuildContext context, RideSearchModel ride) {
+  Widget _buildCleanBottomAction(BuildContext context, RideSearchModel ride) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+        color: TColors.surface(context),
+        border: Border(
+          top: BorderSide(
+            color: TColors.neutral300.withOpacity(0.3),
+            width: 0.5,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Price breakdown
+            // Price summary - clean and minimal
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -756,53 +622,50 @@ class RideDetailsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Total à payer',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      'Total',
+                      style: TTypography.labelSmall(
+                        context,
+                      ).copyWith(color: TColors.textSecondary(context)),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       '${(int.parse(_numberOfSeatsController.text) * ride.price).toInt()} FCFA',
-                      style: const TextStyle(
-                        fontSize: 24,
+                      style: TTypography.headingMedium(context).copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF10B981),
+                        color: TColors.success,
                       ),
                     ),
                   ],
                 ),
                 Text(
                   '${_numberOfSeatsController.text} place${int.parse(_numberOfSeatsController.text) > 1 ? 's' : ''}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TTypography.bodyMedium(
+                    context,
+                  ).copyWith(color: TColors.textSecondary(context)),
                 ),
               ],
             ),
 
             const SizedBox(height: 16),
 
-            // Book button
+            // Action button - clean design
             SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 52,
               child: Obx(() {
                 if (controller.isRequestingBooking.value) {
                   return ElevatedButton(
                     onPressed: null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6a0dad),
+                      backgroundColor: TColors.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       elevation: 0,
                     ),
-                    child: const SizedBox(
-                      width: 24,
-                      height: 24,
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
                       child: CircularProgressIndicator(
                         color: Colors.white,
                         strokeWidth: 2,
@@ -820,6 +683,7 @@ class RideDetailsView extends StatelessWidget {
                           : controller.bookingRequestStatus.value == 'rejected'
                           ? Icons.cancel_outlined
                           : Icons.access_time_outlined,
+                      size: 20,
                     ),
                     label: Text(
                       controller.bookingRequestStatus.value == 'approved'
@@ -827,20 +691,22 @@ class RideDetailsView extends StatelessWidget {
                           : controller.bookingRequestStatus.value == 'rejected'
                           ? 'Réservation refusée'
                           : 'En attente de confirmation',
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: TTypography.bodyMedium(context).copyWith(
                         fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: controller.bookingRequestStatus.value == 'approved'
-                          ? const Color(0xFF10B981)
-                          : controller.bookingRequestStatus.value == 'rejected'
-                          ? const Color(0xFFEF4444)
-                          : const Color(0xFF3B82F6),
+                      backgroundColor:
+                          controller.bookingRequestStatus.value == 'approved'
+                              ? TColors.success
+                              : controller.bookingRequestStatus.value ==
+                                  'rejected'
+                              ? TColors.error
+                              : TColors.info,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       elevation: 0,
                     ),
@@ -848,21 +714,26 @@ class RideDetailsView extends StatelessWidget {
                 }
 
                 return ElevatedButton(
-                  onPressed: () => _showBookingConfirmationDialog(context, ride),
+                  onPressed:() => Get.to(
+                            () => const PaymentView(),
+                            arguments: {
+                              'amount': 100, // Amount in XOF
+                              'bookingData': {/* booking details */},
+                            },
+                          ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6a0dad),
+                    backgroundColor: TColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 0,
-                    shadowColor: const Color(0xFF6a0dad).withOpacity(0.3),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Réserver maintenant',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TTypography.bodyMedium(context).copyWith(
                       fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
                 );
@@ -874,10 +745,10 @@ class RideDetailsView extends StatelessWidget {
     );
   }
 
-  Future<void> _showBookingConfirmationDialog(
-      BuildContext context,
-      RideSearchModel ride,
-      ) async {
+  Future<void> _showCleanBookingDialog(
+    BuildContext context,
+    RideSearchModel ride,
+  ) async {
     final numberOfSeats = int.parse(_numberOfSeatsController.text);
     final totalPrice = numberOfSeats * ride.price;
 
@@ -890,193 +761,158 @@ class RideDetailsView extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
+              color: TColors.surface(context),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header
+                // Clean header
                 Container(
-                  width: 64,
-                  height: 64,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF6a0dad), Color(0xFF8B1FE8)],
-                    ),
-                    borderRadius: BorderRadius.circular(32),
+                    color: TColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.confirmation_number_outlined,
-                    color: Colors.white,
-                    size: 32,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                const Text(
-                  'Confirmer la réservation',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Trip summary
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFE5E7EB)),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Trajet',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                          Text(
-                            '${ride.departurePoint} → ${ride.arrivalPoint}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Date',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                          Text(
-                            DateFormat('d MMM yyyy', 'fr_FR').format(ride.departureDate),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Places',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                          Text(
-                            '$numberOfSeats place${numberOfSeats > 1 ? 's' : ''}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            '${totalPrice.toInt()} FCFA',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF10B981),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFEF3C7),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.info_outline,
-                        color: Color(0xFFF59E0B),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Le chauffeur devra approuver votre demande pour confirmer la réservation.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.orange[800],
-                          ),
-                        ),
-                      ),
-                    ],
+                    color: TColors.primary,
+                    size: 28,
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-                // Actions
+                Text(
+                  'Confirmer la réservation',
+                  style: TTypography.headingMedium(
+                    context,
+                  ).copyWith(fontWeight: FontWeight.w600),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Trip summary - clean layout
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: TColors.neutral200.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildSummaryRow(
+                        context,
+                        'Trajet',
+                        '${ride.departurePoint} → ${ride.arrivalPoint}',
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryRow(
+                        context,
+                        'Date',
+                        DateFormat(
+                          'd MMM yyyy',
+                          'fr_FR',
+                        ).format(ride.departureDate),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryRow(
+                        context,
+                        'Places',
+                        '$numberOfSeats place${numberOfSeats > 1 ? 's' : ''}',
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Divider(
+                          color: TColors.neutral400.withOpacity(0.3),
+                          height: 1,
+                        ),
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total',
+                            style: TTypography.bodyLarge(
+                              context,
+                            ).copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            '${totalPrice.toInt()} FCFA',
+                            style: TTypography.bodyLarge(context).copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: TColors.success,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Info note - clean design
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: TColors.warning.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: TColors.warning.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: TColors.warning,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Le chauffeur devra approuver votre demande.',
+                          style: TTypography.bodySmall(
+                            context,
+                          ).copyWith(color: TColors.warning),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                // Actions - clean button layout
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () => Get.back(),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Annuler',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF6B7280),
+                          style: TTypography.bodyMedium(context).copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: TColors.textSecondary(context),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 16),
                     Expanded(
                       flex: 2,
                       child: ElevatedButton(
@@ -1085,25 +921,23 @@ class RideDetailsView extends StatelessWidget {
                           controller.requestBooking(
                             ride,
                             numberOfSeats,
-                            _messageController.text.isEmpty
-                                ? null
-                                : _messageController.text,
+                            null,
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6a0dad),
+                          backgroundColor: TColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 0,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Confirmer',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TTypography.bodyMedium(context).copyWith(
                             fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -1115,6 +949,319 @@ class RideDetailsView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSummaryRow(BuildContext context, String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TTypography.bodyMedium(
+            context,
+          ).copyWith(color: TColors.textSecondary(context)),
+        ),
+        Flexible(
+          child: Text(
+            value,
+            style: TTypography.bodyMedium(
+              context,
+            ).copyWith(fontWeight: FontWeight.w600),
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showDriverProfile(BuildContext context, RideSearchModel ride) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: TColors.surface(context),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: TColors.neutral400.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      // Header
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Row(
+                          children: [
+                            // Driver avatar
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: TColors.primary.withOpacity(0.2),
+                                  width: 2,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.asset(
+                                  ride.chauffeurImageUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(width: 16),
+
+                            // Driver info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ride.chauffeurName,
+                                    style: TTypography.headingMedium(context).copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star_rounded,
+                                        size: 18,
+                                        color: Colors.amber,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${ride.chauffeurRating} (124 avis)',
+                                        style: TTypography.bodyMedium(context).copyWith(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: TColors.success.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      'Chauffeur vérifié',
+                                      style: TTypography.labelSmall(context).copyWith(
+                                        color: TColors.success,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Driver stats - clean grid
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          children: [
+                            // Stats grid
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildStatCard(
+                                    context,
+                                    icon: Icons.directions_car_outlined,
+                                    title: 'Trajets',
+                                    value: '247',
+                                    color: TColors.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildStatCard(
+                                    context,
+                                    icon: Icons.schedule_outlined,
+                                    title: 'Expérience',
+                                    value: '3 ans',
+                                    color: TColors.info,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildStatCard(
+                                    context,
+                                    icon: Icons.thumb_up_outlined,
+                                    title: 'Satisfaction',
+                                    value: '98%',
+                                    color: TColors.success,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildStatCard(
+                                    context,
+                                    icon: Icons.access_time_outlined,
+                                    title: 'Ponctualité',
+                                    value: '95%',
+                                    color: TColors.accent,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // About section
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: TColors.neutral200.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'À propos',
+                                    style: TTypography.bodyLarge(context).copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Chauffeur expérimenté et fiable. Véhicule climatisé et confortable. Toujours ponctuel et courtois avec les passagers.',
+                                    style: TTypography.bodyMedium(context).copyWith(
+                                      color: TColors.textSecondary(context),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // Close button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: TextButton(
+                                onPressed: () => Get.back(),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: TColors.primary.withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Fermer',
+                                  style: TTypography.bodyMedium(context).copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: TColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TColors.surface(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: TColors.neutral300.withOpacity(0.3),
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: TTypography.headingSmall(context).copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: TTypography.labelSmall(context).copyWith(
+              color: TColors.textSecondary(context),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

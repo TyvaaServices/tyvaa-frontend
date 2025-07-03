@@ -38,7 +38,12 @@ class AppPages {
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
       showCupertinoParallax: true,
-      bindings: [HomeBinding(), ChatbotBinding(), NotificationBinding()],
+      bindings: [
+        HomeBinding(),
+        ChatbotBinding(),
+        NotificationBinding(),
+        PaymentBinding(),
+      ],
     ),
     GetPage(
       name: _Paths.CHOOSE,

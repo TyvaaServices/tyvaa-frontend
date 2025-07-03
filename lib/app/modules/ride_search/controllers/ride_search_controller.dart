@@ -41,8 +41,13 @@ class RideSearchController extends GetxController {
   final RxBool isSearching = false.obs;
   final RxBool hasSearched = false.obs;
 
+  // Filter state
+  final RxString selectedDateFilter = ''.obs;
+  final RxString selectedSortFilter = ''.obs;
+
   // Search results
   final RxList<RideSearchModel> searchResults = <RideSearchModel>[].obs;
+  final RxList<RideSearchModel> filteredResults = <RideSearchModel>[].obs;
 
   // Selected ride for booking
   final Rx<RideSearchModel?> selectedRide = Rx<RideSearchModel?>(null);
@@ -95,6 +100,7 @@ class RideSearchController extends GetxController {
     Future.delayed(Duration(seconds: 1), () {
       // Generate mock search results
       searchResults.value = _generateMockSearchResults();
+      filteredResults.value = List.from(searchResults);
 
       isSearching.value = false;
       hasSearched.value = true;
@@ -112,8 +118,6 @@ class RideSearchController extends GetxController {
     int numberOfSeats,
     String? message,
   ) {
-    if (ride == null) return;
-
     isRequestingBooking.value = true;
 
     // Simulate network delay for booking request
@@ -138,6 +142,9 @@ class RideSearchController extends GetxController {
     searchDate.value = null;
     hasSearched.value = false;
     searchResults.clear();
+    filteredResults.clear();
+    selectedDateFilter.value = '';
+    selectedSortFilter.value = '';
   }
 
   // Reset booking state
@@ -147,6 +154,51 @@ class RideSearchController extends GetxController {
     bookingRequestStatus.value = null;
   }
 
+  // Filter methods
+  void setDateFilter(String filter) {
+    selectedDateFilter.value = selectedDateFilter.value == filter ? '' : filter;
+    _applyFilters();
+  }
+
+  void setSortFilter(String filter) {
+    selectedSortFilter.value = selectedSortFilter.value == filter ? '' : filter;
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    List<RideSearchModel> results = List.from(searchResults);
+
+    // Apply date filters
+    if (selectedDateFilter.value == 'today') {
+      final today = DateTime.now();
+      results = results.where((ride) =>
+          ride.departureDate.year == today.year &&
+          ride.departureDate.month == today.month &&
+          ride.departureDate.day == today.day
+      ).toList();
+    } else if (selectedDateFilter.value == 'week') {
+      final now = DateTime.now();
+      final weekFromNow = now.add(Duration(days: 7));
+      results = results.where((ride) =>
+          ride.departureDate.isAfter(now) &&
+          ride.departureDate.isBefore(weekFromNow)
+      ).toList();
+    }
+
+    // Apply sort filters
+    if (selectedSortFilter.value == 'price_asc') {
+      results.sort((a, b) => a.price.compareTo(b.price));
+    } else if (selectedSortFilter.value == 'time_asc') {
+      results.sort((a, b) {
+        final aMinutes = a.departureTime.hour * 60 + a.departureTime.minute;
+        final bMinutes = b.departureTime.hour * 60 + b.departureTime.minute;
+        return aMinutes.compareTo(bMinutes);
+      });
+    }
+
+    filteredResults.value = results;
+  }
+
   // Generate mock search results
   List<RideSearchModel> _generateMockSearchResults() {
     final now = DateTime.now();
@@ -154,12 +206,12 @@ class RideSearchController extends GetxController {
     // Create several mock rides
     return List.generate(
       5,
-      (index) => RideSearchModel(
+          (index) => RideSearchModel(
         id: 'ride_${now.millisecondsSinceEpoch}_$index',
         departurePoint: departurePoint.value!,
         arrivalPoint: arrivalPoint.value!,
         departureDate:
-            searchDate.value ?? DateTime.now().add(Duration(days: index)),
+        searchDate.value ?? DateTime.now().add(Duration(days: index)),
         departureTime: TimeOfDay(
           hour: 8 + (index * 2) % 12,
           minute: (index * 15) % 60,
