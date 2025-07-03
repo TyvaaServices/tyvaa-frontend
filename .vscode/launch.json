@@ -1,0 +1,72 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter Development",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "toolArgs": [
+                "--dart-define=CINETPAY_API_KEY=12912847765bc0db748fdd44.40081707",
+                "--dart-define=CINETPAY_SITE_ID=445160",
+                "--dart-define=CINETPAY_NOTIFY_URL=http://localhost:3000/api/v1/payments/notify",
+                "--dart-define=APP_ENV=development",
+                "--dart-define=API_BASE_URL=http://localhost:3000"
+            ]
+        },
+        {
+            "name": "Flutter Production",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--dart-define=CINETPAY_API_KEY=YOUR_PRODUCTION_API_KEY",
+                "--dart-define=CINETPAY_SITE_ID=123456",
+                "--dart-define=CINETPAY_NOTIFY_URL=https://your-production-api.com/webhook/cinetpay",
+                "--dart-define=APP_ENV=production",
+                "--dart-define=API_BASE_URL=https://your-production-api.com"
+            ]
+        },
+        {
+            "name": "Flutter Debug (Custom)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--dart-define=CINETPAY_API_KEY=${input:cinetpayApiKey}",
+                "--dart-define=CINETPAY_SITE_ID=${input:cinetpaySiteId}",
+                "--dart-define=CINETPAY_NOTIFY_URL=${input:cinetpayNotifyUrl}",
+                "--dart-define=APP_ENV=development",
+                "--dart-define=API_BASE_URL=${input:apiBaseUrl}"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "cinetpayApiKey",
+            "description": "Enter CinetPay API Key",
+            "default": "12912847765bc0db748fdd44.40081707",
+            "type": "promptString"
+        },
+        {
+            "id": "cinetpaySiteId",
+            "description": "Enter CinetPay Site ID",
+            "default": "445160",
+            "type": "promptString"
+        },
+        {
+            "id": "cinetpayNotifyUrl",
+            "description": "Enter CinetPay Notify URL",
+            "default": "http://localhost:3000/api/v1/payments/notify",
+            "type": "promptString"
+        },
+        {
+            "id": "apiBaseUrl",
+            "description": "Enter API Base URL",
+            "default": "http://localhost:3000",
+            "type": "promptString"
+        }
+    ]
+}

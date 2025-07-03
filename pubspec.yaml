@@ -59,6 +59,8 @@ dependencies:
   printing: ^5.14.2
   path_provider: ^2.1.5
   share_plus: ^11.0.0
+  cinetpay: ^1.0.8
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -78,3 +80,4 @@ flutter:
     - assets/images/
     - assets/drivers/
     - assets/register_illustration.png
+    - .env
