@@ -5,18 +5,23 @@ part 'driver_profile.g.dart';
 @HiveType(typeId: 2)
 class DriverProfile extends HiveObject {
   @HiveField(0)
-  int? id;
+  int id;
 
   @HiveField(1)
-  double? driverNote;
+  double driverNote;
 
   @HiveField(2)
-  String? statusProfile;
+  String statusProfile;
 
   @HiveField(3)
-  int? userId;
+  int userId;
 
-  DriverProfile({this.id, this.driverNote, this.statusProfile, this.userId});
+  DriverProfile({
+    required this.id,
+    required this.driverNote,
+    required this.statusProfile,
+    required this.userId,
+  });
 
   factory DriverProfile.fromJson(Map<String, dynamic> json) {
     return DriverProfile(

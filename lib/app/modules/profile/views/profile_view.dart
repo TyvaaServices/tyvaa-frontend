@@ -267,7 +267,7 @@ class ProfileScreen extends GetView<ProfileController> {
           child: _buildStatCard(
             context,
             'Note',
-            '4.8',
+            controller.user.value.driverProfile!.driverNote.toString(),
             Icons.star_rounded,
             Colors.amber,
           ),

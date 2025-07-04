@@ -10,6 +10,7 @@ class RideSearchModel {
   final String chauffeurName;
   final String chauffeurImageUrl;
   final double chauffeurRating;
+  final String chauffeurPhone; // Added phone number field
   final int availableSeats;
   final double price;
   final bool isRecurring;
@@ -24,6 +25,7 @@ class RideSearchModel {
     required this.chauffeurName,
     required this.chauffeurImageUrl,
     required this.chauffeurRating,
+    required this.chauffeurPhone, // Added phone number parameter
     required this.availableSeats,
     required this.price,
     this.isRecurring = false,
@@ -35,7 +37,9 @@ class RideSearchController extends GetxController {
   // Search form values
   final Rx<String?> departurePoint = Rx<String?>(null);
   final Rx<String?> arrivalPoint = Rx<String?>(null);
-  final Rx<DateTime?> searchDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> searchDate = Rx<DateTime?>(
+    DateTime.now(),
+  ); // Default to today
 
   // Search state
   final RxBool isSearching = false.obs;
@@ -171,18 +175,26 @@ class RideSearchController extends GetxController {
     // Apply date filters
     if (selectedDateFilter.value == 'today') {
       final today = DateTime.now();
-      results = results.where((ride) =>
-          ride.departureDate.year == today.year &&
-          ride.departureDate.month == today.month &&
-          ride.departureDate.day == today.day
-      ).toList();
+      results =
+          results
+              .where(
+                (ride) =>
+                    ride.departureDate.year == today.year &&
+                    ride.departureDate.month == today.month &&
+                    ride.departureDate.day == today.day,
+              )
+              .toList();
     } else if (selectedDateFilter.value == 'week') {
       final now = DateTime.now();
       final weekFromNow = now.add(Duration(days: 7));
-      results = results.where((ride) =>
-          ride.departureDate.isAfter(now) &&
-          ride.departureDate.isBefore(weekFromNow)
-      ).toList();
+      results =
+          results
+              .where(
+                (ride) =>
+                    ride.departureDate.isAfter(now) &&
+                    ride.departureDate.isBefore(weekFromNow),
+              )
+              .toList();
     }
 
     // Apply sort filters
@@ -206,12 +218,12 @@ class RideSearchController extends GetxController {
     // Create several mock rides
     return List.generate(
       5,
-          (index) => RideSearchModel(
+      (index) => RideSearchModel(
         id: 'ride_${now.millisecondsSinceEpoch}_$index',
         departurePoint: departurePoint.value!,
         arrivalPoint: arrivalPoint.value!,
         departureDate:
-        searchDate.value ?? DateTime.now().add(Duration(days: index)),
+            searchDate.value ?? DateTime.now().add(Duration(days: index)),
         departureTime: TimeOfDay(
           hour: 8 + (index * 2) % 12,
           minute: (index * 15) % 60,
@@ -223,6 +235,7 @@ class RideSearchController extends GetxController {
         price: 1000 + (index * 500),
         isRecurring: index % 3 == 0,
         recurringDays: index % 3 == 0 ? _getRandomRecurringDays() : null,
+        chauffeurPhone: '+221776543210', // Mock phone number
       ),
     );
   }

@@ -8,7 +8,7 @@ part of 'booking.dart';
 
 class BookingAdapter extends TypeAdapter<Booking> {
   @override
-  final int typeId = 3;
+  final int typeId = 6;
 
   @override
   Booking read(BinaryReader reader) {

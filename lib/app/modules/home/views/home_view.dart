@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
 import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
-import 'package:passenger_tyvaa/app/modules/payment/views/payment_view.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 import 'package:passenger_tyvaa/app/widgets/notification_bell.dart';

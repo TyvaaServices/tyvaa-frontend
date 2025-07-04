@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'payment.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 7)
 class Payment extends HiveObject {
   @HiveField(0)
   String transactionId;

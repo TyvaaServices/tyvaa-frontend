@@ -4,7 +4,7 @@ import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
 
 part 'booking.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 6)
 class Booking extends HiveObject {
   @HiveField(0)
   int id;

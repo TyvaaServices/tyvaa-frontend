@@ -101,7 +101,6 @@ class OtpVerificationController extends GetxController
           otp: completeOtp,
         );
         if (success) {
-          // Registration success: you may want to fetch user data here if needed
           isVerified.value = true;
           final needsPermission = await _needsLocationPermission();
           if (needsPermission) {

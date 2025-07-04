@@ -2,6 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
 
 import '../../../../generated/assets.dart';
@@ -138,7 +139,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () {
-                            Get.offAllNamed('/main');
+                            Get.offAllNamed(Routes.MAIN);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: TColors.primary,

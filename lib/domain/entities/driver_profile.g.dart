@@ -17,10 +17,10 @@ class DriverProfileAdapter extends TypeAdapter<DriverProfile> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DriverProfile(
-      id: fields[0] as int?,
-      driverNote: fields[1] as double?,
-      statusProfile: fields[2] as String?,
-      userId: fields[3] as int?,
+      id: fields[0] as int,
+      driverNote: fields[1] as double,
+      statusProfile: fields[2] as String,
+      userId: fields[3] as int,
     );
   }
 

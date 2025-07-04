@@ -1,8 +1,10 @@
 import 'package:hive/hive.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
+
 part 'ride_model.g.dart';
 
 @HiveType(typeId: 3)
+@HiveType(typeId: 4)
 class RideModel extends HiveObject {
   @HiveField(0)
   int id;
@@ -42,7 +44,7 @@ class RideModel extends HiveObject {
 
   @HiveField(12)
   User? driver;
-  
+
   RideModel({
     required this.id,
     required this.driverId,
@@ -65,9 +67,10 @@ class RideModel extends HiveObject {
       departure: json['departure'],
       destination: json['destination'],
       seatsAvailable: json['seatsAvailable'].toInt(),
-      recurrence: json['recurrence'] != null
-          ? List<String>.from(json['recurrence'])
-          : null,
+      recurrence:
+          json['recurrence'] != null
+              ? List<String>.from(json['recurrence'])
+              : null,
       price: json['price'].toInt(),
       status: json['status'],
       startDate: json['startDate'],

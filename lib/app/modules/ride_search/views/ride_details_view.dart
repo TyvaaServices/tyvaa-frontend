@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/controllers/ride_search_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../payment/views/payment_view.dart';
 
@@ -389,92 +390,240 @@ class RideDetailsView extends StatelessWidget {
           width: 0.5,
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Driver avatar - clean and simple
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: TColors.primary.withOpacity(0.2),
-                width: 1.5,
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(ride.chauffeurImageUrl, fit: BoxFit.cover),
-            ),
-          ),
-
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ride.chauffeurName,
-                  style: TTypography.bodyLarge(
-                    context,
-                  ).copyWith(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.star_rounded, size: 16, color: Colors.amber),
-                    const SizedBox(width: 4),
-                    Text(
-                      ride.chauffeurRating.toString(),
-                      style: TTypography.bodySmall(
-                        context,
-                      ).copyWith(fontWeight: FontWeight.w500),
+          // Enhanced driver info with trust signals
+          Row(
+            children: [
+              // Driver avatar with verification badge
+              Stack(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: TColors.primary.withOpacity(0.2),
+                        width: 2,
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.asset(
+                        ride.chauffeurImageUrl,
+                        fit: BoxFit.cover,
                       ),
+                    ),
+                  ),
+                  // Verification badge
+                  Positioned(
+                    bottom: -2,
+                    right: -2,
+                    child: Container(
+                      width: 20,
+                      height: 20,
                       decoration: BoxDecoration(
-                        color: TColors.success.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Vérifié',
-                        style: TTypography.labelSmall(context).copyWith(
-                          color: TColors.success,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
+                        color: TColors.success,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: TColors.surface(context),
+                          width: 2,
                         ),
                       ),
+                      child: Icon(Icons.check, size: 12, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(width: 16),
+
+              // Driver details with enhanced info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ride.chauffeurName,
+                            style: TTypography.bodyLarge(
+                              context,
+                            ).copyWith(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        // Trust score
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: TColors.success.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.verified_user,
+                                size: 12,
+                                color: TColors.success,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Vérifié',
+                                style: TTypography.labelSmall(context).copyWith(
+                                  color: TColors.success,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+
+                    // Enhanced rating with more context
+                    Row(
+                      children: [
+                        Row(
+                          children: List.generate(5, (index) {
+                            return Icon(
+                              index < ride.chauffeurRating.floor()
+                                  ? Icons.star_rounded
+                                  : index < ride.chauffeurRating
+                                  ? Icons.star_half_rounded
+                                  : Icons.star_outline_rounded,
+                              size: 16,
+                              color: Colors.amber,
+                            );
+                          }),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${ride.chauffeurRating} • 247 trajets',
+                          style: TTypography.bodySmall(context).copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: TColors.textSecondary(context),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Quick stats
+                    Row(
+                      children: [
+                        _buildQuickStat(
+                          context,
+                          '98%',
+                          'Ponctualité',
+                          TColors.info,
+                        ),
+                        const SizedBox(width: 16),
+                        _buildQuickStat(
+                          context,
+                          '5★',
+                          'Moyenne',
+                          TColors.warning,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
-          // Simple action button
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: TColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: IconButton(
-              onPressed: () => _showDriverProfile(context, ride),
-              icon: Icon(
-                Icons.arrow_forward_ios,
-                color: TColors.primary,
-                size: 14,
+          const SizedBox(height: 20),
+
+          // Action buttons with enhanced UX
+          Row(
+            children: [
+              // WhatsApp contact - primary action
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  onPressed: () => _launchWhatsApp(ride.chauffeurPhone),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF25D366),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    elevation: 2,
+                  ),
+                  icon: Icon(Icons.chat, size: 18),
+                  label: Text(
+                    'Contacter',
+                    style: TTypography.bodySmall(context).copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
-            ),
+
+              const SizedBox(width: 12),
+
+              // View profile - secondary action
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: TColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TColors.primary.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () => _showDriverProfile(context, ride),
+                  icon: Icon(
+                    Icons.person_outline,
+                    color: TColors.primary,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuickStat(
+    BuildContext context,
+    String value,
+    String label,
+    Color color,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          '$value $label',
+          style: TTypography.labelSmall(context).copyWith(
+            color: TColors.textSecondary(context),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 
@@ -989,6 +1138,88 @@ class RideDetailsView extends StatelessWidget {
                                     ),
 
                                     const SizedBox(height: 24),
+
+                                    // WhatsApp contact section
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: TColors.surface(context),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: TColors.neutral300.withOpacity(
+                                            0.3,
+                                          ),
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Contacter le chauffeur',
+                                            style: TTypography.bodyLarge(
+                                              context,
+                                            ).copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          Row(
+                                            children: [
+                                              // WhatsApp icon
+                                              GestureDetector(
+                                                onTap:
+                                                    () => _launchWhatsApp(
+                                                      ride.chauffeurPhone,
+                                                    ),
+                                                child: Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  decoration: BoxDecoration(
+                                                    color: TColors.success
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          12,
+                                                        ),
+                                                    child: Image.asset(
+                                                      'assets/icons/wa_icon.png',
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 16),
+
+                                              Expanded(
+                                                child: Text(
+                                                  'Envoyer un message sur WhatsApp',
+                                                  style: TTypography.bodyMedium(
+                                                    context,
+                                                  ).copyWith(
+                                                    color: TColors.textPrimary(
+                                                      context,
+                                                    ),
+                                                    height: 1.4,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1048,6 +1279,68 @@ class RideDetailsView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _launchWhatsApp(String? phoneNumber) async {
+    if (phoneNumber == null || phoneNumber.isEmpty) return;
+
+    // Clean phone number - remove any non-digit characters except +
+    String cleanPhoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+    // For Android, try WhatsApp with proper intent handling
+    final whatsappAppUrl = "whatsapp://send?phone=$cleanPhoneNumber";
+    final whatsappWebUrl = "https://wa.me/$cleanPhoneNumber";
+
+    try {
+      // First try the app scheme
+      bool canLaunchApp = await canLaunch(whatsappAppUrl);
+      if (canLaunchApp) {
+        await launch(whatsappAppUrl);
+        return;
+      }
+
+      // If app scheme fails, try web with external app preference
+      bool canLaunchWeb = await canLaunch(whatsappWebUrl);
+      if (canLaunchWeb) {
+        await launch(
+          whatsappWebUrl,
+          forceSafariVC: false,
+          forceWebView: false,
+          enableJavaScript: true,
+          universalLinksOnly: true, // This helps prefer app over browser
+        );
+        return;
+      }
+
+      // If both fail, show error
+      _showWhatsAppError();
+    } catch (e) {
+      print('Error launching WhatsApp: $e');
+      // Try alternative Android intent approach
+      try {
+        final androidIntentUrl =
+            "intent://send?phone=$cleanPhoneNumber#Intent;scheme=whatsapp;package=com.whatsapp;end";
+        if (await canLaunch(androidIntentUrl)) {
+          await launch(androidIntentUrl);
+          return;
+        }
+      } catch (intentError) {
+        print('Android intent also failed: $intentError');
+      }
+
+      _showWhatsAppError();
+    }
+  }
+
+  void _showWhatsAppError() {
+    Get.snackbar(
+      'WhatsApp non disponible',
+      'Veuillez installer WhatsApp pour contacter le chauffeur',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.orange[100],
+      colorText: Colors.orange[800],
+      duration: const Duration(seconds: 3),
     );
   }
 }

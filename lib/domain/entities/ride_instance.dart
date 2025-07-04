@@ -1,9 +1,10 @@
-
 import 'package:hive/hive.dart';
 import 'package:passenger_tyvaa/domain/entities/ride_model.dart';
+
 part 'ride_instance.g.dart';
-@HiveType(typeId: 3)
-class Rideinstance extends HiveObject{
+
+@HiveType(typeId: 5)
+class Rideinstance extends HiveObject {
   @HiveField(0)
   int id;
 
@@ -35,7 +36,7 @@ class Rideinstance extends HiveObject{
     this.ride,
   });
 
-    factory Rideinstance.fromJson(Map<String, dynamic> json) {
+  factory Rideinstance.fromJson(Map<String, dynamic> json) {
     return Rideinstance(
       id: json['id'],
       rideId: json['rideId'].toInt(),
@@ -43,9 +44,7 @@ class Rideinstance extends HiveObject{
       seatsAvailable: json['seatsAvailable'].toInt(),
       seatsBooked: json['seatsBooked'].toInt(),
       status: json['status'],
-      ride: json['ride'] != null
-          ? RideModel.fromJson(json['ride'])
-          : null,
+      ride: json['ride'] != null ? RideModel.fromJson(json['ride']) : null,
     );
   }
 
@@ -60,5 +59,4 @@ class Rideinstance extends HiveObject{
       'ride': ride?.toJson(),
     };
   }
-
 }
