@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:passenger_tyvaa/app/modules/publish_ride/views/succes_publish_view.dart';
+import 'package:passenger_tyvaa/app/repositories/user_repository.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
+import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 enum PublishStepType { departure, arrival, time, date, summary }
 
@@ -43,6 +44,15 @@ class PublishRideController extends GetxController {
     'Mermoz',
     'Sacré-Cœur',
   ];
+
+  // Additional fields for ride publishing
+  final RxInt seatsAvailable = 1.obs;
+  final RxString comment = ''.obs;
+  final RxDouble price = 0.0.obs;
+  final Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> endDate = Rx<DateTime?>(null);
+
+  final UserRepository _userRepository = UserRepository();
 
   @override
   void onInit() {
@@ -157,13 +167,61 @@ class PublishRideController extends GetxController {
     }
   }
 
-  void publishRide() {
-    Future.delayed(Duration(seconds: 3), () {
-      // Get.back();
-    });
-    // Get.to(VerificationRequiredScreen());
-    Get.toNamed(Routes.DRIVER_VERIFICATION);
-    // Get.to(RidePublishedSuccessScreen());
+  // Helper to get recurrence days as list of strings
+  List<String> get recurrenceDays {
+    final days = <String>[];
+    for (int i = 0; i < selectedDays.length; i++) {
+      if (selectedDays[i]) {
+        days.add(weekdayLabels[i]);
+      }
+    }
+    return days;
+  }
+
+  // Enhanced publishRide method
+  void publishRide() async {
+    try {
+      final User? currentUser = _userRepository.getCurrentUser();
+      if (currentUser == null) {
+        Get.snackbar('Erreur', 'Utilisateur non connecté');
+        return;
+      }
+
+      if (currentUser.driverProfile == null) {
+        Get.snackbar(
+          'Vérification requise',
+          'Vous devez compléter votre profil conducteur avant de publier un trajet.',
+        );
+        Get.toNamed(Routes.DRIVER_VERIFICATION);
+        return;
+      }
+
+      final rideData = {
+        'driverId': currentUser.id,
+        'departure': departurePoint.value,
+        'destination': arrivalPoint.value,
+        'seatsAvailable': seatsAvailable.value,
+        'recurrence': isRecurring.value ? recurrenceDays : [],
+        'comment': comment.value,
+        'price': price.value,
+        'startDate': startDate.value?.toIso8601String(),
+        'endDate': endDate.value?.toIso8601String(),
+        'time':
+            departureTime.value != null
+                ? formatTime(departureTime.value!)
+                : null,
+        'isRecurring': isRecurring.value,
+      };
+      final success = await _userRepository.publishRide(rideData);
+      if (success) {
+        Get.snackbar('Succès', 'Trajet publié avec succès');
+      } else {
+        Get.snackbar('Erreur', 'Échec de la publication du trajet');
+      }
+    } catch (error) {
+      print('Error publishing ride: $error');
+      Get.snackbar('Erreur', 'Erreur lors de la publication du trajet');
+    }
   }
 
   String getStepTitle() {

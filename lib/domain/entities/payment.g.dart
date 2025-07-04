@@ -1,50 +1,53 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'booking.dart';
+part of 'payment.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BookingAdapter extends TypeAdapter<Booking> {
+class PaymentAdapter extends TypeAdapter<Payment> {
   @override
-  final int typeId = 3;
+  final int typeId = 4;
 
   @override
-  Booking read(BinaryReader reader) {
+  Payment read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Booking(
-      id: fields[0] as int,
-      rideInstanceId: fields[1] as int,
-      seatsBooked: fields[2] as int,
+    return Payment(
+      transactionId: fields[0] as String,
+      phone: fields[1] as String?,
+      amount: fields[2] as double,
       status: fields[3] as String,
-      userId: fields[4] as int,
-      rideInstance: fields[5] as Rideinstance,
-      payment: fields[6] as Payment,
+      currency: fields[4] as String?,
+      paymentMethod: fields[5] as String?,
+      metadata: fields[6] as String?,
+      operatorId: fields[7] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Booking obj) {
+  void write(BinaryWriter writer, Payment obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.transactionId)
       ..writeByte(1)
-      ..write(obj.rideInstanceId)
+      ..write(obj.phone)
       ..writeByte(2)
-      ..write(obj.seatsBooked)
+      ..write(obj.amount)
       ..writeByte(3)
       ..write(obj.status)
       ..writeByte(4)
-      ..write(obj.userId)
+      ..write(obj.currency)
       ..writeByte(5)
-      ..write(obj.rideInstance)
+      ..write(obj.paymentMethod)
       ..writeByte(6)
-      ..write(obj.payment);
+      ..write(obj.metadata)
+      ..writeByte(7)
+      ..write(obj.operatorId);
   }
 
   @override
@@ -53,7 +56,7 @@ class BookingAdapter extends TypeAdapter<Booking> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BookingAdapter &&
+      other is PaymentAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

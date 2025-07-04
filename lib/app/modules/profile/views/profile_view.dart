@@ -249,7 +249,7 @@ class ProfileScreen extends GetView<ProfileController> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          'Membre depuis ${Jiffy.parseFromDateTime(controller.user.value?.createdAt ?? DateTime.now()).format(pattern: 'MMMM yyyy')}',
+          'Membre depuis ${Jiffy.parseFromDateTime(controller.user.value.createdAt ?? DateTime.now()).format(pattern: 'MMMM yyyy')}',
           style: TextStyle(
             fontSize: 14,
             color: TColors.primary,
@@ -415,9 +415,9 @@ class ProfileScreen extends GetView<ProfileController> {
               context,
               Icons.person_rounded,
               'Statut',
-              controller.user.value.isDriver == true
-                  ? 'Conducteur'
-                  : 'Passager',
+              controller.user.value.driverProfile != null
+                  ? 'Membre Tyvaa'
+                  : 'Explorateur Tyvaa',
               controller.user.value.isVerified == true,
               Colors.purple,
             ),

@@ -245,7 +245,6 @@ class ApiClient {
     return await dio.post('/users/register', data: {'user': user, 'otp': otp});
   }
 
-
   Future<Response> getAllBookings() async {
     return await dio.get('/bookings');
   }
@@ -258,7 +257,7 @@ class ApiClient {
     return await dio.get('/bookings/$bookingId');
   }
 
-   Future<Response> cancelBooking(int bookingId) async {
+  Future<Response> cancelBooking(int bookingId) async {
     return await dio.delete('/bookings/$bookingId');
   }
 
@@ -280,5 +279,10 @@ class ApiClient {
       logger.e('Error submitting driver application: ${e.toString()}');
       rethrow;
     }
+  }
+
+  /// Publish a ride (create ride template)
+  Future<Response> publishRide({required Map<String, dynamic> ride}) async {
+    return await dio.post('/rides', data: ride);
   }
 }

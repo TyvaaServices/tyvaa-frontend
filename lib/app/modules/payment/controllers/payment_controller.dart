@@ -1,36 +1,31 @@
 import 'package:cinetpay/cinetpay.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../../repositories/user_repository.dart';
+import 'package:passenger_tyvaa/domain/entities/booking.dart';
+import 'package:passenger_tyvaa/domain/entities/payment_response.dart';
+
 import '../../../config/cinetpay_config.dart';
+import '../../../repositories/user_repository.dart';
 
 class PaymentController extends GetxController {
-  // Variables observables
   final RxDouble amount = 0.0.obs;
   final RxString errorMessage = ''.obs;
   final RxString successMessage = ''.obs;
   final RxBool isLoading = false.obs;
 
-  // Booking data passed from previous screen
   Map<String, dynamic>? bookingData;
 
-  // Repository
   final UserRepository _userRepository = UserRepository();
 
-  // Wave Business configuration (keeping for backwards compatibility)
-  static const String WAVE_MERCHANT_CODE =
-      'VOTRE_CODE_WAVE'; // À remplacer par votre code
+  Booking? booking;
 
   @override
   void onInit() {
     super.onInit();
-    // Get arguments from previous screen with proper type casting
     if (Get.arguments != null) {
       final args = Get.arguments as Map<String, dynamic>?;
       if (args != null) {
         if (args['amount'] != null) {
-          // Handle both int and double amounts
           final amountValue = args['amount'];
           if (amountValue is int) {
             amount.value = amountValue.toDouble();
@@ -41,12 +36,10 @@ class PaymentController extends GetxController {
           }
         }
         if (args['bookingData'] != null) {
-          // Safely cast booking data
           final bookingDataRaw = args['bookingData'];
           if (bookingDataRaw is Map<String, dynamic>) {
             bookingData = bookingDataRaw;
           } else if (bookingDataRaw is Map) {
-            // Convert Map<dynamic, dynamic> to Map<String, dynamic>
             bookingData = Map<String, dynamic>.from(bookingDataRaw);
           }
         }
@@ -64,24 +57,19 @@ class PaymentController extends GetxController {
       isLoading.value = true;
       clearMessages();
 
-      // Validate amount using configuration
       if (!CinetPayConfig.isValidAmount(amount.value)) {
         errorMessage.value = CinetPayConfig.getAmountErrorMessage(amount.value);
         return;
       }
 
-      // Generate unique transaction ID
       final String transactionId = CinetPayConfig.generateTransactionId();
 
-      // Validate configuration before proceeding
       if (!CinetPayConfig.isConfigured) {
         final errors = CinetPayConfig.validateConfiguration();
         errorMessage.value =
-            'Configuration CinetPay manquante:\n${errors.join('\n')}';
+            'Configuration CinetPay manquante:\n[0m[1m[31m${errors.join('\n')}[0m';
         return;
       }
-
-      // Navigate to CinetPay checkout
       await Get.to(
         () => CinetPayCheckout(
           title: 'Paiement de votre trajet',
@@ -90,9 +78,8 @@ class PaymentController extends GetxController {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-          titleBackgroundColor: const Color(
-            0xFF6A0DAD,
-          ), // Using your primary color
+          titleBackgroundColor: const Color(0xFF6A0DAD),
+          // Using your primary color
           configData: CinetPayConfig.configData,
           paymentData: <String, dynamic>{
             'transaction_id': transactionId,
@@ -103,18 +90,25 @@ class PaymentController extends GetxController {
           },
           waitResponse: (response) {
             try {
-              // Cast response to proper type
               final typedResponse = Map<String, dynamic>.from(response);
-              _handlePaymentResponse(typedResponse, transactionId);
+              if (booking != null) {
+                _handlePaymentResponse(
+                  typedResponse,
+                  booking!.payment.transactionId,
+                  booking!,
+                );
+              } else {
+                errorMessage.value =
+                    'Réservation introuvable pour le paiement.';
+              }
             } catch (e) {
               errorMessage.value =
-                  'Erreur de format de réponse: ${e.toString()}';
+                  'Erreur de format de réponse: \\${e.toString()}';
               isLoading.value = false;
             }
           },
           onError: (error) {
             try {
-              // Cast error to proper type
               final typedError = Map<String, dynamic>.from(error);
               _handlePaymentError(typedError);
             } catch (e) {
@@ -132,87 +126,56 @@ class PaymentController extends GetxController {
     }
   }
 
-  Future<void> _handlePaymentResponse(
-    Map<String, dynamic> response,
-    String transactionId,
-  ) async {
-    if (response['status'] == 'ACCEPTED') {
-      successMessage.value = 'Paiement effectué avec succès!';
-
-      // Now book the ride if booking data is available
-      if (bookingData != null) {
-        // Add payment information to booking data
-        bookingData!['paymentStatus'] = 'completed';
-        bookingData!['transactionId'] = transactionId;
-        bookingData!['paymentMethod'] = 'cinetpay';
-        bookingData!['amount'] = amount.value;
-
-        // Call the booking API
-        final bookingSuccess = await _userRepository.bookRide(bookingData!);
-
-        if (bookingSuccess) {
-          // Navigate to success screen or booking confirmation
-          Future.delayed(const Duration(seconds: 2), () {
-            Get.back(
-              result: {
-                'success': true,
-                'transaction_id': transactionId,
-                'booking_confirmed': true,
-              },
-            );
-          });
-        } else {
-          errorMessage.value =
-              'Paiement réussi mais erreur lors de la réservation. Contactez le support.';
-        }
-      } else {
-        // Just payment, no booking
-        Future.delayed(const Duration(seconds: 2), () {
-          Get.back(result: {'success': true, 'transaction_id': transactionId});
-        });
+  Future<void> handleBookAndPay(Map<String, dynamic> bookingRequestData) async {
+    try {
+      // 1. Book the ride and get Booking (with Payment inside)
+      final bookingResult = await _userRepository.bookRide(bookingRequestData);
+      if (bookingResult == null) {
+        errorMessage.value =
+            'Erreur lors de la réservation. Veuillez réessayer.';
+        return;
       }
+      booking = bookingResult;
+      final transactionId = booking!.payment.transactionId;
+      // 2. Initiate payment with CinetPay using transactionId
+      await initiateCinetPayPayment();
+      // Payment response will be handled in waitResponse/onError callbacks
+    } catch (e) {
+      errorMessage.value =
+          'Erreur lors du processus de paiement: \\${e.toString()}';
+    }
+  }
+
+  Future<void> _handlePaymentResponse(
+    Map<String, dynamic>? response,
+    String? transactionId,
+    Booking booking,
+  ) async {
+    if (response == null || transactionId == null) {
+      errorMessage.value = 'Erreur lors du paiement ou de la réservation.';
+      return;
+    }
+    final paymentResponse = PaymentResponse.fromJson(response);
+    if (paymentResponse.status == 'ACCEPTED') {
+      successMessage.value = 'Paiement effectué avec succès!';
+      // TODO: Implement notifyPayment in UserRepository if needed
+      Future.delayed(const Duration(seconds: 2), () {
+        Get.back(
+          result: {
+            'success': true,
+            'transaction_id': transactionId,
+            'booking_confirmed': true,
+          },
+        );
+      });
     } else {
-      errorMessage.value = 'Paiement échoué. Veuillez réessayer.';
+      errorMessage.value = 'Paiement échoué ou annulé.';
+      // Optionally notify backend of failure
     }
   }
 
   void _handlePaymentError(Map<String, dynamic> error) {
     errorMessage.value =
         error['description'] ?? 'Une erreur est survenue lors du paiement';
-  }
-
-  Future<void> initiateWavePayment() async {
-    try {
-      isLoading.value = true;
-      errorMessage.value = '';
-
-      final Uri waveUri = Uri.parse(
-        'wave://business-payment?recipient_wave_code=$WAVE_MERCHANT_CODE'
-        '&amount=${amount.value.toStringAsFixed(0)}'
-        '&currency=XOF',
-      );
-
-      if (await canLaunchUrl(waveUri)) {
-        await launchUrl(waveUri);
-      } else {
-        errorMessage.value =
-            'Impossible de lancer Wave. Veuillez vérifier que l\'application est installée.';
-      }
-    } catch (e) {
-      errorMessage.value =
-          'Erreur lors du lancement du paiement: ${e.toString()}';
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> initiateOrangeMoneyPayment() async {
-    // À implémenter selon les spécifications d'Orange Money
-    errorMessage.value = 'Paiement Orange Money bientôt disponible';
-  }
-
-  Future<void> initiateFreeMoneyPayment() async {
-    // À implémenter selon les spécifications de Free Money
-    errorMessage.value = 'Paiement Free Money bientôt disponible';
   }
 }

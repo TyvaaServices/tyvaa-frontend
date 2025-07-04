@@ -1,9 +1,11 @@
-
 import 'package:hive/hive.dart';
+import 'package:passenger_tyvaa/domain/entities/payment.dart';
 import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
+
 part 'booking.g.dart';
+
 @HiveType(typeId: 3)
-class Booking extends HiveObject{
+class Booking extends HiveObject {
   @HiveField(0)
   int id;
 
@@ -20,7 +22,10 @@ class Booking extends HiveObject{
   int userId;
 
   @HiveField(5)
-  Rideinstance? rideInstance;
+  Rideinstance rideInstance;
+
+  @HiveField(6)
+  Payment payment;
 
   Booking({
     required this.id,
@@ -28,19 +33,19 @@ class Booking extends HiveObject{
     required this.seatsBooked,
     required this.status,
     required this.userId,
-    this.rideInstance,
+    required this.rideInstance,
+    required this.payment,
   });
 
-    factory Booking.fromJson(Map<String, dynamic> json) {
+  factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
       id: json['id'],
       rideInstanceId: json['rideInstanceId'].toInt(),
       seatsBooked: json['seatsBooked'].toInt(),
       status: json['status'],
       userId: json['userId'].toInt(),
-      rideInstance: json['rideInstance'] != null
-          ? Rideinstance.fromJson(json['rideInstance'])
-          : null,
+      rideInstance: Rideinstance.fromJson(json['rideInstance']),
+      payment: Payment.fromJson(json['payment']),
     );
   }
 
@@ -51,8 +56,8 @@ class Booking extends HiveObject{
       'seatsBooked': seatsBooked,
       'status': status,
       'userId': userId,
-      'rideInstance': rideInstance?.toJson(),
+      'rideInstance': rideInstance.toJson(),
+      'payment': payment.toJson(),
     };
   }
-
 }

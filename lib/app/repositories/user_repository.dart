@@ -50,9 +50,13 @@ class UserRepository {
     }
   }
 
-  Future<User?> refreshUserData(int userId) async {
+  Future<User?> refreshUserData(int? userId) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, returning cached user data');
+      return getCurrentUser();
+    }
+    if (userId == null) {
+      _logger.w('User ID is null, cannot refresh user data');
       return getCurrentUser();
     }
 
@@ -81,6 +85,7 @@ class UserRepository {
         user,
         profileController,
       );
+      await refreshUserData(getCurrentUser()?.id);
       return result;
     } catch (e) {
       _logger.e('Error synchronizing user data: $e');
@@ -165,7 +170,6 @@ class UserRepository {
         if (data['token'] != null) {
           await storage.write(key: 'auth_token', value: data['token']);
         }
-        // Optionally save to Hive/local storage if needed
         return true;
       }
       return false;
@@ -218,6 +222,7 @@ class UserRepository {
       final response = await _apiClient.cancelBooking(bookingId);
       if (response.statusCode == 200 && response.data != null) {
         _logger.d('Booking cancelled successfully: ${response.data}');
+        await refreshUserData(getCurrentUser()?.id);
         return true;
       }
       return false;
@@ -227,10 +232,10 @@ class UserRepository {
     }
   }
 
-  Future<bool> bookRide(Map<String, dynamic> bookingData) async {
+  Future<Booking?> bookRide(Map<String, dynamic> bookingData) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot book ride');
-      return false;
+      return null;
     }
 
     try {
@@ -240,11 +245,26 @@ class UserRepository {
         Booking booking = Booking.fromJson(response.data);
         final bookingBox = Hive.box<Booking>('bookings');
         await bookingBox.put(booking.id, booking);
+        return booking;
+      }
+      return null;
+    } catch (e) {
+      _logger.e('Error booking ride: $e');
+      return null;
+    }
+  }
+
+  /// Publish a ride using the API
+  Future<bool> publishRide(Map<String, dynamic> ride) async {
+    try {
+      final response = await _apiClient.publishRide(ride: ride);
+      if (response.statusCode == 201) {
+        await refreshUserData(getCurrentUser()?.id);
         return true;
       }
       return false;
     } catch (e) {
-      _logger.e('Error booking ride: $e');
+      _logger.e('Error publishing ride: $e');
       return false;
     }
   }
