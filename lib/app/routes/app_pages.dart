@@ -8,8 +8,6 @@ import 'package:passenger_tyvaa/app/modules/home/views/aide_view.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/main_screen.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/onboarding_chauffeur.dart';
 import 'package:passenger_tyvaa/app/modules/home/views/splash_view.dart';
-import 'package:passenger_tyvaa/app/modules/notification/bindings/notification_binding.dart';
-import 'package:passenger_tyvaa/app/modules/notification/views/notification_view.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/bindings/location_permission_binding.dart';
 import 'package:passenger_tyvaa/app/modules/permissions/views/location_permission_view.dart';
 import 'package:passenger_tyvaa/app/modules/publish_ride/views/publish_ride_view.dart';
@@ -22,8 +20,8 @@ import '../modules/auth/views/login_view.dart';
 import '../modules/driver_verification/bindings/driver_verification_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/onboarding_view.dart';
-import '../modules/payment/views/payment_view.dart';
 import '../modules/payment/bindings/payment_binding.dart';
+import '../modules/payment/views/payment_view.dart';
 
 part 'app_routes.dart';
 
@@ -38,12 +36,7 @@ class AppPages {
       transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
       showCupertinoParallax: true,
-      bindings: [
-        HomeBinding(),
-        ChatbotBinding(),
-        NotificationBinding(),
-        PaymentBinding(),
-      ],
+      bindings: [HomeBinding(), ChatbotBinding(), PaymentBinding()],
     ),
     GetPage(
       name: _Paths.CHOOSE,
@@ -78,13 +71,6 @@ class AppPages {
       page: () => SplashScreen(),
       binding: HomeBinding(),
       transition: Transition.zoom,
-      transitionDuration: Duration(milliseconds: 800),
-    ),
-    GetPage(
-      name: _Paths.NOTIFICATION,
-      page: () => NotificationsScreen(),
-      binding: HomeBinding(),
-      transition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 800),
     ),
     GetPage(

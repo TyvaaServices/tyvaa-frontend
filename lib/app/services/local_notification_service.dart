@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+
 import '../routes/app_pages.dart';
 
 class LocalNotificationService {
@@ -56,15 +58,15 @@ class LocalNotificationService {
             Get.toNamed(Routes.MAIN);
             break;
           default:
-            Get.toNamed(Routes.NOTIFICATION);
+            Get.toNamed(Routes.MAIN);
             break;
         }
       } else {
-        Get.toNamed(Routes.NOTIFICATION);
+        Get.toNamed(Routes.MAIN);
       }
     } catch (e) {
       print('Error handling notification tap: $e');
-      Get.toNamed(Routes.NOTIFICATION);
+      Get.toNamed(Routes.PAYMENT);
     }
   }
 

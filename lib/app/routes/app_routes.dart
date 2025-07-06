@@ -10,7 +10,6 @@ abstract class Routes {
   static const LOGIN = _Paths.LOGIN;
   static const REGISTER = _Paths.REGISTER;
   static const SPLASH = _Paths.SPLASH;
-  static const NOTIFICATION = _Paths.NOTIFICATION;
   static const OTP = _Paths.OTP;
   static const AIDE = _Paths.AIDE;
   static const ONBOARDINGCHAUFFEUR = _Paths.ONBOARDINGCHAUFFEUR;
@@ -37,7 +36,6 @@ abstract class _Paths {
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const SPLASH = '/splash';
-  static const NOTIFICATION = '/notification';
   static const OTP = '/otp';
   static const ONBOARDINGCHAUFFEUR = '/publier-trajet';
   static const PUBLISH_TRAJET = '/publish-trajet';

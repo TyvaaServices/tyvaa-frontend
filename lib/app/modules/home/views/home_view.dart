@@ -1,37 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
-import 'package:passenger_tyvaa/app/modules/notification/controllers/notification_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
-import 'package:passenger_tyvaa/app/widgets/notification_bell.dart';
 
 import '../../../routes/app_pages.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
 
-  final NotificationController notificationController = Get.find();
   final ProfileController profileController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColors.background(context),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed('/publier-trajet'),
-        backgroundColor: TColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: TRadius.buttonRadius),
-        label: Text(
-          'Publier un trajet',
-          style: TTypography.labelLarge(
-            context,
-          ).copyWith(color: Colors.white, fontWeight: FontWeight.w600),
-        ),
-        icon: const Icon(Icons.add_road_rounded),
-      ),
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -65,7 +48,6 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
-        // Profile image with improved tap indication
         Hero(
           tag: 'profile_image',
           child: Material(
@@ -100,7 +82,6 @@ class HomeScreen extends GetView<HomeController> {
                                 ),
                       ),
                     ),
-                    // Small icon indicator for tappable profile
                     Positioned(
                       right: 0,
                       bottom: 0,
@@ -158,20 +139,8 @@ class HomeScreen extends GetView<HomeController> {
             ],
           ),
         ),
-        _buildNotificationButton(context),
       ],
     );
-  }
-
-  Widget _buildNotificationButton(BuildContext context) {
-    return Obx(() {
-      return NotificationBell(
-        hasNotifications: notificationController.notifications.isNotEmpty,
-        unreadCount: notificationController.unreadCount,
-        onTap: () => Get.toNamed('/notification'),
-        size: 24,
-      );
-    });
   }
 
   Widget _buildWelcomeCard(BuildContext context) {
@@ -221,7 +190,6 @@ class HomeScreen extends GetView<HomeController> {
                 ),
               ),
 
-              // Content
               Padding(
                 padding: EdgeInsets.all(TSpacing.lg),
                 child: Column(
@@ -572,7 +540,10 @@ class HomeScreen extends GetView<HomeController> {
                         subtitle: Text(ride['date']),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap:
-                            () => Get.toNamed('/ride-details', arguments: ride),
+                            () => Get.toNamed(
+                              Routes.RIDE_DETAILS,
+                              arguments: ride,
+                            ),
                       );
                     },
                   ),
