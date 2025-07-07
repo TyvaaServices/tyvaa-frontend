@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/booking.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 import '../modules/profile/controllers/profile_controller.dart';
@@ -232,14 +233,14 @@ class UserRepository {
     }
   }
 
-  Future<Booking?> bookRide(Map<String, dynamic> bookingData) async {
+  Future<Booking?> bookRide(Booking  bookingData) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot book ride');
       return null;
     }
 
     try {
-      final response = await _apiClient.bookRide(booking: bookingData);
+      final response = await _apiClient.bookRide(booking: bookingData.toJson());
       if (response.statusCode == 201 && response.data != null) {
         _logger.d('Ride booked successfully: ${response.data}');
         Booking booking = Booking.fromJson(response.data);
@@ -266,6 +267,30 @@ class UserRepository {
     } catch (e) {
       _logger.e('Error publishing ride: $e');
       return false;
+    }
+  }
+
+  Future<List<Rideinstance>> searchRides({required String departure, required String arrival, DateTime? date}) async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, cannot search rides');
+      return[];
+    }
+
+    try {
+      final response = await _apiClient.searchRides(
+        departure: departure,
+        destination: arrival,
+        date: date,
+      );
+      if (response['statusCode'] == 200) {
+        return Rideinstance.fromJson(response);
+      } else {
+        _logger.e('Error searching rides: [31m${response['error']}[0m');
+        return [];
+      }
+    } catch (e) {
+      _logger.e('Error searching rides: $e');
+      return [];
     }
   }
 }
