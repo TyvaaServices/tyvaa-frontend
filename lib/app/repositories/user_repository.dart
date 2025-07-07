@@ -233,7 +233,7 @@ class UserRepository {
     }
   }
 
-  Future<Booking?> bookRide(Booking  bookingData) async {
+  Future<Booking?> bookRide(Booking bookingData) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot book ride');
       return null;
@@ -270,10 +270,14 @@ class UserRepository {
     }
   }
 
-  Future<List<Rideinstance>> searchRides({required String departure, required String arrival, DateTime? date}) async {
+  Future<List<Rideinstance>> searchRides({
+    required String departure,
+    required String arrival,
+    DateTime? date,
+  }) async {
     if (!_connectivity.hasInternet.value) {
       _logger.d('No internet connection, cannot search rides');
-      return[];
+      return [];
     }
 
     try {
@@ -283,9 +287,12 @@ class UserRepository {
         date: date,
       );
       if (response['statusCode'] == 200) {
-        return Rideinstance.fromJson(response);
+        final List<dynamic> ridesData = response['data'] ?? [];
+        return ridesData
+            .map((rideJson) => Rideinstance.fromJson(rideJson))
+            .toList();
       } else {
-        _logger.e('Error searching rides: [31m${response['error']}[0m');
+        _logger.e('Error searching rides: [31m${response['error']}[0m');
         return [];
       }
     } catch (e) {
