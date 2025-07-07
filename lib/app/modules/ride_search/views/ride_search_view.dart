@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/controllers/ride_search_controller.dart';
 import 'package:passenger_tyvaa/app/modules/ride_search/views/ride_details_view.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
 
 import '../bindings/ride_search_binding.dart';
 
@@ -174,53 +175,13 @@ class RideSearchView extends StatelessWidget {
                   onTap: () => _showLocationPicker(context, true),
                 ),
 
-                // Connector line and swap button
-                Container(
-                  height: 40,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 24),
-                      Container(
-                        width: 2,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: TColors.neutral300,
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: _swapLocations,
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: TColors.neutral100,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: TColors.neutral300,
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.swap_vert,
-                            color: TColors.primary,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 24),
-                    ],
-                  ),
-                ),
-
                 // To location
                 _buildSearchLocationField(
                   context,
                   icon: Icons.location_on,
-                  iconColor: TColors.error,
+                  iconColor: TColors.accent,
                   label: 'Destination',
-                  value: controller.arrivalPoint.value,
+                  value: controller.destinationPoint.value,
                   placeholder: 'Où allez-vous ?',
                   onTap: () => _showLocationPicker(context, false),
                 ),
@@ -307,7 +268,7 @@ class RideSearchView extends StatelessWidget {
                   if (label == 'Départ') {
                     controller.departurePoint.value = null;
                   } else {
-                    controller.arrivalPoint.value = null;
+                    controller.destinationPoint.value = null;
                   }
                 },
                 child: Container(
@@ -385,7 +346,7 @@ class RideSearchView extends StatelessWidget {
     return Obx(() {
       final canSearch =
           controller.departurePoint.value != null &&
-          controller.arrivalPoint.value != null;
+          controller.destinationPoint.value != null;
 
       return Container(
         width: double.infinity,
@@ -474,7 +435,7 @@ class RideSearchView extends StatelessWidget {
         child: InkWell(
           onTap: () {
             controller.departurePoint.value = route['from'];
-            controller.arrivalPoint.value = route['to'];
+            controller.destinationPoint.value = route['to'];
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(
@@ -528,8 +489,8 @@ class RideSearchView extends StatelessWidget {
   // Helper methods for enhanced UX
   void _swapLocations() {
     final temp = controller.departurePoint.value;
-    controller.departurePoint.value = controller.arrivalPoint.value;
-    controller.arrivalPoint.value = temp;
+    controller.departurePoint.value = controller.destinationPoint.value;
+    controller.destinationPoint.value = temp;
   }
 
   void _showLocationPicker(BuildContext context, bool isDeparture) {
@@ -653,7 +614,7 @@ class RideSearchView extends StatelessWidget {
                             const SizedBox(height: 12),
 
                             // Popular locations
-                            ...controller.dakarLandmarks
+                            ...controller.popularLocations
                                 .map(
                                   (location) => _buildLocationOption(
                                     context,
@@ -665,7 +626,7 @@ class RideSearchView extends StatelessWidget {
                                         controller.departurePoint.value =
                                             location;
                                       } else {
-                                        controller.arrivalPoint.value =
+                                        controller.destinationPoint.value =
                                             location;
                                       }
                                       Get.back();
@@ -940,7 +901,7 @@ class RideSearchView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    controller.arrivalPoint.value ?? '',
+                    controller.destinationPoint.value ?? '',
                     style: TTypography.bodySmall(
                       context,
                     ).copyWith(fontWeight: FontWeight.w600),
@@ -1032,7 +993,7 @@ class RideSearchView extends StatelessWidget {
     );
   }
 
-  Widget _buildCleanRideCard(BuildContext context, RideSearchModel ride) {
+  Widget _buildCleanRideCard(BuildContext context, Rideinstance ride) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -1058,7 +1019,7 @@ class RideSearchView extends StatelessWidget {
               children: [
                 // Time
                 Text(
-                  '${ride.departureTime.hour.toString().padLeft(2, '0')}:${ride.departureTime.minute.toString().padLeft(2, '0')}',
+                  '${ride.rideDate.toString().padLeft(2, '0')}:${ride.rideDate.toString().padLeft(2, '0')}',
                   style: TTypography.headingMedium(context).copyWith(
                     fontWeight: FontWeight.w700,
                     color: TColors.primary,
@@ -1075,7 +1036,7 @@ class RideSearchView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '${ride.price.toInt()} FCFA',
+                    '${ride.ride!.price.toInt()} FCFA',
                     style: TTypography.bodyMedium(context).copyWith(
                       color: TColors.success,
                       fontWeight: FontWeight.w700,
@@ -1107,7 +1068,7 @@ class RideSearchView extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              ride.departurePoint,
+                              ride.ride!.departure,
                               style: TTypography.bodyMedium(
                                 context,
                               ).copyWith(fontWeight: FontWeight.w600),
@@ -1129,7 +1090,7 @@ class RideSearchView extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              ride.arrivalPoint,
+                              ride.ride!.destination,
                               style: TTypography.bodyMedium(
                                 context,
                               ).copyWith(fontWeight: FontWeight.w600),
@@ -1162,7 +1123,7 @@ class RideSearchView extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.asset(
-                      ride.chauffeurImageUrl,
+                      ride.ride!.driver!.profileImage!,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -1176,7 +1137,7 @@ class RideSearchView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        ride.chauffeurName,
+                        ride.ride!.driver!.fullName!,
                         style: TTypography.bodySmall(
                           context,
                         ).copyWith(fontWeight: FontWeight.w500),
@@ -1190,7 +1151,7 @@ class RideSearchView extends StatelessWidget {
                           ),
                           const SizedBox(width: 2),
                           Text(
-                            ride.chauffeurRating.toString(),
+                            ride.ride!.driver!.driverProfile!.driverNote.toString(),
                             style: TTypography.labelSmall(context),
                           ),
                         ],
@@ -1210,7 +1171,7 @@ class RideSearchView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    '${ride.availableSeats} place${ride.availableSeats > 1 ? 's' : ''}',
+                    '${ride.ride!.seatsAvailable} place${ride.ride!.seatsAvailable> 1 ? 's' : ''}',
                     style: TTypography.labelSmall(context).copyWith(
                       color: TColors.info,
                       fontWeight: FontWeight.w500,
