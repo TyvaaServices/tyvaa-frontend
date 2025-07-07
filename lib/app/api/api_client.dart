@@ -285,4 +285,35 @@ class ApiClient {
   Future<Response> publishRide({required Map<String, dynamic> ride}) async {
     return await dio.post('/rides', data: ride);
   }
+
+  Future searchRides({required String departure, required String destination, DateTime? date}) async {
+    if (!_connectivityController.hasInternet.value) {
+      logger.w('No internet connection. Cannot search rides.');
+      return {'statusCode': 400, 'error': 'No internet connection', 'data': []};
+    }
+
+    try {
+      final response = await dio.get('/rides/search', queryParameters: {
+        'departure': departure,
+        'destination': destination,
+        if (date != null) 'date': date.toIso8601String(),
+      });
+      // If backend returns error in body, propagate it
+      if (response.data is Map && response.data.containsKey('error')) {
+        return {
+          'statusCode': response.data['statusCode'] ?? response.statusCode,
+          'error': response.data['error'],
+          'data': response.data['data'] ?? []
+        };
+      }
+      return {'statusCode': response.statusCode, 'data': response.data, 'error': null};
+    } on DioException catch (e) {
+      logger.e('Error searching rides: [31m${e.message}[0m');
+      return {
+        'statusCode': e.response?.statusCode ?? 500,
+        'error': e.message,
+        'data': []
+      };
+    }
+  }
 }
