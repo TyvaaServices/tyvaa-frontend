@@ -16,13 +16,8 @@ class CinetPayConfig {
   static const double MIN_AMOUNT = 100.0;
   static const double MAX_AMOUNT = 1500000.0;
 
-  static const String TRANSACTION_PREFIX = 'TYVAA_';
 
-  static String generateTransactionId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = DateTime.now().microsecond;
-    return '${TRANSACTION_PREFIX}${timestamp}_$random';
-  }
+
 
   static bool isValidAmount(double amount) {
     return amount >= MIN_AMOUNT && amount <= MAX_AMOUNT;
