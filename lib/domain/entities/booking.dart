@@ -7,45 +7,49 @@ part 'booking.g.dart';
 @HiveType(typeId: 6)
 class Booking extends HiveObject {
   @HiveField(0)
-  int id;
+  int? id;
 
   @HiveField(1)
-  int rideInstanceId;
+  int? rideInstanceId;
 
   @HiveField(2)
-  int seatsBooked;
+  int? seatsBooked;
 
   @HiveField(3)
-  String status;
+  String? status;
 
   @HiveField(4)
-  int userId;
+  int? userId;
 
   @HiveField(5)
-  Rideinstance rideInstance;
+  Rideinstance? rideInstance;
 
   @HiveField(6)
-  Payment payment;
+  Payment? payment;
 
   Booking({
-    required this.id,
-    required this.rideInstanceId,
-    required this.seatsBooked,
-    required this.status,
-    required this.userId,
-    required this.rideInstance,
-    required this.payment,
+    this.id,
+    this.rideInstanceId,
+    this.seatsBooked,
+    this.status,
+    this.userId,
+    this.rideInstance,
+   this.payment,
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
-      id: json['id'],
-      rideInstanceId: json['rideInstanceId'].toInt(),
-      seatsBooked: json['seatsBooked'].toInt(),
-      status: json['status'],
-      userId: json['userId'].toInt(),
-      rideInstance: Rideinstance.fromJson(json['rideInstance']),
-      payment: Payment.fromJson(json['payment']),
+      id: json['id'] as int?,
+      rideInstanceId: json['rideInstanceId'] as int?,
+      seatsBooked: json['seatsBooked'] as int?,
+      status: json['status'] as String?,
+      userId: json['userId'] as int?,
+      rideInstance: json['rideInstance'] != null
+          ? Rideinstance.fromJson(json['rideInstance'])
+          : null,
+      payment: json['payment'] != null
+          ? Payment.fromJson(json['payment'])
+          : null,
     );
   }
 
@@ -56,8 +60,8 @@ class Booking extends HiveObject {
       'seatsBooked': seatsBooked,
       'status': status,
       'userId': userId,
-      'rideInstance': rideInstance.toJson(),
-      'payment': payment.toJson(),
+      'rideInstance': rideInstance?.toJson(),
+      'payment': payment?.toJson(),
     };
   }
 }
