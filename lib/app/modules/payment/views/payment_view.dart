@@ -66,7 +66,7 @@ class PaymentView extends GetView<PaymentController> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () => controller.initiateCinetPayPayment(),
+                onPressed: () => controller.handleBookAndPay(controller.booking!),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TColors.primary,
                   foregroundColor: Colors.white,
