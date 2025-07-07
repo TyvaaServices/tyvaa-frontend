@@ -23,27 +23,6 @@ class PaymentController extends GetxController {
   void onInit() {
     super.onInit();
     if (Get.arguments != null) {
-      final args = Get.arguments as Map<String, dynamic>?;
-      if (args != null) {
-        if (args['amount'] != null) {
-          final amountValue = args['amount'];
-          if (amountValue is int) {
-            amount.value = amountValue.toDouble();
-          } else if (amountValue is double) {
-            amount.value = amountValue;
-          } else if (amountValue is String) {
-            amount.value = double.tryParse(amountValue) ?? 0.0;
-          }
-        }
-        if (args['bookingData'] != null) {
-          final bookingDataRaw = args['bookingData'];
-          if (bookingDataRaw is Map<String, dynamic>) {
-            bookingData = bookingDataRaw;
-          } else if (bookingDataRaw is Map) {
-            bookingData = Map<String, dynamic>.from(bookingDataRaw);
-          }
-        }
-      }
     }
   }
 
@@ -52,26 +31,20 @@ class PaymentController extends GetxController {
     successMessage.value = '';
   }
 
-  Future<void> initiateCinetPayPayment() async {
+
+  Future<void> handleBookAndPay(Booking bookingRequestData) async {
     try {
-      isLoading.value = true;
-      clearMessages();
-
-      if (!CinetPayConfig.isValidAmount(amount.value)) {
-        errorMessage.value = CinetPayConfig.getAmountErrorMessage(amount.value);
-        return;
-      }
-
-      final String transactionId = CinetPayConfig.generateTransactionId();
-
-      if (!CinetPayConfig.isConfigured) {
-        final errors = CinetPayConfig.validateConfiguration();
+      final bookingResult = await _userRepository.bookRide(bookingRequestData);
+      if (bookingResult == null) {
         errorMessage.value =
-            'Configuration CinetPay manquante:\n[0m[1m[31m${errors.join('\n')}[0m';
+            'Erreur lors de la réservation. Veuillez réessayer.';
         return;
       }
+      booking = bookingResult;
+      final transactionId = booking!.payment?.transactionId;
+      // 2. Initiate payment with CinetPay using transactionId
       await Get.to(
-        () => CinetPayCheckout(
+            () => CinetPayCheckout(
           title: 'Paiement de votre trajet',
           titleStyle: const TextStyle(
             fontSize: 20,
@@ -94,16 +67,16 @@ class PaymentController extends GetxController {
               if (booking != null) {
                 _handlePaymentResponse(
                   typedResponse,
-                  booking!.payment.transactionId,
+                  booking!.payment?.transactionId,
                   booking!,
                 );
               } else {
                 errorMessage.value =
-                    'Réservation introuvable pour le paiement.';
+                'Réservation introuvable pour le paiement.';
               }
             } catch (e) {
               errorMessage.value =
-                  'Erreur de format de réponse: \\${e.toString()}';
+              'Erreur de format de réponse: \\${e.toString()}';
               isLoading.value = false;
             }
           },
@@ -118,27 +91,6 @@ class PaymentController extends GetxController {
           },
         ),
       );
-    } catch (e) {
-      errorMessage.value =
-          'Erreur lors du lancement du paiement: ${e.toString()}';
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> handleBookAndPay(Map<String, dynamic> bookingRequestData) async {
-    try {
-      // 1. Book the ride and get Booking (with Payment inside)
-      final bookingResult = await _userRepository.bookRide(bookingRequestData);
-      if (bookingResult == null) {
-        errorMessage.value =
-            'Erreur lors de la réservation. Veuillez réessayer.';
-        return;
-      }
-      booking = bookingResult;
-      final transactionId = booking!.payment.transactionId;
-      // 2. Initiate payment with CinetPay using transactionId
-      await initiateCinetPayPayment();
       // Payment response will be handled in waitResponse/onError callbacks
     } catch (e) {
       errorMessage.value =
