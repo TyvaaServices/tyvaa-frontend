@@ -129,7 +129,7 @@ void main() async {
         translations: TyvaaTranslation(),
         locale: Locale('fr'),
         fallbackLocale: Locale('en'),
-        initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
+        initialRoute: token.isEmpty ? AppPages.INITIAL : Routes.LOGIN,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,
