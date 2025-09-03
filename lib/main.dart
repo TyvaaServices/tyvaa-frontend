@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:passenger_tyvaa/app/config/environment.dart';
 import 'package:passenger_tyvaa/app/core/service_initializer.dart';
 import 'package:passenger_tyvaa/app/i18n/translations.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_listener.dart';
 import 'package:passenger_tyvaa/app/services/local_notification_service.dart';
 import 'package:passenger_tyvaa/app/themes/design_system.dart';
-import 'package:passenger_tyvaa/app/config/environment.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -129,7 +129,7 @@ void main() async {
         translations: TyvaaTranslation(),
         locale: Locale('fr'),
         fallbackLocale: Locale('en'),
-        initialRoute: token.isEmpty ? AppPages.INITIAL : Routes.LOGIN,
+        initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
         getPages: AppPages.routes,
         theme: lightTheme,
         darkTheme: darkTheme,

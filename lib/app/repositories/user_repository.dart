@@ -7,6 +7,7 @@ import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/domain/entities/booking.dart';
 import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_model.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 import '../modules/profile/controllers/profile_controller.dart';
@@ -256,7 +257,7 @@ class UserRepository {
   }
 
   /// Publish a ride using the API
-  Future<bool> publishRide(Map<String, dynamic> ride) async {
+  Future<bool> publishRide(RideModel ride) async {
     try {
       final response = await _apiClient.publishRide(ride: ride);
       if (response.statusCode == 201) {
@@ -297,6 +298,26 @@ class UserRepository {
       }
     } catch (e) {
       _logger.e('Error searching rides: $e');
+      return [];
+    }
+  }
+
+  Future<List<String>> getAllLandmarks() async {
+    if (!_connectivity.hasInternet.value) {
+      _logger.d('No internet connection, cannot fetch landmarks');
+      return [];
+    }
+
+    try {
+      final response = await _apiClient.getAllLandmarks();
+      if (response.statusCode == 200 && response.data != null) {
+        return List<String>.from(response.data);
+      } else {
+        _logger.e('Error fetching landmarks: ${response.data}');
+        return [];
+      }
+    } catch (e) {
+      _logger.e('Error fetching landmarks: $e');
       return [];
     }
   }

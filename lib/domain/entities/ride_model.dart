@@ -7,7 +7,7 @@ part 'ride_model.g.dart';
 @HiveType(typeId: 4)
 class RideModel extends HiveObject {
   @HiveField(0)
-  int id;
+  int? id;
 
   @HiveField(1)
   int driverId;
@@ -46,7 +46,7 @@ class RideModel extends HiveObject {
   User? driver;
 
   RideModel({
-    required this.id,
+    this.id,
     required this.driverId,
     required this.departure,
     required this.destination,

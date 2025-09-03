@@ -11,90 +11,95 @@ class DateStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: TSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Date du trajet', style: TTypography.headingMedium(context)),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: TSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Date du trajet', style: TTypography.headingMedium(context)),
 
-          const SizedBox(height: TSpacing.sm),
+            const SizedBox(height: TSpacing.sm),
 
-          Text(
-            'Quand souhaitez-vous effectuer ce trajet?',
-            style: TTypography.bodyMedium(
-              context,
-            ).copyWith(color: TColors.textSecondary(context)),
-          ),
-
-          const SizedBox(height: TSpacing.xl),
-
-          // Route summary
-          _buildRouteSummary(context),
-
-          const SizedBox(height: TSpacing.xl),
-
-          // Toggle between one-time and recurring
-          Container(
-            decoration: BoxDecoration(
-              color: TColors.surface(context),
-              borderRadius: TRadius.cardRadius,
-              boxShadow: TShadows.subtle,
+            Text(
+              'Quand souhaitez-vous effectuer ce trajet?',
+              style: TTypography.bodyMedium(
+                context,
+              ).copyWith(color: TColors.textSecondary(context)),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(TSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Type de trajet',
-                    style: TTypography.labelLarge(context),
-                  ),
 
-                  const SizedBox(height: TSpacing.md),
+            const SizedBox(height: TSpacing.xl),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Obx(
-                          () => _buildSelectionTile(
-                            context,
-                            title: 'Date spécifique',
-                            icon: Icons.event,
-                            isSelected: !controller.isRecurring.value,
-                            onTap: () => controller.isRecurring.value = false,
+            // Route summary
+            _buildRouteSummary(context),
+
+            const SizedBox(height: TSpacing.xl),
+
+            // Toggle between one-time and recurring
+            Container(
+              decoration: BoxDecoration(
+                color: TColors.surface(context),
+                borderRadius: TRadius.cardRadius,
+                boxShadow: TShadows.subtle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(TSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Type de trajet',
+                      style: TTypography.labelLarge(context),
+                    ),
+
+                    const SizedBox(height: TSpacing.md),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Obx(
+                            () => _buildSelectionTile(
+                              context,
+                              title: 'Date spécifique',
+                              icon: Icons.event,
+                              isSelected: !controller.isRecurring.value,
+                              onTap: () => controller.isRecurring.value = false,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: TSpacing.md),
-                      Expanded(
-                        child: Obx(
-                          () => _buildSelectionTile(
-                            context,
-                            title: 'Récurrent',
-                            icon: Icons.repeat,
-                            isSelected: controller.isRecurring.value,
-                            onTap: () => controller.isRecurring.value = true,
+                        const SizedBox(width: TSpacing.md),
+                        Expanded(
+                          child: Obx(
+                            () => _buildSelectionTile(
+                              context,
+                              title: 'Récurrent',
+                              icon: Icons.repeat,
+                              isSelected: controller.isRecurring.value,
+                              onTap: () => controller.isRecurring.value = true,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          const SizedBox(height: TSpacing.xl),
+            const SizedBox(height: TSpacing.xl),
 
-          // Date selection based on selection type
-          Obx(
-            () =>
-                controller.isRecurring.value
-                    ? _buildRecurringSelection(context)
-                    : _buildDateSelection(context),
-          ),
-        ],
+            // Date selection based on selection type
+            Obx(
+              () =>
+                  controller.isRecurring.value
+                      ? _buildRecurringSelection(context)
+                      : _buildDateSelection(context),
+            ),
+
+            // Add some bottom padding to prevent overflow
+            const SizedBox(height: TSpacing.xxl),
+          ],
+        ),
       ),
     );
   }

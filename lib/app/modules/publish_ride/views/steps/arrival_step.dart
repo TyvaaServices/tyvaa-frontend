@@ -7,7 +7,7 @@ import 'package:passenger_tyvaa/app/themes/design_system.dart';
 class ArrivalStep extends StatelessWidget {
   final PublishRideController controller;
 
-  const ArrivalStep({Key? key, required this.controller}) : super(key: key);
+  const ArrivalStep({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,6 @@ class ArrivalStep extends StatelessWidget {
                     )
                     : const SizedBox.shrink(),
           ),
-
           // Selected arrival point indicator
           Obx(
             () =>

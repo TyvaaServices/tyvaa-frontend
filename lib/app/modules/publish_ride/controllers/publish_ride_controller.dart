@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/web.dart';
 import 'package:passenger_tyvaa/app/repositories/user_repository.dart';
 import 'package:passenger_tyvaa/app/routes/app_pages.dart';
+import 'package:passenger_tyvaa/domain/entities/ride_model.dart';
 import 'package:passenger_tyvaa/domain/entities/user.dart';
 
 enum PublishStepType { departure, arrival, time, date, summary }
 
 class PublishRideController extends GetxController {
   final Rx<PublishStepType> currentStep = PublishStepType.departure.obs;
+  final UserRepository _userRepository = UserRepository();
 
   late PageController pageController;
 
@@ -24,26 +27,27 @@ class PublishRideController extends GetxController {
   final RxList<String> weekdayLabels =
       ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].obs;
 
-  final List<String> dakarLandmarks = [
-    'HLM',
-    'UCAD',
-    'Sandaga',
-    'Keur Massar',
-    'Pikine',
-    'Guédiawaye',
-    'Parcelles Assainies',
-    'Médina',
-    'Yoff',
-    'Ouest Foire',
-    'Grand Dakar',
-    'Liberté 6',
-    'Almadies',
-    'Point E',
-    'Plateau',
-    'Fann',
-    'Mermoz',
-    'Sacré-Cœur',
-  ];
+  final RxList<String> dakarLandmarks =
+      [
+        'HLM',
+        'UCAD',
+        'Sandaga',
+        'Keur Massar',
+        'Pikine',
+        'Guédiawaye',
+        'Parcelles Assainies',
+        'Médina',
+        'Yoff',
+        'Ouest Foire',
+        'Grand Dakar',
+        'Liberté 6',
+        'Almadies',
+        'Point E',
+        'Plateau',
+        'Fann',
+        'Mermoz',
+        'Sacré-Cœur',
+      ].obs;
 
   // Additional fields for ride publishing
   final RxInt seatsAvailable = 1.obs;
@@ -52,12 +56,22 @@ class PublishRideController extends GetxController {
   final Rx<DateTime?> startDate = Rx<DateTime?>(null);
   final Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
-  final UserRepository _userRepository = UserRepository();
-
   @override
   void onInit() {
     super.onInit();
     pageController = PageController();
+    _loadLandmarks();
+  }
+
+  Future<void> _loadLandmarks() async {
+    final landmarks = await _userRepository.getAllLandmarks();
+    if (landmarks.isNotEmpty) {
+      final Logger logger = Logger();
+      logger.d('Fetched landmarks: $landmarks');
+      // Update dakarLandmarks with fetched landmarks
+      dakarLandmarks.clear();
+      dakarLandmarks.addAll(landmarks);
+    }
   }
 
   @override
@@ -196,25 +210,32 @@ class PublishRideController extends GetxController {
         return;
       }
 
-      final rideData = {
-        'driverId': currentUser.id,
-        'departure': departurePoint.value,
-        'destination': arrivalPoint.value,
-        'seatsAvailable': seatsAvailable.value,
-        'recurrence': isRecurring.value ? recurrenceDays : [],
-        'comment': comment.value,
-        'price': price.value,
-        'startDate': startDate.value?.toIso8601String(),
-        'endDate': endDate.value?.toIso8601String(),
-        'time':
-            departureTime.value != null
-                ? formatTime(departureTime.value!)
-                : null,
-        'isRecurring': isRecurring.value,
-      };
+      final RideModel rideData = RideModel(
+        driverId: currentUser.id!,
+        departure: departurePoint.value!,
+        destination: arrivalPoint.value!,
+        seatsAvailable: seatsAvailable.value,
+        recurrence: isRecurring.value ? recurrenceDays : null,
+        price: price.value.toInt(),
+        status: 'SCHEDULED',
+        startDate:
+            isRecurring.value
+                ? startDate.value?.toIso8601String() ??
+                    DateTime.now().toIso8601String()
+                : specificDate.value!.toIso8601String(),
+        endDate:
+            isRecurring.value
+                ? endDate.value?.toIso8601String() ??
+                    DateTime.now().add(Duration(days: 365)).toIso8601String()
+                : specificDate.value!.toIso8601String(),
+        time: formatTime(departureTime.value!),
+        isRecurring: isRecurring.value,
+      );
+
       final success = await _userRepository.publishRide(rideData);
       if (success) {
         Get.snackbar('Succès', 'Trajet publié avec succès');
+        Get.back();
       } else {
         Get.snackbar('Erreur', 'Échec de la publication du trajet');
       }

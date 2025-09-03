@@ -4,56 +4,58 @@ import 'package:passenger_tyvaa/app/repositories/user_repository.dart';
 import 'package:passenger_tyvaa/domain/entities/ride_instance.dart';
 
 class RideSearchController extends GetxController {
-  // Search form values
   final Rx<String?> departurePoint = Rx<String?>(null);
   final Rx<String?> destinationPoint = Rx<String?>(null);
   final Rx<DateTime?> searchDate = Rx<DateTime?>(DateTime.now());
 
-  // Search state
   final RxBool isSearching = false.obs;
   final RxBool hasSearched = false.obs;
 
-  // Filter state
   final RxString selectedDateFilter = ''.obs;
   final RxString selectedSortFilter = ''.obs;
 
-  // Search results
   RxList<Rideinstance> searchResults = <Rideinstance>[].obs;
   RxList<Rideinstance> filteredResults = <Rideinstance>[].obs;
 
-  // Selected ride for booking
   final Rx<Rideinstance?> selectedRide = Rx<Rideinstance?>(null);
 
-  // Booking state
   final RxBool isRequestingBooking = false.obs;
   final RxBool hasRequestedBooking = false.obs;
   final Rx<String?> bookingRequestStatus = Rx<String?>(null);
 
   final UserRepository _userRepository = UserRepository();
 
-  // Liste des lieux populaires pour la recherche
-  final List<String> popularLocations = [
-    'Plateau',
-    'Almadies',
-    'HLM',
-    'UCAD',
-    'Pikine',
-    'Sandaga',
-    'Yoff',
-    'Keur Massar',
-    'Guédiawaye',
-    'Parcelles Assainies',
-    'Médina',
-    'Ouest Foire',
-    'Grand Dakar',
-    'Liberté 6',
-    'Point E',
-    'Fann',
-    'Mermoz',
-    'Sacré-Cœur',
-  ];
+  final RxList<String> popularLocations =
+      [
+        'Plateau',
+        'Almadies',
+        'HLM',
+        'UCAD',
+        'Pikine',
+        'Sandaga',
+        'Yoff',
+        'Keur Massar',
+        'Guédiawaye',
+        'Parcelles Assainies',
+        'Médina',
+        'Ouest Foire',
+        'Grand Dakar',
+        'Liberté 6',
+        'Point E',
+        'Fann',
+        'Mermoz',
+        'Sacré-Cœur',
+      ].obs;
 
-  // Perform search (real backend)
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    final landmarks = await _userRepository.getAllLandmarks();
+    if (landmarks != []) {
+      popularLocations.value = landmarks;
+    }
+  }
+
   Future<void> searchRides() async {
     if (departurePoint.value == null || destinationPoint.value == null) {
       Get.snackbar(
@@ -75,21 +77,22 @@ class RideSearchController extends GetxController {
       searchResults.value = results;
       hasSearched.value = true;
     } catch (e) {
-      Get.snackbar('Erreur', 'Impossible de charger les trajets'+e.toString(),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red[100],
-          colorText: Colors.red[800]);
+      Get.snackbar(
+        'Erreur',
+        'Impossible de charger les trajets' + e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[800],
+      );
     } finally {
       isSearching.value = false;
     }
   }
 
-  // Select a ride for viewing details
   void selectRide(Rideinstance ride) {
     selectedRide.value = ride;
   }
 
-  // Reset the search
   void resetSearch() {
     departurePoint.value = null;
     destinationPoint.value = null;
@@ -101,24 +104,20 @@ class RideSearchController extends GetxController {
     selectedSortFilter.value = '';
   }
 
-  // Reset booking state
   void resetBooking() {
     selectedRide.value = null;
     hasRequestedBooking.value = false;
     bookingRequestStatus.value = null;
   }
 
-  // Setter explicite pour le point de départ
   void setDeparture(String value) {
     departurePoint.value = value;
   }
 
-  // Setter explicite pour la destination
   void setDestination(String value) {
     destinationPoint.value = value;
   }
 
-  // Filter methods
   void setDateFilter(String filter) {
     selectedDateFilter.value = selectedDateFilter.value == filter ? '' : filter;
     //_applyFilters();
