@@ -27,7 +27,7 @@ class RideModelAdapter extends TypeAdapter<RideModel> {
       status: fields[7] as String,
       startDate: fields[8] as String,
       endDate: fields[9] as String,
-      time: fields[10] as String,
+      time: fields[10] as String?,
       isRecurring: fields[11] as bool,
     )..driver = fields[12] as User?;
   }

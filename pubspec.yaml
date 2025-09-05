@@ -63,6 +63,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   url_launcher: ^6.3.1
   flutter_screenutil: ^5.9.3
+  app_links: ^6.4.1
 
 dev_dependencies:
   flutter_test:
@@ -83,3 +84,4 @@ flutter:
     - assets/drivers/
     - assets/register_illustration.png
     - .env
+

@@ -432,6 +432,7 @@ class UserRepository {
         destination: arrival,
         date: date,
       );
+      _logger.d(response);
       if (response['statusCode'] == 200) {
         final List<dynamic> ridesData = response['data'] ?? [];
         return ridesData
@@ -443,6 +444,7 @@ class UserRepository {
       }
     } catch (e) {
       _logger.e('Error searching rides: $e');
+
       return [];
     }
   }

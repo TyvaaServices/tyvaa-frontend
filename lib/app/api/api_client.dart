@@ -286,7 +286,14 @@ class ApiClient {
   }
 
   Future<Response> bookRide({required Map<String, dynamic> booking}) async {
-    logger.d('Booking ride with data: $booking');
+    if (!_connectivityController.hasInternet.value) {
+      logger.w('No internet connection. Ride booking request blocked.');
+      throw DioException(
+        requestOptions: RequestOptions(path: '/bookings/book'),
+        type: DioExceptionType.connectionError,
+        message: 'No internet connection',
+      );
+    }
 
     // Ensure all required fields are present and properly typed
     // Don't remove null values for required fields, instead validate them
@@ -300,10 +307,14 @@ class ApiClient {
     final sanitizedBooking = {
       'rideInstanceId': booking['rideInstanceId'] as int,
       'seatsBooked': (booking['seatsBooked'] as int?) ?? 1,
-      // Default to 1 if null
       'userId': booking['userId'] as int,
       'status': (booking['status'] as String?) ?? 'pending',
       // Default to pending
+
+      // DEXCHANGE: Include payment method and country fields
+      if (booking['paymentMethod'] != null)
+        'paymentMethod': booking['paymentMethod'] as String,
+      if (booking['country'] != null) 'country': booking['country'] as String,
     };
 
     logger.d('Sanitized booking data: $sanitizedBooking');

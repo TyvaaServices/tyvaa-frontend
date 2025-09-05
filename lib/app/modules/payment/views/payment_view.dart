@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../models/dexchange_models.dart';
 import '../../../themes/design_system.dart';
 import '../controllers/payment_controller.dart';
+import '../widgets/dexchange_payment_selector.dart';
 
 class PaymentView extends GetView<PaymentController> {
   const PaymentView({super.key});
@@ -61,20 +63,40 @@ class PaymentView extends GetView<PaymentController> {
 
             SizedBox(height: TSpacing.xl),
 
-            // Simple payment button
+            // DEXCHANGE Payment Method Selector
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(TSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: TColors.surface(context),
+                    borderRadius: TRadius.cardRadius,
+                    border: Border.all(color: TColors.neutral300, width: 1),
+                  ),
+                  child: const DexchangePaymentSelector(),
+                ),
+              ),
+            ),
+
+            SizedBox(height: TSpacing.xl),
+
+            // Payment confirmation button
             Container(
               width: double.infinity,
               height: 56,
               child: Obx(
                 () => ElevatedButton(
                   onPressed:
-                      controller.booking != null
+                      controller.booking != null &&
+                              controller.selectedPaymentMethod.value != null &&
+                              !controller.isLoading.value
                           ? () =>
                               controller.handleBookAndPay(controller.booking!)
                           : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        controller.booking != null
+                        controller.booking != null &&
+                                controller.selectedPaymentMethod.value != null
                             ? TColors.primary
                             : TColors.neutral400,
                     foregroundColor: Colors.white,
@@ -96,9 +118,12 @@ class PaymentView extends GetView<PaymentController> {
                             ),
                           )
                           : Text(
-                            controller.booking != null
-                                ? 'Confirmer le paiement'
-                                : 'Chargement...',
+                            controller.selectedPaymentMethod.value != null
+                                ? 'Payer via ${controller.selectedPaymentMethod.value != null ? _getPaymentMethodDisplayName(controller.selectedPaymentMethod.value!) : "Mobile Money"}'
+                                : controller.availablePaymentMethods.isEmpty &&
+                                    controller.isLoading.value
+                                ? 'Chargement des méthodes...'
+                                : 'Sélectionnez une méthode de paiement',
                             style: TTypography.labelLarge(context).copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -146,8 +171,6 @@ class PaymentView extends GetView<PaymentController> {
                       : const SizedBox.shrink(),
             ),
 
-            SizedBox(height: TSpacing.md),
-
             // Success message
             Obx(
               () =>
@@ -184,9 +207,9 @@ class PaymentView extends GetView<PaymentController> {
                       : const SizedBox.shrink(),
             ),
 
-            Spacer(),
+            SizedBox(height: TSpacing.md),
 
-            // Secure payment note
+            // Secure payment note - Updated for DEXCHANGE
             Container(
               padding: EdgeInsets.all(TSpacing.md),
               decoration: BoxDecoration(
@@ -203,7 +226,7 @@ class PaymentView extends GetView<PaymentController> {
                   SizedBox(width: TSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Paiement sécurisé via CinetPay',
+                      'Paiement sécurisé via DEXCHANGE Mobile Money',
                       style: TTypography.bodySmall(
                         context,
                       ).copyWith(color: TColors.textSecondary(context)),
@@ -216,5 +239,22 @@ class PaymentView extends GetView<PaymentController> {
         ),
       ),
     );
+  }
+
+  String _getPaymentMethodDisplayName(DexchangePaymentMethod method) {
+    switch (method) {
+      case DexchangePaymentMethod.orange:
+        return 'Orange Money';
+      case DexchangePaymentMethod.wave:
+        return 'Wave';
+      case DexchangePaymentMethod.mtn:
+        return 'MTN Money';
+      case DexchangePaymentMethod.moov:
+        return 'Moov Money';
+      case DexchangePaymentMethod.free:
+        return 'Free Money';
+      case DexchangePaymentMethod.wizall:
+        return 'Wizall Money';
+    }
   }
 }

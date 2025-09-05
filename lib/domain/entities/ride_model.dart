@@ -38,7 +38,7 @@ class RideModel extends HiveObject {
   String endDate;
 
   @HiveField(10)
-  String time;
+  String? time; // Fixed: Made nullable since API can return null
 
   @HiveField(11)
   bool isRecurring;
@@ -57,7 +57,7 @@ class RideModel extends HiveObject {
     required this.status,
     required this.startDate,
     required this.endDate,
-    required this.time,
+    this.time, // Fixed: Made optional since it can be null
     required this.isRecurring,
   });
 
@@ -77,6 +77,7 @@ class RideModel extends HiveObject {
         startDate: json['startDate'],
         endDate: json['endDate'],
         time: json['time'],
+        // Now handles null properly
         isRecurring: json['isRecurring'] ?? false,
       )
       ..driver =
