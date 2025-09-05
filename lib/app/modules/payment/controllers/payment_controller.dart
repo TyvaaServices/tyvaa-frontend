@@ -148,7 +148,8 @@ class PaymentController extends GetxController {
                       m as Map<String, dynamic>,
                     ),
                   )
-                  .toList();
+                  .toSet() // Convert to Set to remove duplicates
+                  .toList(); // Convert back to List
 
           logger.d(
             'DEXCHANGE: Loaded ${availablePaymentMethods.length} payment methods',
@@ -248,7 +249,7 @@ class PaymentController extends GetxController {
       );
     }
 
-    availablePaymentMethods.value = fallbackMethods;
+    availablePaymentMethods.value = fallbackMethods.toSet().toList();
 
     // Auto-select first method
     if (fallbackMethods.isNotEmpty && selectedPaymentMethod.value == null) {

@@ -122,4 +122,17 @@ class DexchangePaymentMethodInfo {
       'country': country,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is DexchangePaymentMethodInfo &&
+        other.displayName == displayName;
+  }
+
+  @override
+  int get hashCode {
+    return displayName.hashCode;
+  }
 }
