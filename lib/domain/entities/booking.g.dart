@@ -17,13 +17,13 @@ class BookingAdapter extends TypeAdapter<Booking> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Booking(
-      id: fields[0] as int,
-      rideInstanceId: fields[1] as int,
-      seatsBooked: fields[2] as int,
-      status: fields[3] as String,
-      userId: fields[4] as int,
-      rideInstance: fields[5] as Rideinstance,
-      payment: fields[6] as Payment,
+      id: fields[0] as int?,
+      rideInstanceId: fields[1] as int?,
+      seatsBooked: fields[2] as int?,
+      status: fields[3] as String?,
+      userId: fields[4] as int?,
+      rideInstance: fields[5] as Rideinstance?,
+      payment: fields[6] as Payment?,
     );
   }
 

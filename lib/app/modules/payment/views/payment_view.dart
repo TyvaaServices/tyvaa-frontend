@@ -65,18 +65,25 @@ class PaymentView extends GetView<PaymentController> {
             Container(
               width: double.infinity,
               height: 56,
-              child: ElevatedButton(
-                onPressed: () => controller.handleBookAndPay(controller.booking!),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: TRadius.buttonRadius,
+              child: Obx(
+                () => ElevatedButton(
+                  onPressed:
+                      controller.booking != null
+                          ? () =>
+                              controller.handleBookAndPay(controller.booking!)
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        controller.booking != null
+                            ? TColors.primary
+                            : TColors.neutral400,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: TRadius.buttonRadius,
+                    ),
                   ),
-                ),
-                child: Obx(
-                  () =>
+                  child:
                       controller.isLoading.value
                           ? SizedBox(
                             height: 20,
@@ -89,7 +96,9 @@ class PaymentView extends GetView<PaymentController> {
                             ),
                           )
                           : Text(
-                            'Confirmer le paiement',
+                            controller.booking != null
+                                ? 'Confirmer le paiement'
+                                : 'Chargement...',
                             style: TTypography.labelLarge(context).copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,

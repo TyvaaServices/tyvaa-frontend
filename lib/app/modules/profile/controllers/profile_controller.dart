@@ -29,19 +29,38 @@ class ProfileController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    final Box<User> box = Hive.box<User>('users');
     var logger = Logger();
 
-    var box = Hive.box<User>('users');
+    logger.d('ProfileController onInit - checking for user in Hive');
+    logger.d('Hive box keys: ${box.keys.toList()}');
+    logger.d('Hive box length: ${box.length}');
+    logger.d('Contains currentUser key: ${box.containsKey('currentUser')}');
 
     if (box.containsKey('currentUser')) {
       user.value = box.get('currentUser')!;
       nameController.text = user.value!.fullName ?? '';
-      logger.d(user.value);
+      logger.d('User found in Hive: ${user.value?.toJson()}');
 
       // If there's an existing profile image, try to load it and extract colors
       await loadProfileImageAndExtractColors();
     } else {
       logger.d('No user found in Hive');
+
+      // Add a small delay and check again in case there's a race condition
+      await Future.delayed(Duration(milliseconds: 500));
+      logger.d('Rechecking after delay...');
+      logger.d('Hive box keys after delay: ${box.keys.toList()}');
+      logger.d(
+        'Contains currentUser key after delay: ${box.containsKey('currentUser')}',
+      );
+
+      if (box.containsKey('currentUser')) {
+        user.value = box.get('currentUser')!;
+        nameController.text = user.value!.fullName ?? '';
+        logger.d('User found in Hive after delay: ${user.value?.toJson()}');
+        await loadProfileImageAndExtractColors();
+      }
     }
 
     super.onInit();

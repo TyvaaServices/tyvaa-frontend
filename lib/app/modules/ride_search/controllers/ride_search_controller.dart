@@ -28,6 +28,8 @@ class RideSearchController extends GetxController {
   final RxList<String> popularLocations =
       [
         'Plateau',
+        'City A',
+        'City B',
         'Almadies',
         'HLM',
         'UCAD',

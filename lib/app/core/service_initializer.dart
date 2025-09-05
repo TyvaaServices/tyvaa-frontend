@@ -7,6 +7,7 @@ import 'package:passenger_tyvaa/app/api/api_client.dart';
 import 'package:passenger_tyvaa/app/services/connectivity_service.dart';
 import 'package:passenger_tyvaa/app/services/permission_service.dart';
 import 'package:passenger_tyvaa/app/services/synchronization_service.dart';
+import 'package:passenger_tyvaa/domain/entities/booking.dart';
 import 'package:passenger_tyvaa/domain/entities/driver_profile.dart';
 import 'package:passenger_tyvaa/domain/entities/message.dart';
 import 'package:passenger_tyvaa/domain/entities/passenger_profile.dart';
@@ -33,6 +34,7 @@ class ServiceInitializer {
     Hive.registerAdapter(DriverProfileAdapter());
     Hive.registerAdapter(RideModelAdapter());
     Hive.registerAdapter(RideinstanceAdapter());
+    Hive.registerAdapter(BookingAdapter());
     Hive.registerAdapter(PaymentAdapter());
     Hive.registerAdapter(MessageAdapter());
     await Hive.openBox<User>('users');
@@ -40,6 +42,7 @@ class ServiceInitializer {
     await Hive.openBox<DriverProfile>('driver_profiles');
     await Hive.openBox<RideModel>('ride_models');
     await Hive.openBox<Rideinstance>('ride_instances');
+    await Hive.openBox<Booking>('bookings');
     await Hive.openBox<Payment>('payments');
     await Hive.openBox<Message>('messages');
 

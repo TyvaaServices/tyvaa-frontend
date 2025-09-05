@@ -38,13 +38,18 @@ class Rideinstance extends HiveObject {
 
   factory Rideinstance.fromJson(Map<String, dynamic> json) {
     return Rideinstance(
-      id: json['id'],
-      rideId: json['rideId'].toInt(),
-      rideDate: json['rideDate'],
-      seatsAvailable: json['seatsAvailable'].toInt(),
-      seatsBooked: json['seatsBooked'].toInt(),
-      status: json['status'],
-      ride: json['ride'] != null ? RideModel.fromJson(json['ride']) : null,
+      id: json['id'] as int,
+      rideId: json['rideId'] as int,
+      rideDate: json['rideDate'] as String,
+      seatsAvailable: json['seatsAvailable'] as int,
+      seatsBooked: json['seatsBooked'] as int,
+      status: json['status'] as String,
+      ride:
+          json['ride'] != null
+              ? RideModel.fromJson(json['ride'])
+              : json['RideModel'] != null
+              ? RideModel.fromJson(json['RideModel'])
+              : null,
     );
   }
 

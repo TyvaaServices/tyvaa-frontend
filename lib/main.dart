@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
@@ -114,27 +115,37 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final storage = const FlutterSecureStorage();
-  String? token = '';
+  String? token;
 
   if (await storage.containsKey(key: "auth_token")) {
     token = await storage.read(key: "auth_token");
-    print("un token ici :" + token!);
+    print("un token ici : ${token ?? 'null'}");
   }
+
   Jiffy.setLocale('fr');
   runApp(
-    ConnectivityListener(
-      child: GetMaterialApp(
-        title: "Tyvaa",
-        debugShowCheckedModeBanner: false,
-        translations: TyvaaTranslation(),
-        locale: Locale('fr'),
-        fallbackLocale: Locale('en'),
-        initialRoute: token.isNotEmpty ? AppPages.INITIAL : Routes.LOGIN,
-        getPages: AppPages.routes,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.system,
-      ),
+    ScreenUtilInit(
+      designSize: Size(1080, 2340), // Pixel 4a size in px
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder:
+          (context, child) => ConnectivityListener(
+            child: GetMaterialApp(
+              title: "Tyvaa",
+              debugShowCheckedModeBanner: false,
+              translations: TyvaaTranslation(),
+              locale: Locale('fr'),
+              fallbackLocale: Locale('en'),
+              initialRoute:
+                  (token?.isNotEmpty ?? false)
+                      ? AppPages.INITIAL
+                      : Routes.LOGIN,
+              getPages: AppPages.routes,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: ThemeMode.system,
+            ),
+          ),
     ),
   );
 }

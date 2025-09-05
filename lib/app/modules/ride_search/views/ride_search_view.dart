@@ -554,6 +554,12 @@ class RideSearchView extends StatelessWidget {
         'icon': Icons.business,
         'price': '1500',
       },
+      {
+        'from': 'City A',
+        'to': 'City B',
+        'icon': Icons.business,
+        'price': '1500',
+      },
       {'from': 'HLM', 'to': 'UCAD', 'icon': Icons.school, 'price': '800'},
       {
         'from': 'Pikine',
@@ -1126,7 +1132,7 @@ class RideSearchView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '${ride.ride!.price.toInt()} FCFA',
+                        '${ride.ride?.price?.toInt() ?? 0} FCFA',
                         style: TTypography.bodyLarge(context).copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -1147,7 +1153,7 @@ class RideSearchView extends StatelessWidget {
                           _buildRoutePoint(
                             context,
                             color: TColors.primary,
-                            text: ride.ride!.departure,
+                            text: ride.ride?.departure ?? 'Départ non spécifié',
                           ),
                           Container(
                             width: 2,
@@ -1161,7 +1167,9 @@ class RideSearchView extends StatelessWidget {
                           _buildRoutePoint(
                             context,
                             color: TColors.accent,
-                            text: ride.ride!.destination,
+                            text:
+                                ride.ride?.destination ??
+                                'Destination non spécifiée',
                           ),
                         ],
                       ),
@@ -1185,10 +1193,16 @@ class RideSearchView extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          ride.ride!.driver!.profileImage!,
-                          fit: BoxFit.cover,
-                        ),
+                        child:
+                            ride.ride?.driver?.profileImage != null
+                                ? Image.asset(
+                                  ride.ride!.driver!.profileImage!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          _buildDefaultAvatar(),
+                                )
+                                : _buildDefaultAvatar(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -1197,7 +1211,7 @@ class RideSearchView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ride.ride!.driver!.fullName!,
+                            ride.ride?.driver?.fullName ?? 'Conducteur',
                             style: TTypography.bodyMedium(
                               context,
                             ).copyWith(fontWeight: FontWeight.w600),
@@ -1211,7 +1225,8 @@ class RideSearchView extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                ride.ride!.driver!.driverProfile!.driverNote
+                                (ride.ride?.driver?.driverProfile?.driverNote ??
+                                        0.0)
                                     .toString(),
                                 style: TTypography.bodySmall(context).copyWith(
                                   color: TColors.textSecondary(context),
@@ -1241,7 +1256,7 @@ class RideSearchView extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${ride.ride!.seatsAvailable}',
+                            '${ride.ride?.seatsAvailable ?? 0}',
                             style: TTypography.bodySmall(context).copyWith(
                               color: TColors.info,
                               fontWeight: FontWeight.w600,
@@ -1257,6 +1272,16 @@ class RideSearchView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDefaultAvatar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: TColors.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Icon(Icons.person, color: TColors.primary, size: 24),
     );
   }
 

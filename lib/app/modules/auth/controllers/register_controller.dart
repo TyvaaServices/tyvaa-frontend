@@ -181,7 +181,7 @@ class RegisterController extends GetxController
           snackPosition: SnackPosition.TOP,
         );
         await Future.delayed(const Duration(seconds: 1));
-        Get.offAllNamed(
+        Get.toNamed(
           Routes.OTP,
           arguments: {
             'phone': phoneNumber,

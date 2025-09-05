@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:passenger_tyvaa/app/modules/home/controllers/home_controller.dart';
 import 'package:passenger_tyvaa/app/modules/profile/controllers/profile_controller.dart';
@@ -66,8 +67,8 @@ class HomeScreen extends GetView<HomeController> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(TRadius.md - 2),
                       child: Container(
-                        height: 48,
-                        width: 48,
+                        height: 125.h,
+                        width: 125.w,
                         child:
                             profileController.profileImage.value != null
                                 ? Image(
@@ -169,8 +170,8 @@ class HomeScreen extends GetView<HomeController> {
                 right: -30,
                 top: -20,
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 100.w,
+                  height: 100.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white.withOpacity(0.1),
@@ -206,10 +207,10 @@ class HomeScreen extends GetView<HomeController> {
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(TRadius.sm),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.directions_car_filled_rounded,
                                 color: Colors.white,
-                                size: 20,
+                                size: 48.sp,
                               ),
                             ),
                             SizedBox(width: TSpacing.sm),
@@ -219,7 +220,7 @@ class HomeScreen extends GetView<HomeController> {
                                 context,
                               ).copyWith(
                                 color: Colors.white,
-                                letterSpacing: 0.5,
+                                letterSpacing: 0.5.w,
                               ),
                             ),
                           ],
@@ -233,7 +234,7 @@ class HomeScreen extends GetView<HomeController> {
                           child: Icon(
                             Icons.arrow_forward_ios,
                             color: Colors.white,
-                            size: 14,
+                            size: 48.sp,
                           ),
                         ),
                       ],
@@ -302,7 +303,7 @@ class HomeScreen extends GetView<HomeController> {
             boxShadow: [
               BoxShadow(
                 color: TColors.primary.withOpacity(0.1),
-                blurRadius: 10,
+                blurRadius: 10.w,
                 spreadRadius: 0,
                 offset: Offset(0, 4),
               ),
@@ -326,7 +327,7 @@ class HomeScreen extends GetView<HomeController> {
                         child: Icon(
                           Icons.search_rounded,
                           color: TColors.primary,
-                          size: 22,
+                          size: 48.sp,
                         ),
                       ),
                       SizedBox(width: TSpacing.md),
@@ -342,7 +343,7 @@ class HomeScreen extends GetView<HomeController> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            SizedBox(height: 4.h),
                             Text(
                               'Départ, destination, date...',
                               style: TTypography.bodySmall(
@@ -361,7 +362,7 @@ class HomeScreen extends GetView<HomeController> {
                         child: Icon(
                           Icons.arrow_forward,
                           color: Colors.white,
-                          size: 18,
+                          size: 48.sp,
                         ),
                       ),
                     ],
@@ -378,7 +379,7 @@ class HomeScreen extends GetView<HomeController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.touch_app, color: TColors.primary, size: 16),
-                        SizedBox(width: 6),
+                        SizedBox(width: 6.w),
                         Text(
                           'Appuyez pour chercher un trajet',
                           style: TTypography.labelMedium(context).copyWith(

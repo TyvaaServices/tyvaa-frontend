@@ -261,39 +261,44 @@ class ProfileScreen extends GetView<ProfileController> {
   }
 
   Widget _buildStatsCards(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            context,
-            'Note',
-            controller.user.value.driverProfile!.driverNote.toString(),
-            Icons.star_rounded,
-            Colors.amber,
+    return Obx(() {
+      final user = controller.user.value;
+      final driverNote = user?.driverProfile?.driverNote?.toString() ?? '0.0';
+
+      return Row(
+        children: [
+          Expanded(
+            child: _buildStatCard(
+              context,
+              'Note',
+              driverNote,
+              Icons.star_rounded,
+              Colors.amber,
+            ),
           ),
-        ),
-        SizedBox(width: TSpacing.md),
-        Expanded(
-          child: _buildStatCard(
-            context,
-            'Trajets',
-            '32',
-            Icons.directions_car_rounded,
-            Color(0xFF6C63FF),
+          SizedBox(width: TSpacing.md),
+          Expanded(
+            child: _buildStatCard(
+              context,
+              'Trajets',
+              '32',
+              Icons.directions_car_rounded,
+              Color(0xFF6C63FF),
+            ),
           ),
-        ),
-        SizedBox(width: TSpacing.md),
-        Expanded(
-          child: _buildStatCard(
-            context,
-            'Avis',
-            '28',
-            Icons.rate_review_rounded,
-            Colors.green,
+          SizedBox(width: TSpacing.md),
+          Expanded(
+            child: _buildStatCard(
+              context,
+              'Avis',
+              '28',
+              Icons.rate_review_rounded,
+              Colors.green,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildStatCard(
@@ -428,9 +433,11 @@ class ProfileScreen extends GetView<ProfileController> {
               context,
               Icons.cake,
               'Date de naissance',
-              Jiffy.parseFromDateTime(
-                controller.user.value.dateOfBirth!,
-              ).format(pattern: 'dd MMMM yyyy'),
+              controller.user.value?.dateOfBirth != null
+                  ? Jiffy.parseFromDateTime(
+                    controller.user.value!.dateOfBirth!,
+                  ).format(pattern: 'dd MMMM yyyy')
+                  : 'Non renseignée',
               Colors.orange,
             ),
           ),

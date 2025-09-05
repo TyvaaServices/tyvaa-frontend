@@ -41,14 +41,19 @@ class Payment extends HiveObject {
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
-      transactionId: json['transaction_id'] as String,
+      transactionId:
+          json['transactionId'] as String? ??
+          json['transaction_id'] as String? ??
+          '',
       phone: json['phone'] as String?,
       amount: (json['amount'] as num).toDouble(),
       status: json['status'] as String? ?? 'PENDING',
       currency: json['currency'] as String?,
-      paymentMethod: json['payment_method'] as String?,
+      paymentMethod:
+          json['paymentMethod'] as String? ?? json['payment_method'] as String?,
       metadata: json['metadata'] as String?,
-      operatorId: json['operator_id'] as String?,
+      operatorId:
+          json['operatorId'] as String? ?? json['operator_id'] as String?,
     );
   }
 

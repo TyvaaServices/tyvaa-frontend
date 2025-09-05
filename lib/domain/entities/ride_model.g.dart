@@ -17,7 +17,7 @@ class RideModelAdapter extends TypeAdapter<RideModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return RideModel(
-      id: fields[0] as int,
+      id: fields[0] as int?,
       driverId: fields[1] as int,
       departure: fields[2] as String,
       destination: fields[3] as String,

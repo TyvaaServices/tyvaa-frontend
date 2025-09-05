@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Design System for Tyvaa app
 /// This file defines the core design elements that should be used throughout the app
@@ -64,12 +65,12 @@ class TSpacing {
 }
 
 class TRadius {
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 12.0;
-  static const double lg = 16.0;
-  static const double xl = 24.0;
-  static const double pill = 100.0;
+  static double xs = 8.0.w;
+  static double sm = 12.0.w;
+  static double md = 16.0.w;
+  static double lg = 24.0.w;
+  static double xl = 32.0.w;
+  static double pill = 100.0.w;
 
   static BorderRadius get buttonRadius => BorderRadius.circular(lg);
 
@@ -80,13 +81,13 @@ class TRadius {
   static BorderRadius get chipRadius => BorderRadius.circular(pill);
 
   static BorderRadius get modalRadius =>
-      const BorderRadius.vertical(top: Radius.circular(xl));
+      BorderRadius.vertical(top: Radius.circular(xl));
 }
 
 class TTypography {
   // Display styles
   static TextStyle displayLarge(BuildContext context) => TextStyle(
-    fontSize: 32,
+    fontSize: 32.sp,
     fontWeight: FontWeight.bold,
     height: 1.2,
     color: TColors.textPrimary(context),
@@ -100,15 +101,15 @@ class TTypography {
   );
 
   static TextStyle displaySmall(BuildContext context) => TextStyle(
-    fontSize: 24,
+    fontSize: 80.sp,
     fontWeight: FontWeight.bold,
-    height: 1.2,
+    height: 4.9.h,
     color: TColors.textPrimary(context),
   );
 
   // Heading styles
   static TextStyle headlineSmall(BuildContext context) => TextStyle(
-    fontSize: 20,
+    fontSize: 48.sp,
     fontWeight: FontWeight.w600,
     height: 1.3,
     color: TColors.textPrimary(context),
@@ -159,23 +160,23 @@ class TTypography {
 
   // Label styles
   static TextStyle labelLarge(BuildContext context) => TextStyle(
-    fontSize: 14,
+    fontSize: 48.sp,
     fontWeight: FontWeight.w500,
-    height: 1.3,
+    height: 4.0.h,
     color: TColors.textPrimary(context),
   );
 
   static TextStyle labelMedium(BuildContext context) => TextStyle(
-    fontSize: 12,
+    fontSize: 32.sp,
     fontWeight: FontWeight.w500,
-    height: 1.3,
+    height: 4.0.h,
     color: TColors.textPrimary(context),
   );
 
   static TextStyle labelSmall(BuildContext context) => TextStyle(
-    fontSize: 10,
+    fontSize: 32.sp,
     fontWeight: FontWeight.w500,
-    height: 1.3,
+    height: 4.0.h,
     color: TColors.textSecondary(context),
   );
 }

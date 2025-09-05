@@ -63,6 +63,8 @@ class SynchronizationService extends GetxService {
     await _secureStorage.write(key: _pendingChangesKey, value: 'true');
 
     if (connectivityController.hasInternet.value && !_isSyncing.value) {
+      // Add a small delay to ensure any ongoing token storage operations complete
+      await Future.delayed(const Duration(milliseconds: 200));
       syncUserToApi();
     } else {
       logger.d('Changes marked for sync when internet becomes available');
@@ -79,6 +81,7 @@ class SynchronizationService extends GetxService {
 
       if (token == null) {
         logger.d('No auth token, cannot sync to API');
+        _isSyncing.value = false;
         return;
       }
 
@@ -87,8 +90,12 @@ class SynchronizationService extends GetxService {
 
       if (currentUser == null) {
         logger.d('No current user in Hive, nothing to sync');
+        _isSyncing.value = false;
         return;
       }
+
+      logger.d('Starting sync to API with token: ${token.substring(0, 10)}...');
+
       final ProfileController profileController = Get.find<ProfileController>();
       final success = await apiClient.updateUserProfile(
         currentUser,
@@ -98,24 +105,12 @@ class SynchronizationService extends GetxService {
       if (success) {
         _hasPendingChanges.value = false;
         await _secureStorage.write(key: _pendingChangesKey, value: 'false');
-
-        logger.d(
-          '✅ User data successfully pushed to API: ${currentUser.phoneNumber}',
-        );
-
-        // Get.snackbar(
-        //   'Synchronisation réussie',
-        //   'Vos informations ont été synchronisées avec le serveur',
-        //   snackPosition: SnackPosition.BOTTOM,
-        //   backgroundColor: Colors.green,
-        //   colorText: Colors.white,
-        //   duration: Duration(seconds: 2),
-        // );
+        logger.d('User data successfully synced to API');
       } else {
-        logger.e('⚠️ Failed to push user data to API');
+        logger.w('Failed to sync user data to API');
       }
     } catch (e) {
-      logger.e('❌ Error during API sync: $e');
+      logger.e('Error syncing user data to API: $e');
     } finally {
       _isSyncing.value = false;
     }

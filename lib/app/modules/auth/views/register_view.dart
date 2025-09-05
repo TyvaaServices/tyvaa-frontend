@@ -23,27 +23,40 @@ class RegisterScreen extends GetView<RegisterController> {
           // Background decorations
           _buildBackgroundDecorations(width, height),
 
-          // Main content
+          // Main content - everything scrollable
           SafeArea(
             child: Column(
               children: [
                 _buildHeader(context),
                 _buildProgressIndicator(),
                 Expanded(
-                  child: PageView(
-                    controller: controller.pageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    onPageChanged: (index) {
-                      controller.currentStep.value = index;
-                    },
-                    children: [
-                      _buildPhoneStep(context),
-                      _buildNameStep(context),
-                      _buildDetailsStep(context),
-                    ],
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        // Page content
+                        SizedBox(
+                          height: height * 0.7, // Minimum height for content
+                          child: PageView(
+                            controller: controller.pageController,
+                            physics: NeverScrollableScrollPhysics(),
+                            onPageChanged: (index) {
+                              controller.currentStep.value = index;
+                            },
+                            children: [
+                              _buildPhoneStep(context),
+                              _buildNameStep(context),
+                              _buildDetailsStep(context),
+                            ],
+                          ),
+                        ),
+                        // Navigation buttons as part of scrollable content
+                        _buildNavigationButtons(context),
+                        SizedBox(height: 20), // Bottom padding
+                      ],
+                    ),
                   ),
                 ),
-                _buildNavigationButtons(context),
               ],
             ),
           ),
@@ -780,72 +793,89 @@ class RegisterScreen extends GetView<RegisterController> {
         child: Row(
           children: [
             if (controller.currentStep.value > 0)
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: controller.previousStep,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: TColors.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(TRadius.lg),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: TSpacing.md),
+              GestureDetector(
+                onTap: controller.previousStep,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  child: Text(
-                    'Précédent',
-                    style: TTypography.labelLarge(
-                      context,
-                    ).copyWith(color: TColors.primary),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.transparent,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.chevron_left_rounded,
+                        color: TColors.textSecondary(context),
+                        size: 24,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Retour',
+                        style: TextStyle(
+                          color: TColors.textSecondary(context),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            if (controller.currentStep.value > 0)
-              const SizedBox(width: TSpacing.md),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(TRadius.lg),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TColors.primary.withOpacity(.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed:
-                      controller.isLoading.value
-                          ? null
-                          : () {
-                            // Dismiss keyboard
-                            FocusScope.of(context).unfocus();
-                            controller.nextStep();
-                          },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(TRadius.lg),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: TSpacing.md),
-                    elevation: 0,
+            const Spacer(),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: TColors.primary.withOpacity(.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
-                  child:
-                      controller.isLoading.value
-                          ? const SpinKitThreeBounce(
-                            color: Colors.white,
-                            size: 20,
-                          )
-                          : Text(
-                            controller.currentStep.value < 2
-                                ? 'Continuer'
-                                : 'Créer le compte',
-                            style: TTypography.labelLarge(context).copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                ],
+              ),
+              width: Get.width * 0.5,
+              height: Get.height * 0.07,
+              child: ElevatedButton(
+                onPressed:
+                    controller.isLoading.value
+                        ? null
+                        : () {
+                          FocusScope.of(context).unfocus();
+                          controller.nextStep();
+                        },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 0,
                 ),
+                child:
+                    controller.isLoading.value
+                        ? const SpinKitThreeBounce(
+                          color: Colors.white,
+                          size: 20,
+                        )
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 12),
+                            Text(
+                              controller.currentStep.value < 2
+                                  ? 'Continuer'
+                                  : 'Créer le compte',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
               ),
             ),
           ],
